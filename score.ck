@@ -10,9 +10,9 @@ MonitorEvent evt2 @=> evt[2];
 
 
 
-MonitorA ms0; =>  Monitor m0;
-MonitorB ms1;  => Monitor m1;
-MonitorC ms2;  => Monitor m2;
+MonitorA ms0  @=>  Monitor m0;
+MonitorB ms1  @=> Monitor m1;
+MonitorC ms2  @=> Monitor m2;
 
 Monitor mss[3];
 m0 @=> mss[0];

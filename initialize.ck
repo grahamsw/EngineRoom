@@ -1,8 +1,11 @@
 
-"C\\:/Users/shyguy/Documents/gsw/dev/EngineRoom/" => string root;
+"C\\:/Users/shyguy/Documents/github/EngineRoom/" => string root;
 
 // add classes
-Machine.add(root + "monitors.ck");
+Machine.add(root + "monitor.ck");
+Machine.add(root + "monitorA.ck");
+Machine.add(root + "monitorB.ck");
+Machine.add(root + "monitorC.ck");
 Machine.add(root + "monitorevent.ck");
 
 // 
