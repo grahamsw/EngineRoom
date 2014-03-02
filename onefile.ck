@@ -10,19 +10,36 @@ class Monitor{
 }
 
 class MonitorA extends Monitor{
-    SinOsc s => dac;
-    0.5 => s.gain;
+    SinOsc s => dac.right;
+    0.7 => s.gain;
     fun void ReadValue(float val){
        2 * val => s.freq;        
-        <<< label + ": ", val>>>;
+  //     <<< label + ": ", val>>>;
     }    
 }
+
+// smoother square wave
 class MonitorB extends Monitor{
-    SqrOsc s => dac;
-    0.5 => s.gain;
+    float history[10];
+    for (0 => int i; i < history.cap(); 1 +=> i){
+        400 => history[i];
+    }
+    SqrOsc s => dac.left;
+    0.3 => s.gain;
     fun void ReadValue(float val){
-       2 * val => s.freq;        
-        <<< label + ": ", val>>>;
+        0.0 => float sum;
+        for(0 => int i; i < history.cap(); 1 +=> i){
+            history[i] +=> sum;
+        }
+        for(0 => int i; i > history.cap() - 1; 1 +=> i){
+            //h[1] => h[0]; h[2] => h[1]; ...
+            history[i + 1] => history[i];
+           // <<< i, ": ", history[i]>>>;
+        }
+        sum / (history.cap() + 1) => float freq;
+        val => history[history.cap() - 1];      
+        freq => s.freq;
+     //   <<< label + ": ", freq>>>;
     }    
 }
     
