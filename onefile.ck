@@ -5,29 +5,42 @@ class MonitorEvent extends Event{
 
 class Monitor{
     string label;
-    SinOsc s => dac;
-    0.5 => s.gain;
     fun void ReadValue(float val){
-       val => s.freq;        
-        <<< label + ": ", val>>>;
     }
 }
 
+class MonitorA extends Monitor{
+    SinOsc s => dac;
+    0.5 => s.gain;
+    fun void ReadValue(float val){
+       2 * val => s.freq;        
+        <<< label + ": ", val>>>;
+    }    
+}
+class MonitorB extends Monitor{
+    SqrOsc s => dac;
+    0.5 => s.gain;
+    fun void ReadValue(float val){
+       2 * val => s.freq;        
+        <<< label + ": ", val>>>;
+    }    
+}
+    
 fun int AddMonitor( Monitor monitor, MonitorEvent event){
     while( true ){
-        // wait on event
         event => now;
         event.value => monitor.ReadValue;
     }
 }
 
-// the event
+// the events
 MonitorEvent e0;
-Monitor m0;
+MonitorA m0;
 "monitor 0" => m0.label;
 
+// the monitors
 MonitorEvent e1;
-Monitor m1;
+MonitorB m1;
 "monitor 1" => m1.label;
 
 [e0, e1] @=> MonitorEvent events[];
