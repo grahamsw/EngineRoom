@@ -1,11 +1,9 @@
+
 public class MonitorA extends Monitor{
-    SinOsc s => dac;
-    1 => s.gain;
-    
-    fun void signal(int n) {        
-        Std.mtof(n) => s.freq;
-	//	<<<"A: " + s.freq >>>;
-
-    }
+    SinOsc s => dac.right;
+    0.7 => s.gain;
+    fun void ReadValue(float val){
+       2 * val => s.freq;        
+  //     <<< label + ": ", val>>>;
+    }    
 }
-

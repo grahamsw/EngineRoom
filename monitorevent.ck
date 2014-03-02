@@ -1,3 +1,3 @@
-public class MonitorEvent extends Event {
-    float reading;    
+public class MonitorEvent extends Event{
+    float value;
 }

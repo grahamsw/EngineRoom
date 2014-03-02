@@ -5,7 +5,7 @@
 Machine.add(root + "monitor.ck");
 Machine.add(root + "monitorA.ck");
 Machine.add(root + "monitorB.ck");
-Machine.add(root + "monitorC.ck");
+//Machine.add(root + "monitorC.ck");
 Machine.add(root + "monitorevent.ck");
 
 // 

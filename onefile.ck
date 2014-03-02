@@ -18,7 +18,7 @@ class MonitorA extends Monitor{
     }    
 }
 
-// smoother square wave
+// frequency smoothed square wave
 class MonitorB extends Monitor{
     float history[10];
     for (0 => int i; i < history.cap(); 1 +=> i){
