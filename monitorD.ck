@@ -4,9 +4,12 @@ public class MonitorD extends Monitor{
 
     1 => t.gain;
     
-    fun void signal(int n){
-	    if (        
-        Std.mtof(n) => t.freq;
+    fun void Signal(MonitorEvent evt){
+	    if (evt.label == "CPU"){
+			evt.value => t.freq;
+		}
+		else if ("Memory" == evt.label){
+			evt.value => 
 		//<<<"C: " + s.freq >>>;
     }
 }
