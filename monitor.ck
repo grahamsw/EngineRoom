@@ -1,6 +1,6 @@
 public class Monitor{
     string label;
-    fun void ReadValue(float val){
+    fun void Signal(MonitorEvent evt){
     }
 }
 

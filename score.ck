@@ -1,3 +1,7 @@
+// this will be replaced with something generic that 
+// reads a configuration file, generates the monitors, adds them, 
+// and - the tricky bit - handles the event pump
+
 
 // the events
 MonitorEvent e0;
@@ -18,7 +22,7 @@ for(0 => int i; i < monitors.cap(); 1 +=> i){
 
 while (true){
     1::second => now;
-    Math.random2(0, 1) => int which;   
+    Math.random2(0, 1) => int which;
     Math.random2f(400,800) => events[which].value;
     events[which].signal();
 }

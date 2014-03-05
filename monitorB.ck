@@ -7,7 +7,7 @@ public class MonitorB extends Monitor{
     }
     SqrOsc s => dac.left;
     0.3 => s.gain;
-    fun void ReadValue(float val){
+    fun void Signal(MonitorEvent evt){
         0.0 => float sum;
         for(0 => int i; i < history.cap(); 1 +=> i){
             history[i] +=> sum;
@@ -18,8 +18,8 @@ public class MonitorB extends Monitor{
            // <<< i, ": ", history[i]>>>;
         }
         sum / (history.cap() + 1) => float freq;
-        val => history[history.cap() - 1];      
+        evt.value => history[history.cap() - 1];      
         freq => s.freq;
-     //   <<< label + ": ", freq>>>;
+        <<< label + ": ", freq>>>;
     }    
 }
