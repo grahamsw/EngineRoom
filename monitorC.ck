@@ -1,11 +1,11 @@
 
 public class MonitorC extends Monitor{
-    SqrOsc t => Delay d => dac;
+    SqrOsc t => dac;
 
     1 => t.gain;
     
-    fun void signal(int n){        
-        Std.mtof(n) => t.freq;
-		//<<<"C: " + s.freq >>>;
+    fun void Signal(MonitorEvent evt){        
+        evt.value => t.freq;
+		<<<label + " " +evt.value >>>;
     }
 }
