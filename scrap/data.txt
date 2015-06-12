@@ -1,0 +1,5 @@
+temperature	45.6
+windspeed	12.1
+windspeed	12.1
+winddirection	349
+humidity	89
