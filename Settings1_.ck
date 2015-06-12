@@ -52,7 +52,7 @@ public class Settings1 {
 
 	fun void play(){
 		while (true) {
-		    <<< _msgHeader + " " + pitch + " " + gain + " " + bpm >>>;
+		  //  <<< _msgHeader + " " + pitch + " " + gain + " " + bpm >>>;
 			pitch => sin.freq;
 			gain => sin.gain;
 			bpm * 1 :: ms => now;
