@@ -21,3 +21,5 @@ public class MonitorA extends Monitor{
        <<< "value: ", evt.value>>>;
     }    
 }
+
+

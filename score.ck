@@ -7,6 +7,7 @@
 MonitorEvent e0;
 MonitorA m0;
 "monitor 0" => m0.label;
+spork~addMoonitor(m0, e0);
 
 // the monitors
 //MonitorEvent e1;
@@ -24,18 +25,22 @@ spork~AddMonitor.Add(m0, e0);
 while (true){
     1::second => now;
 
-    Math.random2(1, 3) => int which;
+    Math.random2(0, 4) => int which;
 	if (which == 0){
-		"mag" => e0.label;
-		Math.random2f(100, 200) => e0.value;
+		"sgain" => e0.label;
+		Math.random2f(0.2, 0.5) => e0.value;
 	}
 	else if (which ==1 ){
-		"mod" => e0.label;
-		Math.random2f(5,7) => e0.value;
+		"sfreq" => e0.label;
+		Math.random2f(350,500) => e0.value;
 	}
 	else if (which == 2){
-		"freq" => e0.label;
-		Math.random2f(400, 800) => e0.value;
+		"mfreq" => e0.label;
+		Math.random2f(350, 500) => e0.value;
+	}
+	else if (which == 3){
+	    "mgain" => e0.label;
+		Math.random2f(0.4,0.65) => e0.value;
 	}
 
 	e0.signal();
