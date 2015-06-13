@@ -3,13 +3,15 @@
 DynamicValues dvs1;
 DynamicValues dvs2;
 
-["first", "freq", "onMs", "offMs"] @=> dvs1.names;
-
+["first", "diagnostics", "freq", "onMs", "offMs"] @=> dvs1.names;
+0 => dvs1.ints["diagnostics"];
 2800 =>  dvs1.ints["freq"];
 40 =>  dvs1.ints["onMs"];
 20 =>  dvs1.ints["offMs"];
 
-["second","freq", "onMs", "offMs"] @=> dvs2.names;
+["second","diagnostics", "freq", "onMs", "offMs"] @=> dvs2.names;
+
+0 => dvs2.ints["diagnostics"];
 1800 =>  dvs2.ints["freq"];
 400 =>  dvs2.ints["onMs"];
 200 =>  dvs2.ints["offMs"];
