@@ -3,8 +3,13 @@
 // It may be updated by a OscReceiver, or over time. 
 
 public class DynamicValues {
+
     string names[];
-	float floats[0];
 	int ints[0];
-	string strings[0];
+
+	fun void diagnostics(){
+		for(0 => int i; i < names.cap(); i++){
+			<<< ints[names[i]] >>>;
+		}
+	}
 }

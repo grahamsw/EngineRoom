@@ -3,18 +3,18 @@
 DynamicValues dvs1;
 DynamicValues dvs2;
 
-["first", "diagnostics", "freq", "onMs", "offMs"] @=> dvs1.names;
-0 => dvs1.ints["diagnostics"];
+["first", "freq", "onMs", "offMs", "gain"] @=> dvs1.names;
 2800 =>  dvs1.ints["freq"];
 40 =>  dvs1.ints["onMs"];
 20 =>  dvs1.ints["offMs"];
+400 => dvs1.ints["gain"];
 
-["second","diagnostics", "freq", "onMs", "offMs"] @=> dvs2.names;
-
-0 => dvs2.ints["diagnostics"];
+["second", "freq", "onMs", "offMs", "gain"] @=> dvs2.names;
 1800 =>  dvs2.ints["freq"];
 400 =>  dvs2.ints["onMs"];
 200 =>  dvs2.ints["offMs"];
+300 => dvs2.ints["gain"];
+
 
 
 Receiver r1;
@@ -28,7 +28,6 @@ SinPlayer s2;
 s1.Init(dvs1);
 s2.Init(dvs2);
 
-<<< "never get here, do we?" >>>;
 // need this to keep the receiver and player objects around
 while(true){
 	1000 :: second => now;

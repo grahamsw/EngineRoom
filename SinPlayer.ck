@@ -14,18 +14,9 @@ public class SinPlayer {
 		spork ~ play();
 	}
 
-	fun void diagnostics(){
-		if (1 == _dvs.ints["diagnostics"]){
-			<<< "name:" + _dvs.names[0] >>>;
-			for(1 => int i; i < _dvs.names.cap(); i++){
-				<<< "\t" + _dvs.ints[_dvs.names[i]]>>>;
-			}
-		}
-	}
 	fun void play(){
 		while(true) {
-			diagnostics();
-		    0.4 => sin.gain;
+		    _dvs.ints["gain"]/1000.0 => sin.gain;
 			_dvs.ints["freq"] => sin.freq;			
 			_dvs.ints["onMs"] * 1 :: ms => now;
 			0 => sin.gain;

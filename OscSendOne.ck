@@ -1,8 +1,8 @@
 OscOut oscout;
 
-"sigb" => string msgHeader;
-"diagnostics" => string msg;
-0=> int val;
+"siga" => string msgHeader;
+"gain" => string msg;
+500=> int val;
 
 6449 => int port;
 ("localhost", port) => oscout.dest;
