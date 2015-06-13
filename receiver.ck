@@ -2,7 +2,7 @@
 public class Receiver {  
 	int _port;
 	string _msgHeader;
-	SinPlayer _player;
+	DynamicValues _dvs;
 		
 	fun void listen(){
 		OscIn oscin;
@@ -29,18 +29,12 @@ public class Receiver {
 		}
 	}
 
-	fun void Init(int port, string msgHeader, SinPlayer player){
+	fun void Init(int port, string msgHeader, DynamicValues dvs){
 		port => _port;
 		msgHeader => _msgHeader;
-		player @=> player;
+		svs @=> _svs;
 
-		spork ~ listen();		
-		spork ~ play();
+		spork ~ listen();	
 	}	
-
-	fun void play(){
-		_player.play();
-	}
-
 }
 
