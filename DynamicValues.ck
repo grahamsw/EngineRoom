@@ -3,9 +3,8 @@
 // It may be updated by a OscReceiver, or over time. 
 
 public class DynamicValues {
-   //string names[]
+    string names[];
 	float floats[0];
-	int ints[];
-	bool bools[0];
+	int ints[0];
 	string strings[0];
 }

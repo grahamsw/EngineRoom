@@ -48,7 +48,7 @@ while(true){
 	}
 	trace("send", addr);
     oscout.send();
-	Math.random2(1, 10) * 1 :: second => now;
+	Math.random2(1, 1) * 1 :: second => now;
 }
 
    

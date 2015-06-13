@@ -1,40 +1,37 @@
 
 public class Receiver {  
-	int _port;
+	OscIn oscin;
 	string _msgHeader;
 	DynamicValues _dvs;
 		
-	fun void listen(){
-		OscIn oscin;
-		_port => oscin.port;
+	fun void Init(int port, string msgHeader, DynamicValues dvs){
+		msgHeader => _msgHeader;
+		dvs @=> _dvs;
+		port => oscin.port;
 
-		for (0 => int i; i < _player._svs.cap(); i++){
-		   "/" + _msgHeader +"/" + _player._svs[i].name => string addr;
+		for (0 => int i; i < _dvs.names.cap(); i++){
+		   "/" + _msgHeader +"/" + _dvs.names[i] => string addr;
 			addr => oscin.addAddress;
 		}
 
+		spork ~ listen();	
+	}		
+	
+	fun void listen(){
 		OscMsg msg;
-
 		while(true) {
 			oscin => now;
 			while(oscin.recv(msg)){
-				msg.address => string ad;
-				for(0 => int i; i < _player._svs.cap(); i++){
-					if (ad == "/" + _msgHeader + "/" + _player._svs[i].name) {
-							msg.getFloat(0) => _player._svs[i].value;
-							_player._svs[i].value => _player._values[_player._svs[i].name];
+				msg.address => string addr;
+				<<< addr>>>;
+				for(0 => int i; i < _dvs.names.cap(); i++){
+					if (addr == "/" + _msgHeader + "/" + _dvs.names[i]) {
+					        // right now assume all values are ints
+							msg.getInt(0) => _dvs.ints[_dvs.names[i]];
 					}
 				}
 			}
 		}
 	}
-
-	fun void Init(int port, string msgHeader, DynamicValues dvs){
-		port => _port;
-		msgHeader => _msgHeader;
-		svs @=> _svs;
-
-		spork ~ listen();	
-	}	
 }
 

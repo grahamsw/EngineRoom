@@ -1,45 +1,33 @@
 
+
+DynamicValues dvs1;
+DynamicValues dvs2;
+
+["first", "freq", "onMs", "offMs"] @=> dvs1.names;
+
+2800 =>  dvs1.ints["freq"];
+40 =>  dvs1.ints["onMs"];
+20 =>  dvs1.ints["offMs"];
+
+["second","freq", "onMs", "offMs"] @=> dvs2.names;
+1800 =>  dvs2.ints["freq"];
+400 =>  dvs2.ints["onMs"];
+200 =>  dvs2.ints["offMs"];
+
+
 Receiver r1;
-SinPlayer s1;
-
-
-SignalValue svs11;
-"freq" => svs11.name;
-800 => svs11.value;
-
-SignalValue svs12;
-"onMs" => svs12.name;
-200 => svs12.value;
-
-SignalValue svs13;
-"offMs" => svs13.name;
-200 => svs13.value;
-[svs11, svs12, svs13] @=> SignalValue svs1[];
-
-s1.Init(svs1);
-r1.Init(6449, "siga", s1);
-
 Receiver r2;
+r1.Init(6449, "siga", dvs1);
+r2.Init(6449, "sigb", dvs2);
+
+
+SinPlayer s1;
 SinPlayer s2;
+s1.Init(dvs1);
+s2.Init(dvs2);
 
-SignalValue svs21;
-"freq" => svs21.name;
-1600 => svs11.value;
-
-SignalValue svs22;
-"onMs" => svs22.name;
-80 => svs22.value;
-
-SignalValue svs23;
-"offMs" => svs23.name;
-80 => svs23.value;
-[svs21, svs22, svs23] @=> SignalValue svs2[];
-
-s2.Init(svs2);
-r2.Init(6449, "sigb", s2);
-
-
-// need this to keep the receiver object around
+<<< "never get here, do we?" >>>;
+// need this to keep the receiver and player objects around
 while(true){
 	1000 :: second => now;
 }
