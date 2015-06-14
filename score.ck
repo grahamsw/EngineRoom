@@ -3,25 +3,15 @@
 DynamicValues dvs1;
 DynamicValues dvs2;
 
-["first", "freq", "onMs", "offMs", "gain"] @=> dvs1.names;
-2800 =>  dvs1.ints["freq"];
-40 =>  dvs1.ints["onMs"];
-20 =>  dvs1.ints["offMs"];
-400 => dvs1.ints["gain"];
-
-["second", "freq", "onMs", "offMs", "gain"] @=> dvs2.names;
-1800 =>  dvs2.ints["freq"];
-400 =>  dvs2.ints["onMs"];
-200 =>  dvs2.ints["offMs"];
-300 => dvs2.ints["gain"];
-
-
+dvs1.Init(["freq", "onMs", "offMs", "gain"], 
+           [2000 ,   40  ,      20,   400]);
+dvs2.Init(["freq", "onMs", "offMs", "gain"], 
+           [1800,     400,  200,    300]);
 
 Receiver r1;
 Receiver r2;
 r1.Init(6449, "siga", dvs1);
 r2.Init(6449, "sigb", dvs2);
-
 
 SinPlayer s1;
 SinPlayer s2;
