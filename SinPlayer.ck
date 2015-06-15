@@ -1,14 +1,10 @@
-fun void trace(string header, string msg){
-	//<<< header + ": " + msg>>>;
-}
+
 public class SinPlayer {
 	SinOsc sin;
 	DynamicValues _dvs;
 
 	fun void Init(DynamicValues dvs){
-	    trace("SinPlayer Name", dvs.names[0]);
 		sin => dac;
-		0.4 => sin.gain;
 		dvs @=> _dvs;
 		// must spork here, or it consumes the score thread and the score gets no further
 		spork ~ play();
