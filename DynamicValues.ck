@@ -2,10 +2,20 @@
 // it will give a value. That value may change over time.
 // It may be updated by a OscReceiver, or over time. 
 
+/*
+  usage:
+  DynamicValues dvs;
+  dvs.Init()
+
+
+*/
+
+
 public class DynamicValues {
 
-    string names[];
+    string names[];	
 	int ints[0];
+	float floats[0];
 
 	fun void Init(string nms[], int vals[]){
 		nms @=> names;
