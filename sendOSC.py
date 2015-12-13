@@ -1,7 +1,7 @@
 import OSC
 
 c = OSC.OSCClient()
-c.connect('127.0.0.1', 6449)
+c.connect(('127.0.0.1', 6449))
 
 def send(addr, val):
 	oscmsg = OSC.OSCMessage()

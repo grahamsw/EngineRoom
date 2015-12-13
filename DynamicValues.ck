@@ -2,21 +2,33 @@
 // it will give a value. That value may change over time.
 // It may be updated by a OscReceiver, or over time. 
 
+
+/*
+  usage:
+  DynamicValues dvs;
+  dvs.Init()
+
+
+*/
+
+
 public class DynamicValues {
 
-    string names[];
-	int ints[0];
+    string _names[];	
+	float _vals[0];
 
-	fun void Init(string nms[], int vals[]){
-		nms @=> names;
-		for(0 => int i; i < names.cap(); i++){
-			vals[i] => ints[names[i]];
+	fun void Init(string names[], float vals[]){
+		names @=> _names;
+		for(0 => int i; i < _names.cap(); i++){
+			vals[i] => _vals[_names[i]];
 		}
 	}
 
 	fun void diagnostics(){
-		for(0 => int i; i < names.cap(); i++){
-			<<< ints[names[i]] >>>;
+		for(0 => int i; i < _names.cap(); i++){
+			<<< _names[i], _vals[_names[i]] >>>;
 		}
 	}
+
+
 }
