@@ -15,7 +15,7 @@ class DynamicValue:
         self.to = to
         
         
-class DynamicValueEditor:
+class DynamicValuesEditor:
     def __init__(self, dvals, ip, port):    
         self.c = OSC.OSCClient()
         self.c.connect((ip,port))
@@ -61,5 +61,4 @@ class DynamicValueEditor:
         button1.pack()  
       
       
-dvs = [DynamicValue('/first/gain', 0, 100), DynamicValue('/first/freq', 1000, 2000)]
-ed = DynamicValueEditor(dvs, '127.0.0.1', 6449)   
+  
