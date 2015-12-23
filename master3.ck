@@ -6,6 +6,3 @@ Machine.add(dir + "SinPlayer.ck");
 
 Machine.add(dir + "Score3.ck");
 
-
-
-

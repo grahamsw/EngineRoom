@@ -2,18 +2,13 @@
 // it will give a value. That value may change over time.
 // It may be updated by a OscReceiver, or over time. 
 
-
 /*
   usage:
   DynamicValues dvs;
-  dvs.Init()
-
-
+  dvs.Init();
 */
 
-
 public class DynamicValues {
-
     string _names[];	
 	float _vals[0];
 
@@ -29,6 +24,4 @@ public class DynamicValues {
 			<<< _names[i], _vals[_names[i]] >>>;
 		}
 	}
-
-
 }

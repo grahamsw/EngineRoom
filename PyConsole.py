@@ -15,7 +15,7 @@ class DynamicValue:
         self.to = to
         
         
-class DynamicValuesEditor:
+class DynamicValueEditor:
     def __init__(self, dvals, ip, port):    
         self.c = OSC.OSCClient()
         self.c.connect((ip,port))
@@ -29,22 +29,22 @@ class DynamicValuesEditor:
        
     
     
-    def send(self, addr, val, v):  
-        print ('%s: %f' % (addr, (float(val) /100.0)))
-        v["text"] = float(val) / 100.0
+    def send(self, addr, val):  
+        print addr + ': ' + val
         oscmsg = OSC.OSCMessage()
         oscmsg.setAddress(addr)
         oscmsg.append(float(val)/100.0)
         self.c.send(oscmsg)
     
     def update(self, slider, label, address, from_, to):
-        print "spunk update: from: %s, to: %s" % (from_, to)
+        print 'nob from: ' + from_ + ' to: ' + to
         label["text"] = address
-        slider["from_"] = int(from_) * 100
-        slider["to"] = int(to) * 100
-        slider.set(int(from_) * 100 )
+        slider["from_"] = from_ * 100
+        slider["to"] = to * 100
+        slider.set(from_ * 100)
     
-    def addSetter(self, addr, f, t):
+    def addSetter(self, addr='/poop/freq', f = 0, t = 100):
+                
         label1 = tk.Label(self.root, text=addr)
         address1 = tk.Entry(self.root)
         address1.insert(0,addr)
@@ -54,15 +54,15 @@ class DynamicValuesEditor:
         to1.insert(0,t)
         
         button1 = tk.Button(self.root, text="Update", command=lambda: self.update(slider1,label1,address1.get(),from1.get(), to1.get()))
-        slider1 = tk.Scale(self.root, from_=f * 100 , to=t*100, showvalue = 0,  orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x, val))
-        val = tk.Label(self.root, text = f)        
+        slider1 = tk.Scale(self.root, from_=f * 100, to=t * 100, orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x))
         label1.pack()
-        val.pack()
         slider1.pack()
         address1.pack();
         from1.pack()
         to1.pack()
         button1.pack()  
+
       
       
-  
+dvs = [DynamicValue('/first/gain', 0, 100), DynamicValue('/first/freq', 1000, 2000)]
+ed = DynamicValueEditor(dvs, '127.0.0.1', 6449)   
