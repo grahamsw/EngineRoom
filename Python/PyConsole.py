@@ -6,60 +6,55 @@ Created on Mon Jun 15 16:49:32 2015
 """
 
 import tkinter as tk
+import uuid 
+from collections import namedtuple
 from sendOSC2 import makeOscSender
 
-class DynamicValue:
-    def __init__(self, address, fr, to):
-        self.address = address
-        self.fr = fr
-        self.to = to
+DynamicValue = namedtuple("DynamicValue", "address fr to")
+DynamicValueEditor = namedtuple("DynamicValueEditor", "address_editor from_editor to_editor slider button")
         
-        
-class DynamicValueEditor:
+class DynamicValueConsole:
     def __init__(self, dvals, ip, port): 
         self.sender = makeOscSender(ip, port)
         
         self.root = tk.Tk()
         self.root.title("Osc Console")
+        self.dves = {}
         for dv in dvals:
-            self.addSetter(dv.address, dv.fr, dv.to)
+            self.addSetter(dv)
         self.root.mainloop()
-    
-       
-    
-    
+      
+           
     def send(self, addr, val):  
-        print (addr + ': ' + val)
-        self.sender(addr, val)
+        print (addr + ': ' + str( int(val) / 100.0))
+        self.sender(addr, int(val) /100.0)
 
     
-    def update(self, slider, label, address, from_, to):
-        print ('nob from: ' + from_ + ' to: ' + to)
-        label["text"] = address
-        slider["from_"] = from_ * 100
-        slider["to"] = to * 100
-        slider.set(from_ * 100)
-    
-    def addSetter(self, addr='/poop/freq', f = 0, t = 100):
-               
-        label1 = tk.Label(self.root, text=addr)
-        address1 = tk.Entry(self.root)
-        address1.insert(0,addr)
-        from1 = tk.Entry(self.root)
-        from1.insert(0,f)
-        to1 = tk.Entry(self.root)
-        to1.insert(0,t)
+    def update(self, key):
+        dve = self.dves[key]
+        print (dve.address_editor.get() + ' from: ' + dve.from_editor.get() + ' to: ' + dve.to_editor.get())
+        dve.slider["from_"] = int(dve.from_editor.get()) * 100
+        dve.slider["to"] = int(dve.to_editor.get()) * 100
+        dve.slider.set(int(dve.from_editor.get()) * 100)
         
-        button1 = tk.Button(self.root, text="Update", command=lambda: self.update(slider1,label1,address1.get(),from1.get(), to1.get()))
-        slider1 = tk.Scale(self.root, from_=f * 100, to=t * 100, orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x))
-        label1.pack()
+    def addSetter(self, dval): 
+        key = uuid.uuid4()   
+        address1 = tk.Entry(self.root)
+        address1.insert(0,dval.address)
+        from1 = tk.Entry(self.root)
+        from1.insert(0,dval.fr)
+        to1 = tk.Entry(self.root)
+        to1.insert(0,dval.to)
+        
+        button1 = tk.Button(self.root, text="Update", command=lambda: self.update(key))
+        slider1 = tk.Scale(self.root, from_=dval.fr * 100, to= dval.to * 100, orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x))
+        address1.pack()
         slider1.pack()
-        address1.pack();
         from1.pack()
         to1.pack()
         button1.pack()  
-
+        self.dves[key] = DynamicValueEditor(address1, from1, to1, slider1, button1)
       
       
 dvs = [DynamicValue('/first/gain', 0, 100), DynamicValue('/first/freq', 1000, 2000)]
-ed = DynamicValueEditor(dvs, '127.0.0.1', 6449)   
+ed = DynamicValueConsole(dvs, '127.0.0.1', 6449)   
