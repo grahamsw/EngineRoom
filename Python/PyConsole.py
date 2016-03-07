@@ -6,7 +6,7 @@ Created on Mon Jun 15 16:49:32 2015
 """
 
 import tkinter as tk
-import OSC
+from sendOSC2 import makeOscSender
 
 class DynamicValue:
     def __init__(self, address, fr, to):
@@ -16,9 +16,8 @@ class DynamicValue:
         
         
 class DynamicValueEditor:
-    def __init__(self, dvals, ip, port):    
-        self.c = OSC.OSCClient()
-        self.c.connect((ip,port))
+    def __init__(self, dvals, ip, port): 
+        self.sender = makeOscSender(ip, port)
         
         self.root = tk.Tk()
         self.root.title("Osc Console")
@@ -31,10 +30,8 @@ class DynamicValueEditor:
     
     def send(self, addr, val):  
         print (addr + ': ' + val)
-        oscmsg = OSC.OSCMessage()
-        oscmsg.setAddress(addr)
-        oscmsg.append(float(val)/100.0)
-        self.c.send(oscmsg)
+        self.sender(addr, val)
+
     
     def update(self, slider, label, address, from_, to):
         print ('nob from: ' + from_ + ' to: ' + to)
@@ -44,7 +41,7 @@ class DynamicValueEditor:
         slider.set(from_ * 100)
     
     def addSetter(self, addr='/poop/freq', f = 0, t = 100):
-                
+               
         label1 = tk.Label(self.root, text=addr)
         address1 = tk.Entry(self.root)
         address1.insert(0,addr)
