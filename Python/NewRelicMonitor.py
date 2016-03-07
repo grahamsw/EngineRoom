@@ -1,6 +1,7 @@
 import json
-import urllib2
+import urllib.request
 import urllib
+import urllib.parse
 
 
 # A data getter takes a query and returns the large, complex JSON data object, with all kinds of bookkeeping info, from New Relic, various parts of which might sometimes be of interest.
@@ -10,12 +11,12 @@ import urllib
 
 def makeNewRelicDataGetter(account, key):
     def getNewRelicData(query):
-        escQuery = urllib.quote_plus(query)
-        req = urllib2.Request('https://insights-api.newrelic.com/v1/accounts/' + account + '/query?nrql=' + escQuery)
+        escQuery = urllib.parse.quote_plus(query)
+        req = urllib.request.Request('https://insights-api.newrelic.com/v1/accounts/' + account + '/query?nrql=' + escQuery)
         req.add_header('Accept', 'application/json')
         req.add_header('X-Query-Key', key)
-        response = urllib2.urlopen(req)
-        data = json.loads(response.read())
+        response = urllib.request.urlopen(req)
+        data = json.loads(response.read().decode('utf-8'))
         return data
     return getNewRelicData
  

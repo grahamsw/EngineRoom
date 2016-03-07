@@ -5,7 +5,7 @@ Created on Mon Jun 15 16:49:32 2015
 @author: g.stalker-wilde
 """
 
-import Tkinter as tk
+import tkinter as tk
 import OSC
 
 class DynamicValue:
@@ -30,14 +30,14 @@ class DynamicValueEditor:
     
     
     def send(self, addr, val):  
-        print addr + ': ' + val
+        print (addr + ': ' + val)
         oscmsg = OSC.OSCMessage()
         oscmsg.setAddress(addr)
         oscmsg.append(float(val)/100.0)
         self.c.send(oscmsg)
     
     def update(self, slider, label, address, from_, to):
-        print 'nob from: ' + from_ + ' to: ' + to
+        print ('nob from: ' + from_ + ' to: ' + to)
         label["text"] = address
         slider["from_"] = from_ * 100
         slider["to"] = to * 100
