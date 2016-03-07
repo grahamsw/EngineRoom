@@ -55,6 +55,6 @@ class DynamicValueConsole:
         button1.pack()  
         self.dves[key] = DynamicValueEditor(address1, from1, to1, slider1, button1)
       
-      
-dvs = [DynamicValue('/first/gain', 0, 100), DynamicValue('/first/freq', 1000, 2000)]
+# generates the signals listened for in simpleOscReceiverScore.ck      
+dvs = [DynamicValue('/sinOsc1/f/msOn', 0, 100), DynamicValue('/sinOsc1/f/msOff', 1000, 2000), DynamicValue('/sinOsc1/f/freq', 1000, 2000)]
 ed = DynamicValueConsole(dvs, '127.0.0.1', 6449)   
