@@ -26,16 +26,16 @@ class DynamicValueConsole:
       
            
     def send(self, addr, val):  
-        print (addr + ': ' + str( int(val) / 100.0))
-        self.sender(addr, int(val) /100.0)
+        print (addr + ': ' + str( float(val) ))
+        self.sender(addr, float(val) )
 
     
     def update(self, key):
         dve = self.dves[key]
         print (dve.address_editor.get() + ' from: ' + dve.from_editor.get() + ' to: ' + dve.to_editor.get())
-        dve.slider["from_"] = int(dve.from_editor.get()) * 100
-        dve.slider["to"] = int(dve.to_editor.get()) * 100
-        dve.slider.set(int(dve.from_editor.get()) * 100)
+        dve.slider["from_"] = float(dve.from_editor.get()) 
+        dve.slider["to"] = float(dve.to_editor.get()) 
+        dve.slider.set(float(dve.from_editor.get()))
         
     def addSetter(self, dval): 
         key = uuid.uuid4()   
@@ -47,7 +47,7 @@ class DynamicValueConsole:
         to1.insert(0,dval.to)
         
         button1 = tk.Button(self.root, text="Update", command=lambda: self.update(key))
-        slider1 = tk.Scale(self.root, from_=dval.fr * 100, to= dval.to * 100, orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x))
+        slider1 = tk.Scale(self.root, from_=dval.fr, to=dval.to , orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x), resolution=0.1, relief=tk.SOLID)
         address1.pack()
         slider1.pack()
         from1.pack()
@@ -56,5 +56,5 @@ class DynamicValueConsole:
         self.dves[key] = DynamicValueEditor(address1, from1, to1, slider1, button1)
       
 # generates the signals listened for in simpleOscReceiverScore.ck      
-dvs = [DynamicValue('/sinOsc1/f/msOn', 0, 100), DynamicValue('/sinOsc1/f/msOff', 1000, 2000), DynamicValue('/sinOsc1/f/freq', 1000, 2000)]
+dvs = [DynamicValue('/sinOsc1/f/msOn', 0.5, 5.5), DynamicValue('/sinOsc1/f/msOff', 100.0, 2000.0), DynamicValue('/sinOsc1/f/freq', 300.0, 2000.0)]
 ed = DynamicValueConsole(dvs, '127.0.0.1', 6449)   
