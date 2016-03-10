@@ -10,7 +10,7 @@ import uuid
 from collections import namedtuple
 from sendOSC2 import makeOscSender
 
-DynamicValue = namedtuple("DynamicValue", "address fr to")
+DynamicValue = namedtuple("DynamicValue", "address fr to start")
 DynamicValueEditor = namedtuple("DynamicValueEditor", "address_editor from_editor to_editor slider button")
         
 class DynamicValueConsole:
@@ -39,6 +39,7 @@ class DynamicValueConsole:
         
     def addSetter(self, dval): 
         key = uuid.uuid4()   
+        separator1 = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
         address1 = tk.Entry(self.root)
         address1.insert(0,dval.address)
         from1 = tk.Entry(self.root)
@@ -48,13 +49,23 @@ class DynamicValueConsole:
         
         button1 = tk.Button(self.root, text="Update", command=lambda: self.update(key))
         slider1 = tk.Scale(self.root, from_=dval.fr, to=dval.to , orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x), resolution=0.1, relief=tk.SOLID)
+        separator1.pack(fill=tk.X, padx=5, pady=10)     
         address1.pack()
         slider1.pack()
         from1.pack()
         to1.pack()
-        button1.pack()  
+        button1.pack(pady=5)  
+        slider1.set(dval.start)
         self.dves[key] = DynamicValueEditor(address1, from1, to1, slider1, button1)
+        self.send(dval.address, dval.start)
       
 # generates the signals listened for in simpleOscReceiverScore.ck      
-dvs = [DynamicValue('/sinOsc1/f/msOn', 0.5, 5.5), DynamicValue('/sinOsc1/f/msOff', 100.0, 2000.0), DynamicValue('/sinOsc1/f/freq', 300.0, 2000.0)]
+dvs = [DynamicValue('/sinOsc1/f/gain', 0.0, 1.0, 0.5), 
+       DynamicValue('/sinOsc1/f/freq', 100.0, 2000.0, 400), 
+       DynamicValue('/sinOsc1/f/msOn', 50.0, 200.0, 100),
+       DynamicValue('/sinOsc1/f/msOff', 50.0, 200.0, 80),
+       DynamicValue('/sinOsc1/f/pfreq', 1000.0, 3000.0, 1500),
+       ]
+#dvs1.Init(["f/gain",  "f/freq", "f/msOn", "f/msOff", "f/pfreq"], 
+#         [0.7 ,      400.0  ,  100.0,    200, 2000 ]);
 ed = DynamicValueConsole(dvs, '127.0.0.1', 6449)   

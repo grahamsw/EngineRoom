@@ -1,4 +1,4 @@
-"C:/Users/g.stalker-wilde/Documents/gsw/dev/engineroom/" => string dir;
+"C:/Users/grahamsw/Documents/dev/engineroom/" => string dir;
 
 Machine.add(dir + "DynamicValues.ck");	 
 Machine.add(dir + "OscReceiver.ck");

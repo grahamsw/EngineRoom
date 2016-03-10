@@ -2,18 +2,14 @@
 public class OscReceiver {  
 
 	OscIn oscin;
-	string _msgHeader;
 	DynamicValues _dvs;
 		
-	fun void Init(int port, string msgHeader, DynamicValues dvs){
-		msgHeader => _msgHeader;
+	fun void Init(int port, DynamicValues dvs){
 		dvs @=> _dvs;
 		port => oscin.port;
-
 		
         for (0 => int i; i < _dvs._names.cap(); i++){
-		   "/" + _msgHeader +"/" + _dvs._names[i] => string addr;
-			addr => oscin.addAddress;
+			_dvs._names[i] => oscin.addAddress;
 		}
  
 		spork ~ listen();	
@@ -27,7 +23,7 @@ public class OscReceiver {
 				msg.address => string addr;
 				<<< addr>>>;
 				for(0 => int i; i < _dvs._names.cap(); i++){
-					if (addr == "/" + _msgHeader + "/" + _dvs._names[i]) {
+					if (addr ==  _dvs._names[i]) {
 					     msg.getFloat(0) => _dvs._vals[_dvs._names[i]];
 						 <<< _dvs._vals[_dvs._names[i]] >>>;
 					}	
