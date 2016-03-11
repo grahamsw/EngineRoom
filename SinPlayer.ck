@@ -21,12 +21,12 @@ public class SinPlayer {
 
 	fun void play(){
 		while(true) {
-			_dvs._vals["/sinOsc1/f/pfreq"] => f.pfreq;
-		    _dvs._vals["/sinOsc1/f/gain"] => sin.gain;
-			_dvs._vals["/sinOsc1/f/freq"] => sin.freq;			
-			_dvs._vals["/sinOsc1/f/msOn"] :: ms => now;
+			_dvs._vals["f/pfreq"] => f.pfreq;
+		    _dvs._vals["f/gain"] => sin.gain;
+			_dvs._vals["f/freq"] => sin.freq;			
+			_dvs._vals["f/msOn"] :: ms => now;
 			0 => sin.gain;
-			_dvs._vals["/sinOsc1/f/msOff"] :: ms => now;
+			_dvs._vals["f/msOff"] :: ms => now;
 		}	
 	}
 }
