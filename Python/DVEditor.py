@@ -9,6 +9,7 @@ import tkinter as tk
 import uuid 
 from collections import namedtuple
 from sendOSC2 import makeOscSender
+from VerticalScrolledFrame import VerticalScrolledFrame
 
 DynamicValue = namedtuple("DynamicValue", "address fr to start")
 DynamicValueEditor = namedtuple("DynamicValueEditor", "address_editor from_editor to_editor slider button")
@@ -18,7 +19,10 @@ class DynamicValueConsole:
         self.sender = makeOscSender(ip, port)
         
         self.root = tk.Tk()
+       # self.root.geometry('200x600')
         self.root.title("Osc Console")
+        self.frame = VerticalScrolledFrame(self.root)
+        self.frame.pack(fill=tk.BOTH, expand=tk.YES)
         self.dves = {}
         for dv in dvals:
             self.addSetter(dv)
@@ -39,17 +43,17 @@ class DynamicValueConsole:
         
     def addSetter(self, dval): 
         key = uuid.uuid4()   
-        separator1 = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
-        address1 = tk.Entry(self.root)
+       # separator1 = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
+        address1 = tk.Entry(self.frame.interior)
         address1.insert(0,dval.address)
-        from1 = tk.Entry(self.root)
+        from1 = tk.Entry(self.frame.interior)
         from1.insert(0,dval.fr)
-        to1 = tk.Entry(self.root)
+        to1 = tk.Entry(self.frame.interior)
         to1.insert(0,dval.to)
         
-        button1 = tk.Button(self.root, text="Update", command=lambda: self.update(key))
-        slider1 = tk.Scale(self.root, from_=dval.fr, to=dval.to , orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x), resolution=0.1, relief=tk.SOLID)
-        separator1.pack(fill=tk.X, padx=5, pady=10)     
+        button1 = tk.Button(self.frame.interior, text="Update", command=lambda: self.update(key))
+        slider1 = tk.Scale(self.frame.interior, from_=dval.fr, to=dval.to , orient=tk.HORIZONTAL, command=lambda x: self.send(address1.get(), x), resolution=0.1, relief=tk.SOLID)
+ #       separator1.pack(fill=tk.X, padx=5, pady=10)     
         address1.pack()
         slider1.pack()
         from1.pack()
