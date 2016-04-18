@@ -4,6 +4,6 @@ Machine.add(dir + "DynamicValues.ck");
 Machine.add(dir + "OscReceiver.ck");
 
 
-Machine.add(dir + "Vib.ck");
+Machine.add(dir + "Vibe.ck");
 Machine.add(dir + "ScoreVibe.ck");
 

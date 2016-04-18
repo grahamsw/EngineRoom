@@ -15,7 +15,7 @@ DynamicValue = namedtuple("DynamicValue", "address fr to start")
 DynamicValueEditor = namedtuple("DynamicValueEditor", "address_editor from_editor to_editor slider button")
         
 class DynamicValueConsole:
-    def __init__(self, dvals, ip, port): 
+    def __init__(self, instanceName, dvals, ip, port): 
         self.sender = makeOscSender(ip, port)
         
         self.root = tk.Tk()
@@ -25,7 +25,7 @@ class DynamicValueConsole:
         self.frame.pack(fill=tk.BOTH, expand=tk.YES)
         self.dves = {}
         for dv in dvals:
-            self.addSetter(dv)
+            self.addSetter(instanceName, dv)
         self.root.mainloop()
       
            
@@ -41,11 +41,11 @@ class DynamicValueConsole:
         dve.slider["to"] = float(dve.to_editor.get()) 
         dve.slider.set(float(dve.from_editor.get()))
         
-    def addSetter(self, dval): 
+    def addSetter(self, instanceName, dval): 
         key = uuid.uuid4()   
        # separator1 = tk.Frame(height=2, bd=1, relief=tk.SUNKEN)
         address1 = tk.Entry(self.frame.interior)
-        address1.insert(0,dval.address)
+        address1.insert(0,'/' + instanceName + '/' + dval.address)
         from1 = tk.Entry(self.frame.interior)
         from1.insert(0,dval.fr)
         to1 = tk.Entry(self.frame.interior)
