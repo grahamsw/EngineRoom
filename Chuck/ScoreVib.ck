@@ -1,5 +1,5 @@
 
-
+/*
 DynamicValues dvs1;
 			
 			
@@ -9,8 +9,19 @@ dvs1.Init(["f/lpf/freq","f/lpf/Q","f/gain","f/freq","f/msOn","f/vibratoFreq","f/
 OscReceiver orc;
 orc.Init(6449, "vib1", dvs1);
 
+
 VibPlayer s1;
 s1.Init(dvs1);
+*/
+// using the default values
+ VibPlayer s1;
+ s1.Init(6449, "vib1");
+
+VibPlayer s2;
+s2.Init(ReadJsonInit("v.json"));
+
+
+
 
 // need this to keep the receiver and player objects around
 while(true){
