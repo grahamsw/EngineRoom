@@ -11,12 +11,38 @@ from collections import namedtuple
 from sendOSC2 import makeOscSender
 from VerticalScrolledFrame import VerticalScrolledFrame
 
-DynamicValue = namedtuple("DynamicValue", "address fr to start")
-DynamicValueEditor = namedtuple("DynamicValueEditor", "address_editor from_editor to_editor slider button")
+import json
+
+class DynamicValue:
+    def __init__(self, address, fr, to, start):
+        self.address = address
+        self.fr = fr
+        self.to = to
+        self.start = start
         
+DynamicValueEditor = namedtuple("DynamicValueEditor", "address_editor from_editor to_editor slider button")
+
+
+
+
+class DVReader:
+    def __init__(self, filename):
+        with open(filename) as jsonfile:
+            self.json = json.load(jsonfile)
+            self.instanceName = self.json["instanceName"]
+            print(self.json["ip"])
+            self.ip = self.json["ip"]
+            self.port = self.json["port"]
+            self.dvs = []
+            for dv in self.json["vals"]:
+                self.dvs.append(DynamicValue(dv["name"], dv["min"], dv["max"], dv["init"]))
+            
+                        
 class DynamicValueConsole:
-    def __init__(self, instanceName, dvals, ip, port): 
-        self.sender = makeOscSender(ip, port)
+   # def __init__(self, instanceName, dvals, ip, port): 
+    def __init__(self, jsonFile):
+        r = DVReader(jsonFile)
+        self.sender = makeOscSender(r.ip, r.port)
         
         self.root = tk.Tk()
        # self.root.geometry('200x600')
@@ -24,8 +50,8 @@ class DynamicValueConsole:
         self.frame = VerticalScrolledFrame(self.root)
         self.frame.pack(fill=tk.BOTH, expand=tk.YES)
         self.dves = {}
-        for dv in dvals:
-            self.addSetter(instanceName, dv)
+        for dv in r.dvs:
+            self.addSetter(r.instanceName, dv)
         self.root.mainloop()
       
            

@@ -4,6 +4,6 @@
  "instanceName": "vibe1",
  "vals": [ 
            {"name": "f/gain", "min": 0.0,   "max": 1.0,   "init": 0.4},
-		   {"name": "f/freq", "min": 200.0, "max": 600.0, "init": 300.0}
-		 ]
+	     {"name": "f/freq", "min": 200.0, "max": 600.0, "init": 300.0}
+	   ]
 }
