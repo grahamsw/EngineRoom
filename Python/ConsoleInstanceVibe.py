@@ -6,5 +6,5 @@ Created on Thu Mar 10 00:25:15 2016
 """
 from DVEditor import DynamicValueConsole  
 
-jsonConfig = "C:\\Users\\grahamsw\\Documents\\dev\\EngineRoom\\Chuck\\values.dat"
+jsonConfig = "C:\\Users\\g.stalker-wilde\\Documents\\dev\\EngineRoom\\Chuck\\vib1.json"
 ed = DynamicValueConsole(jsonConfig)      

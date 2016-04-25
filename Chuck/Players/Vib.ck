@@ -1,14 +1,17 @@
 
 public class VibPlayer {
+
 	SinOsc vibrato => SawOsc viol => ADSR env => LPF lpf => dac;
 	env.set(0.1 :: second, 0.1 :: second, 0.5, 0.1 :: second);	  
 	2 => viol.sync;
 
 	DynamicValues _dvs;
+	OscReceiver _orc;
 
-	fun void Init(DynamicValues dvs){
-
-		dvs @=> _dvs;
+	fun void Init(int port, string instanceName){
+		_dvs.Init(["f/lpf/freq","f/lpf/Q","f/gain","f/freq","f/msOn","f/vibratoFreq","f/vibratoGain","f/msOff"], 
+                  [300.0, 1.0, 0.5, 600.0, 100.0, 5.0, 20.0, 100.0 ]);
+		_orc.Init(port, instanceName, _dvs);
 		// must spork here, or it consumes the score thread and the score gets no further
 		spork ~ play();
 	}
