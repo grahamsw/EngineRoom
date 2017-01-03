@@ -1,0 +1,70 @@
+// demo of how to respond to OSC messages (from python)
+(
+
+SynthDef( \sin, { | amp = 0.01, freq = 333, trig = 1 |
+    var env, sig;
+    env = EnvGen.kr( Env.asr( 0.001, 0.9, 0.001 ), trig, doneAction: 0 );
+    sig = LFTri.ar( [ freq, freq * 0.999 ], 0.0, amp ) * env;
+    Out.ar( [ 0 ], sig * 0.6 );
+}).add;
+)
+
+(
+h = Synth( \sin, [ \amp, 0.4 ] );
+k = Synth( \sin, [ \amp, 0.4 ] );
+
+x = ~register.value(h, "/sinMsgs");
+y = ~register.value(k, "/sinMsgs1");
+
+)
+
+(
+/* run this code segment, then you can register synths
+to receive OSC messages that will set their parameters
+as
+~register(aSynthInstance, "/some/osc/name");
+*/
+
+// these two variables should be nested and hidden
+var setProp, regSynth;
+
+setProp = {
+	|synth, prop, val|
+	synth.set(prop, val);
+};
+
+regSynth = {
+	|synth|
+	   {
+		|msg, time, addr, port|
+		var name = msg[1],
+	        val =  msg[2].asFloat;
+	    setProp.value(synth, name, val);
+       };
+};
+
+
+// there has to be a module system that lets me create proper function names
+// register a synth to receive parameter setting
+// messages on the OC address
+~register =
+	{ |synth, oscchannelName|
+		var rcvr = OSCFunc(regSynth.value(h), oscchannelName);
+		rcvr;
+	};
+
+)
+
+/*
+#the python code
+
+import OSC
+import time, random
+client = OSC.OSCClient()
+client.connect( ( '127.0.0.1', 57120 ) )
+msg = OSC.OSCMessage()
+msg.setAddress("/print")
+msg.append(100)
+client.send(msg)
+
+*/

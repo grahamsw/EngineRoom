@@ -5,7 +5,7 @@
 /*
   usage:
   DynamicValues dvs;
-  dvs.Init();
+  dvs.Init(names, vals);
 */
 
 public class DynamicValues {

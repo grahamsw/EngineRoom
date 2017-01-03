@@ -1,7 +1,7 @@
-Init();
-*/
+// Init();
 
-public class PlayerInitiatilizer {
+
+public class PlayerInitializer {
     string _ip;
 	int _port;
 	DynamicValue[] _dvs;
