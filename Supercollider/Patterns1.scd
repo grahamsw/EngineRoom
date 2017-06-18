@@ -27,5 +27,4 @@ Pdef(
 ).play;
 )
 
-p.stop;
 

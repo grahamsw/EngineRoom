@@ -14,7 +14,7 @@ SynthDef(\multi, {
 }).add;
 )
 
-Synth(\multi);
+a = Synth(\multi);
 
 (
 p = Pbind(
@@ -28,3 +28,9 @@ p = Pbind(
     ).play;
 )
 
+p.stop
+
+{(
+	SinOsc.ar(400, 0, 0.4) +
+	SinOsc.ar(200, 0, SinOsc.kr(SinOsc.kr(0.1).range(2, 6)))
+)* 0.3}.play

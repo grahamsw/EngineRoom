@@ -15,7 +15,7 @@ SynthDef(\sonifier,
 )
 
 
-Synth(\sonifier, args:[\harmonics:[1, 2, 3, 4, 5], \amps, [0.1, 0.2, 0.2, 0.1,0.4], \dur, 1])
+Synth(\sonifier, args:[\freq, 20, \harmonics:[1, 2, 3, 4, 5], \amps, [0.1, 0.2, 0.2, 0.1,0.4], \dur, 1])
 (
 
 var h1, h2, h3, a1, a2, a3;
@@ -33,17 +33,17 @@ a3 = [3, 1, 1, 1, 8].normalize;
 
 Pbind(
     \instrument, \sonifier,
-	 \dur, Pseq([3], inf),
+	 \dur, Pseq([0.01], inf),
 	\harmonics, Pseq([h1], inf),
 	\amps, Pseq([a1], inf),
-	\mul, 0.15,
-	\freq, Pseq(~mksq.value(300, 20, 302, 8), inf),
+	\mul, 0.1,
+	\freq, Pseq(~mksq.value(300, 1, 152, 2), inf),
 	\attack, Pseq(~mksq.value(0.5, 20, 0.1, 8) , inf),
 	\decay, Pseq(~mksq.value(0.3, 20, 0.1, 8), inf),
 	\release, Pseq(~mksq.value(0.3, 20, 0.1, 8), inf)
 	).play
 )
-~mksq.value(300, 6, 302, 3)
+~mksq.(300, 6, 302, 3)
 ((200!6) ++ (300!3)).flat
 
 s.plotTree
