@@ -1,29 +1,29 @@
-
+(
 f = {
 | freq = 600, dur = 0.05, mul = 0.3, curve = -8|
 	var env;
 	env = Env.perc(attackTime: 0.001,releaseTime: dur, curve:curve);
 	Klang.ar(`[[1, 2.5, 3.5], [0.7, 0.45, 0.25].normalize], freqscale:freq) * EnvGen.kr(env, doneAction:2) * mul;
 }
-
+)
 (
 
 SynthDef.new(\bellPartial, {
-| freq = 600, dur = 0.05, mul = 0.3, curve = -8, trig= 10|
-	var env, out, gate;
-	gate = Impulse.kr(trig );
+| freq = 600, dur = 0.05, mul = 0.3, curve = -8|
+	var env, out;
 	env = Env.perc(attackTime: 0.001,releaseTime: dur, curve:curve);
 
-	out = Klang.ar(`[[1, 2.5, 3.5], [0.7, 0.45, 0.25].normalize], freqscale:freq) * EnvGen.kr(env, gate:gate, doneAction:0) * mul;
+	out = Klang.ar(`[[1, 2.5, 3.5], [0.7, 0.45, 0.25].normalize], freqscale:freq) * EnvGen.kr(env, doneAction:2) * mul;
 
 Out.ar(0, out);
 	}
 ).add;
 )
 (
-Synth(\bellPartial, [\freq, 720, \dur, 0.5, \trig, 15]);
-Synth(\bellPartial, [\freq, 1230, \dur, 0.5, \trig, 15]);
-Synth(\bellPartial, [\freq, 1800, \dur, 0.5, \trig, 15]);
+
+Synth(\bellPartial, [\freq, 720, \dur, 0.5, \reps, 15]);
+Synth(\bellPartial, [\freq, 1230, \dur, 0.5, \reps, 15]);
+Synth(\bellPartial, [\freq, 1800, \dur, 0.5, \reps, 15]);
 )
 
 
