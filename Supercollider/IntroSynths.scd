@@ -57,3 +57,46 @@ var panPseq = Array.fill(4, {Pseq(pan, inf).asStream});
 }.fork;
 });
 )
+
+
+
+
+
+(
+
+~bs = Bus.audio(s);
+a = Pseq([1,3,4,1,1], 2);
+b = Pseq([1,1,1]/3, 1);
+c = Pseq([1,1,2]/2, 2);
+d = Pseq([-1], 1);
+e = Prand([5, 0], 3);
+
+f = Pseq([0,0,1,0,0,1,2,2,0,1,2,0,1,2], inf).asStream;
+
+p = Pxrand([a, b, c, d, e], inf).asStream;
+
+{
+	inf.do{
+		var which, id;
+		n = p.next;
+		if (n == -1) {
+			[20, 40].do{|i|
+				Synth(\sinPerc,
+					[\freq, i.midicps, \detune, 0.0125, \level, 0.2, \out, ~bs]);
+			};
+			n = 1/8;
+		}{
+			id = f.next;
+			which = [\sinPerc, \impPerc, \pulsePerc][id];
+			Synth(which, [\freq, (n * 3 + 70).midicps, \detune, 0.05, \out, ~bs, \pos, id-1 * 0.75]);
+			Synth(which, [\freq, (n * 3 + 46).midicps, \detune, 0.025, \out, ~bs, \pos, id-1* 0.75]);
+		};
+		(n * 0.25 * 60/84).wait
+	}
+}.fork;
+
+x = {|vol=0.5| Out.ar(0, In.ar(~bs, 2)*vol)}.play(addAction:\addToTail);
+s.scope;
+x.set(\vol, 0.15);
+)
+
