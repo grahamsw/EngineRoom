@@ -24,10 +24,10 @@ Synth.new(\gabberkick)
 SynthDef(\aouw, {
      var in, snd;
      snd = SinOsc.ar(Env([5000, 69, 60], [0.015, 0.1], \exp).ar * [-0.1,
-0, 0.1].midiratio);
+0, 0.1].midiratio, 0.5pi);
      snd = snd.sign - snd;
-     snd = Mix(snd) * Env.perc(0.001, 0.3).ar;
-     snd = (snd * Line.kr(1, 2, 0.05)).tanh;
+      snd = Mix(snd) * Env.perc(0.001, 0.3).ar;
+    snd = (snd * Line.kr(1, 2, 0.05)).tanh;
      snd = BPeakEQ.ar(snd, XLine.kr(100, 1000, 0.7), 0.3, 10);
      snd = (snd * 4).tanh * 5;
      snd = BPeakEQ.ar(snd, XLine.kr(800, 100, 0.7), 0.4, 6);
@@ -36,6 +36,7 @@ SynthDef(\aouw, {
      snd = BHiShelf.ar(snd, 100, 1, -8);
      snd = (snd * 10).tanh;
      snd = snd * Env.linen(0.001, 0.3, 0.08).ar(2);
+/*	*/
      Out.ar(\out.kr(0), Pan2.ar(snd, \pan.kr(0), \amp.kr(0.1)));
 }).add;
 )
@@ -44,5 +45,4 @@ Synth.new(\aouw)
 
 
 
-{Mix.ar(SinOsc.ar(Env([1000, 69, 60], [0.015, 0.1], \exp).ar * [-0.1, 0, 0.1].midiratio, 0.5pi))}.play
 
