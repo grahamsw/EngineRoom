@@ -12,3 +12,5 @@ Pan2.ar( SinOsc.ar(freq), pan)
 );
 }).load(s);
 )
+
+Synth(\sineTing2)
