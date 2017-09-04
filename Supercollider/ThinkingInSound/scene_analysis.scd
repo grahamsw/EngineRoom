@@ -19,24 +19,22 @@ c = Bus.control(s, 1);
 {
 	Out.kr(c, MouseY.kr(-1, 1))
 }.play;
-)
 
-(
 d = Synth(\fspace);
 e = Synth(\fspace, [\freq, 500]);
 d.map(\pos, b);
 e.map(\pos, c);
 
-e.set(\freq, 600)
-e.set(\mul, 0.25)
+e.set(\freq, 600);
+e.set(\mul, 0.25);
 )
 
+e.set(\pos, 1)
 
 
 
 
 
 
-{Pan2.ar(SinOsc.ar(
-	400, mul:0.25), Line.kr(-1, 1, 10) ) + Pan2.ar(SinOsc.ar(1500, mul:0.25),Line.kr(1, -1, 10))}.play
-)
+
+
