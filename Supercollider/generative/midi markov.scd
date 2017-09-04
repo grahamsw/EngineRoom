@@ -73,19 +73,3 @@ p = Pdef(\tune,
 
 p.play
 
-
-d = ~chain["s"].asArray.wchoose(~chain["s"].values.asArray.normalizeSum)
-d.keys.asArray
-
-
-
-			p = [1,2]
-			q = [1,2]
-			r = [1,3]
-			t = [\s,1]
-			u = [\s,1]
-
-				p == q
-			t == r
-			)
-
