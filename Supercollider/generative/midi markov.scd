@@ -64,7 +64,10 @@ e.do({
 )
 
 t = ~makeTune.(100);
+t = e[45]
+
 (
+t = e[5];
 p = Pdef(\tune,
 	Pbind(\midinote, Pseq(t))
 );
@@ -72,4 +75,5 @@ p = Pdef(\tune,
 
 
 p.play
-
+p.stop
+d[5].play
