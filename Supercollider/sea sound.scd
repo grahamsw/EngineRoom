@@ -11,12 +11,12 @@
 (
 SynthDef(\ocean, {
 	| freqFrom = 100, freqTo = 150, freqFreq = 0.3,
-	  bwrFrom = 0.3, bwrTo = 0.7, bwrFreq = 0.2, outBus = 0 |
+	  bwrFrom = 0.3, bwrTo = 0.7, bwrFreq = 0.2, outBus = 0 , amp = 1|
 	var out = Resonz.ar(PinkNoise.ar,
 		SinOsc.kr(freqFreq).exprange(freqFrom, freqTo),
 		SinOsc.kr(bwrFreq).exprange(bwrFrom, bwrTo)
 	);
-	Out.ar(outBus, out);
+	Out.ar(outBus, out * amp);
 	}
 ).add;
 )

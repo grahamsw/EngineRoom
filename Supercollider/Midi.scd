@@ -2,9 +2,6 @@ MIDIClient.init;
 MIDIIn.connectAll;
 
 (
-
-
-
 MIDIdef.noteOn(\noteOnTest, {
   | vel, nn, chan, src |
   [vel, nn].postln;

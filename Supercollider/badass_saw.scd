@@ -25,13 +25,15 @@ SynthDef(\iter,{
 Synth(\iter, [\freq, 40])
 
 (
-p = Pbind(
+p = Pdef(\bind,
+	Pbind(
     \instrument, \iter,
-    \dur, Pwhite(0.2, 2, inf),
-	\freq, Pexprand(50, 200, inf).round(12).trace,
+    \dur, Pwhite(1, 4, inf),
+	\freq, Pexprand(50, 400, inf).round(25).trace,
     \atk, Pwhite(2.0, 3.0, inf),
-    \rel, Pwhite(5.0, 10.0, inf),
+    \rel, Pwhite(2.0, 10.0, inf),
     \amp, Pexprand(0.01, 0.2, inf),
     \pan, Pwhite(-0.8, 0.8, inf),
-    ).play;
+)).play;
 )
+p.stop
