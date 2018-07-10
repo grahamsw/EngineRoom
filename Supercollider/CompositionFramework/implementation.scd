@@ -1,4 +1,5 @@
 
+~framework_osc_name = "/test_piece";
 
 ~framework_defineSynths = {
 	"~framework_defineSynths".postln;
@@ -16,17 +17,13 @@
 };
 ~framework_attachControllers = {
 	"~framework_attachControllers".postln;
-	{
-		inf.do{
-			~events[\low].value;
-			1.wait;
-			~events[\cord].value;
-			0.25.wait;
-			~events[\cord].value;
-			2.wait;
-		}
-	}.fork;
-
+	~osc = OSCFunc({
+		|msg|
+		case
+		{msg[1]==\low} { ~events[\low].value; "low".postln;}
+		{msg[1]==\cord} { ~events[\cord].value; "cord".postln}
+		{true} {nil};
+	}, ~framework_osc_name);
 };
 
 ~framework_addEvents = {
@@ -45,3 +42,8 @@
 	"~framework_createBusses".postln;
 	//~bus.add(\reverb -> Bus.audio(s,2));
 };
+
+~framework_cleanup = {
+	"~framework_cleanup".postln;
+	~osc.free;
+}

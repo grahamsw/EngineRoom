@@ -11,6 +11,7 @@
 	//~bus.add(\reverb -> Bus.audio(s,2));
 };
 ~framework_attachControllers = {nil};
+~framework_cleanup = {nil};
 
 ~implementation.loadRelative;
 
@@ -38,6 +39,7 @@
 };
 
 ~cleanup = {
+	~framework_cleanup.value;
 	s.newBusAllocators;
 	ServerBoot.removeAll;
 	ServerTree.removeAll;
