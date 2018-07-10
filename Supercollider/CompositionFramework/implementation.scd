@@ -20,7 +20,8 @@
 	~osc = OSCFunc({
 		|msg|
 		case
-		{msg[1]==\low} { ~events[\low].value; "low".postln;}
+		// note that strings coming from python arrive here as symbols
+		{msg[1]==\low} { ~events[\low].value "low".postln;}
 		{msg[1]==\cord} { ~events[\cord].value; "cord".postln}
 		{true} {nil};
 	}, ~framework_osc_name);
