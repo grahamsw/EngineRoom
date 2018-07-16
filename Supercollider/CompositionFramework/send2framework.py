@@ -12,3 +12,8 @@ def sendMsg(ip, port, addr, val):
   client.send_message(addr, val)
 
 
+sendSC('/testImplOsc', ['makeS'])
+#sendSC('/testImplOsc', ['killS'])
+sendSC('/testImplOsc', ['setFreq', 300])
+sendSC('/testImplOsc', ['setAmp', 0.8])
+
