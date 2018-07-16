@@ -20,9 +20,12 @@
 
 ~makeEvents = {
 	"~framework_addEvents".postln;
+	~events = Dictionary.new;
 	~events.add(\makeS -> {
 		"\makeS playing".postln;
+		~bus[\amp].set(0.1);
 		~syn = Synth(\s, [\out, ~out]);
+
 		~syn.map(\amp, ~bus[\amp]);
 		~syn.map(\freq, ~bus[\freq]);
 	});
@@ -70,10 +73,9 @@
 
 ~addControllers = {
 	"~addControllers now".postln;
+	   	~osc.free;
 		~osc = OSCFunc({
 		|msg|
-		msg.postln;
-
 		var eventName = msg[1];
 		msg.postln;
 		("got " ++ eventName).postln;

@@ -41,6 +41,7 @@
 };
 
 ~addControllers = {
+	/*
 	"~addControllers".postln;
 		~osc = OSCFunc({
 		|msg|
@@ -50,6 +51,7 @@
 		{~events[eventName].value;eventName.postln;}
 		{(eventName ++ " not found").postln};
 	}, ~framework_osc_name);
+	*/
 };
 
 ~implementation = "testImp.scd";
@@ -76,7 +78,7 @@
 	ServerBoot.add(~serverBoot);
 	ServerQuit.add(~serverQuit);
 };
-
+//OSCFunc.free
 ~makeNodes = {
 	s.bind({
 		~mainGrp = Group.new;
