@@ -1,8 +1,10 @@
 (
 // defaults that will be overloaded by loading the piece specific code
+~implementation = "tutorial_implementation.scd";
 ~implementation = "implementation.scd";
 
 ~framework_defineSynths = {nil};
+~framework_serverBoot = {nil};
 ~framework_createPermanentSynths = {nil};
 ~framework_addEvents = {
 	//~events.add(\eventName -> {});
@@ -14,8 +16,7 @@
 ~framework_cleanup = {nil};
 
 ~implementation.loadRelative;
-
-//1. server config
+~out = 0;
 
 ~configServer = {
 	s = Server.local;
@@ -27,12 +28,12 @@
 	ServerBoot.removeAll;
 	ServerTree.removeAll;
 	ServerQuit.removeAll;
+
+    ServerQuit.add(~cleanup);
+   // ServerBoot.add(~makeBusses);
 };
 
-//2. initialize global variables
-~out = 0;
 
-//3. define piece-specific functions
 ~makeBusses = {
 	~bus = Dictionary.new;
 	~framework_createBusses.value;
@@ -64,17 +65,14 @@
 	~framework_attachControllers.value;
 };
 
-//4. register functions with ServerBoot/Quit
-~configServer.value;
-ServerBoot.add(~makeBusses);
-ServerQuit.add(~cleanup);
 
+~configServer.value;
 //5. boot server
 s.waitForBoot({
 
 	s.sync;
 
-	//6a. Define SynthDefs
+	~framework_serverBoot.value;
 	~framework_defineSynths.value;
 	~makeBusses.value;
 

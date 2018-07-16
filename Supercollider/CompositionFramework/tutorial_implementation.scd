@@ -1,13 +1,33 @@
 
-~framework_osc_name = "/test_piece";
+~framework_osc_name = "/tutorial_piece";
+
+~framework_serverBoot = {
+	~path = PathName(thisProcess.nowExecutingPath).parentPath++"buffers/";
+
+
+	b = Dictionary.new;
+	PathName(~path).entries.do{
+		arg subfolder;
+		b.add(
+			subfolder.folderName.asSymbol ->
+			Array.fill(
+				subfolder.entries.size,
+				{
+					arg i;
+					Buffer.read(s, subfolder.entries[i].fullPath);
+				}
+			)
+		);
+	};
+};
+
 
 ~framework_defineSynths = {
 	"~framework_defineSynths".postln;
 	SynthDef(\bpfsaw, {
-		arg atk=2, sus=0, rel=3, c1=1, c2=(-1),
+		| atk=2, sus=0, rel=3, c1=1, c2=(-1),
 		freq=500, detune=0.2, pan=0, cfhzmin=0.1, cfhzmax=0.3,
-		cfmin=500, cfmax=2000, rqmin=0.1, rqmax=0.2,
-		lsf=200, ldb=0, amp=1, out=0;
+		cfmin=500, cfmax=2000, rqmin=0.1, rqmax=0.2,		lsf=200, ldb=0f, amp=1, out=0 |
 		var sig, env;
 		env = EnvGen.kr(Env([0,1,1,0],[atk,sus,rel],[c1,0,c2]),doneAction:2);
 		sig = Saw.ar(freq * {LFNoise1.kr(0.5,detune).midiratio}!2);
@@ -56,24 +76,39 @@
 
 
 };
+
 ~framework_createPermanentSynths = {
 	"~framework_createPermanentSynths".postln;
+	~reverbSynth = Synth.new(
+			\reverb,
+			[
+				\amp, 1,
+				\predelay, 0.1,
+				\revtime, 1.8,
+				\lpf, 4500,
+				\mix, 0.35,
+				\in, ~bus[\reverb],
+				\out, ~out,
+			],
+		~reverbGrp);
 };
 ~framework_attachControllers = {
 	"~framework_attachControllers".postln;
 	~osc = OSCFunc({
 		|msg|
-		case
-		// note that strings coming from python arrive here as symbols
-		{msg[1]==\low} { ~events[\low].value "low".postln;}
-		{msg[1]==\cord} { ~events[\cord].value; "cord".postln}
-		{true} {nil};
+		var eventName = msg[1];
+		("got " ++ eventName ++ " you cunt").postln;
+		if (eventName == \event1) {~events[\event1].value;"event1 played".postln;}
+		{["not event1", eventName].postln};
+
 	}, ~framework_osc_name);
 };
 
 ~framework_addEvents = {
 	"~framework_addEvents".postln;
-	e.add(\event1 -> {
+	~events.add(\event1 -> {
+		"event 1 playing".postln;
+		/*
 		~shakerSustain = Pbind(
 			\instrument, \bpfbuf,
 			\dur, Pwhite(0.2,0.7),
@@ -89,7 +124,7 @@
 			\group, ~mainGrp,
 			\out, ~bus[\reverb],
 		).play;
-
+*/
 		~drone = Pbind(
 			\instrument, \bpfsaw,
 			\dur, 1,
@@ -108,8 +143,9 @@
 		).play;
 	});
 
-	e.add(\event2 -> {
-		Routine({
+	~events.add(\event2 -> {
+		Routine({/*
+
 			~bellCloud = Pbind(
 				\instrument, \bpfbuf,
 				\dur, Pexprand(0.2,2),
@@ -123,7 +159,7 @@
 				\group, ~mainGrp,
 				\out, ~bus[\reverb],
 			).play;
-
+*/
 			~bubbles = Pbind(
 				\instrument, \bpfsaw,
 				\dur, Pwhite(0.1,0.5),
@@ -149,10 +185,10 @@
 		}).play(AppClock);
 	});
 
-	e.add(\event3 -> {
+	~events.add(\event3 -> {
 		~bellCloud.stop;
 		~bubbles.stop;
-
+/*
 		~bellTone = Pbind(
 			\instrument, \bpfbuf,
 			\dur, Pexprand(0.5,3),
@@ -166,7 +202,7 @@
 			\group, ~mainGrp,
 			\out, ~bus[\reverb],
 		).play;
-
+*/
 		~simpleMarimba = Pbind(
 			\instrument, \bpfsaw,
 			\dur, Prand([0.5,1,2,3],inf),
@@ -185,7 +221,7 @@
 		).play;
 	});
 
-	e.add(\event4 -> {
+	~events.add(\event4 -> {
 		~bellTone.stop;
 		~simpleMarimba.stop;
 
@@ -228,12 +264,12 @@
 		).play;
 	});
 
-	e.add(\event5 -> {
+	~events.add(\event5 -> {
 		~marimba.stop;
 		~chords.stop;
 	});
 
-	e.add(\oneshot1 -> {
+	~events.add(\oneshot1 -> {
 		12.do{
 			Synth(
 				\bpfsaw,
@@ -256,8 +292,8 @@
 			);
 		};
 	});
-
-	e.add(\oneshot2 -> {
+/*
+	~events.add(\oneshot2 -> {
 		15.do{
 			Synth(
 				\bpfbuf,
@@ -280,7 +316,7 @@
 		};
 	});
 
-	e.add(\oneshot3 -> {
+	~events.add(\oneshot3 -> {
 		15.do{
 			Synth(
 				\bpfbuf,
@@ -301,29 +337,15 @@
 					\out, ~bus[\reverb],
 				],
 				~mainGrp
-			);
+
 		};
 	});
-
-	MIDIdef.cc(\controller, {
-		arg val, num;
-		case
-		{num==73 && val==127} {e[\event1].value;"event1".postln;}
-		{num==74 && val==127} {e[\event2].value;"event2".postln;}
-		{num==75 && val==127} {e[\event3].value;"event3".postln;}
-		{num==76 && val==127} {e[\event4].value;"event4".postln;}
-		{num==77 && val==127} {e[\event5].value;"event5".postln;}
-		{num==82 && val==127} {e[\oneshot1].value;"oneshot1".postln;}
-		{num==83 && val==127} {e[\oneshot2].value;"oneshot2".postln;}
-		{num==84 && val==127} {e[\oneshot3].value;"oneshot3".postln;}
-		{true} {nil};
-	});
-
+*/
 };
 
 ~framework_createBusses = {
 	"~framework_createBusses".postln;
-	//~bus.add(\reverb -> Bus.audio(s,2));
+	~bus.add(\reverb -> Bus.audio(s,2));
 };
 
 ~framework_cleanup = {
