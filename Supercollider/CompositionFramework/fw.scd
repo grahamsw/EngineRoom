@@ -1,7 +1,19 @@
 (
 
-~init = {
 
+// these are the heart of any implementation:
+// the synths and the events that are created
+// with them - along with any effects and buffers and
+// busses that they need
+
+~makeBuffers = {
+	// read any sound files the synths will need
+
+};
+
+~makeBusses = {
+	~bus = Dictionary.new;
+	~bus.add(\reverb -> Bus.audio(s,2));
 };
 
 ~addEffectSynths = {
@@ -16,9 +28,37 @@
 
 };
 
-~addControllers = {
+// these implementations will work as is for many
+// pieces, but can be overridden if desired
 
+~init = {
+	~out = 0;
 };
+
+~cleanup = {
+	"~framework_cleanup".postln;
+	~osc.free;
+};
+
+~addControllers = {
+	"~addControllers".postln;
+		~osc = OSCFunc({
+		|msg|
+		var eventName = msg[1];
+		("got " ++ eventName).postln;
+		if (~events[eventName] != nil)
+		{~events[eventName].value;eventName.postln;}
+		{(eventName ++ " not found").postln};
+	}, ~framework_osc_name);
+};
+
+~implementation = "testImp.scd";
+
+// -----------
+// boilerplate
+// -----------
+
+~implementation.loadRelative;
 
 ~configServer = {
 	"~configureServer".postln;
@@ -46,14 +86,15 @@
 
 ~serverTree = {
 	"~serverTree".postln;
-	~makeNodes.value;
-	~addEffectSynths.value;
-	~makeEvents.value;
-	~addControllers.value;
+	~makeNodes.();
+	~addEffectSynths.();
+	~makeEvents.();
+	~addControllers.();
 };
 
 ~serverQuit = {
 	"~serverQuit".postln;
+	~cleanup.();
 	s.newBusAllocators;
 	ServerBoot.removeAll;
 	ServerTree.removeAll;
@@ -62,15 +103,17 @@
 
 ~serverBoot = {
 	"~serverBoot".postln;
-	~init.value;
+	~init.();
+	~makeBuffers.();
+	~makeBusses.();
 };
 
-~configServer.value;
+~configServer.();
 s.waitForBoot({
 
 	s.sync;
 
-	~defineSynths.value;
+	~defineSynths.();
 
 	s.sync;
 
