@@ -1,21 +1,23 @@
 (
 
+
+// Point ~implementation to your own implementation file.
+~implementation = "testImp.scd";
+
+// ---------------------------------------------------------
+// This is a sample implementation file
+// Create your own, defining at least ~defineSynths
+// and ~makeEvents.
+// Define whatever other functions these need, and override
+// any of the other "framework" functions as needed
+// ---------------------------------------------------------
+
 /*
 these are the heart of any implementation:
 the synths and the events that are created
 with them - along with any effects and buffers and
 busses that they need
-
-the ~implementation file will define
-
-
-
 */
-
-
-~implementation = "testImp.scd";
-~traceOsc = false;
-
 ~makeEvents = {
 
 };
@@ -35,21 +37,19 @@ the ~implementation file will define
 
 };
 
-
-
 ~addEffectSynths = {
 	"~addEffectSynths".postln;
 
 };
 
-
+// -----------------------------------------------
 // these implementations will work as is for many
 // pieces, but can be overridden if desired
-
-
+// -----------------------------------------------
 ~init = {
 	"~init".postln;
 	~out = 0;
+	~traceOsc = false;
 };
 
 ~cleanup = {
@@ -57,6 +57,10 @@ the ~implementation file will define
 	~osc.free;
 };
 
+// pretty powerful, generic OSC handler for mapping OSC messages
+// (from any source) to events
+// Can be replaced with MIDI or some other controller as desired
+// (Arduino, Wii, etc)
 ~addControllers = {
 	"~addControllers".postln;
 	   	~osc.free;
@@ -87,11 +91,19 @@ the ~implementation file will define
 	}, ~impl_osc_name);
 };
 
+// you might want something more elaborate than this,
+// or you not need it, but but this is a good start
+~makeNodes = {
+	"~makeNodes".postln;
+	s.bind({
+		~mainGroup = Group.new;
+		~effectsGroup = Group.after(~mainGrp);
+	});
+};
 
+// ----------------------------------------
+// Boilerplate. This
 // -----------
-// boilerplate
-// -----------
-
 ~implementation.loadRelative;
 
 ~configServer = {
@@ -110,14 +122,6 @@ the ~implementation file will define
 
 	ServerBoot.add(~serverBoot);
 	ServerQuit.add(~serverQuit);
-};
-
-~makeNodes = {
-	"~makeNodes".postln;
-	s.bind({
-		~mainGroup = Group.new;
-		~effectsGroup = Group.after(~mainGrp);
-	});
 };
 
 ~serverTree = {

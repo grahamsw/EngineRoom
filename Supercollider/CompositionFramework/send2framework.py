@@ -1,20 +1,25 @@
 from pythonosc import udp_client
 import time
 
-# can send an array 
-def sendSC(addr, val):
-    sendMsg('127.0.0.1', 57120, addr, val)
+
+# save a sender and use it to send multiple messages to the same address
+def sender(addr, ip='127.0.0.1', port=57120):
+    client = udp_client.SimpleUDPClient(ip, port)
+    def s(*args):
+        client.send_message(addr, args)
+    return s
     
-def sendMsg(ip, port, addr, val):
-  client = udp_client.SimpleUDPClient(ip, port)
-  client.send_message(addr, val)
-
-
-
-
+# send a one-off message - msg must be an array
+def send(addr, msg, ip='127.0.0.1', port=57120):
+    sender(addr, ip, port)(*msg)
+    
+    
+    
+    
+    
 # sample using testImp.scd
 # in practise event messages will be much less frequent - fast and 'musical' scheduling
-# will be built in to the SuperCollider Events
+# should. be built in to the SuperCollider Events
 
 freq = 100
 mult = 1.1
@@ -22,16 +27,24 @@ amp = 0.8
 ampMult = 0.98
 sleep = 0.05
 
+s = sender('/implOsc')
 
-sendSC('/implOsc', ['makeS'])
+s('makeS')
+
 for i in range (40):
-    sendSC('/implOsc', ['setFreq', freq ])
+    s('setFreq', freq )
+    s('setAmp', amp)
+    
     freq = freq * mult
-    sendSC('/implOsc', ['setAmp', amp])
     amp = amp * ampMult
     time.sleep(sleep)
     
     
-sendSC('/implOsc', ['killS'])   
+s('killS')   
     
+send('/implOsc', ['makeS'])
+send('/implOsc', ['setFreq', 800])
+send('/implOsc', ['setAmp', 0.4])
+time.sleep(3)
+send('/implOsc', ['killS'])
 

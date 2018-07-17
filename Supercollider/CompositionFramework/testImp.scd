@@ -1,6 +1,4 @@
 (
-~impl_osc_name = "/implOsc";
-~out = 0;
 
 ~makeBusses = {
 	"~makeBusses".postln;
@@ -61,6 +59,8 @@
 ~init = {
 	"~init".postln;
 	~out = 0;
+	~impl_osc_name = "/implOsc";
+	~traceOsc = false;
 };
 
 ~cleanup = {
@@ -74,7 +74,10 @@
 		~osc = OSCFunc({
 		|msg|
 		// msg sent from Python as
-		//     sendSC(~impl_osc_name, [eventName, parameter_1, parameter_2, ... ])
+		//     send(~impl_osc_name, [eventName, parameter_1, parameter_2, ... ])
+		//       or
+		//     s = sender(~impl_osc_name)
+		//     s(eventName, parameter_1, parameter_2, ....)
 		// msg is received as
 		//     [~impl_osc_name, eventName, parameter_1, parameter_2, ....]
 		//
