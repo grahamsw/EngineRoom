@@ -1,5 +1,6 @@
 (
-
+// see https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
+// for code diagram
 
 // Point ~implementation to your own implementation file.
 ~implementation = "testImp.scd";
@@ -104,7 +105,6 @@ busses that they need
 // ----------------------------------------
 // Boilerplate. This
 // -----------
-~implementation.loadRelative;
 
 ~configServer = {
 	"~configServer".postln;
@@ -148,15 +148,22 @@ busses that they need
 	~makeBusses.();
 };
 
-~configServer.();
-s.waitForBoot({
-	s.sync;
-	~defineSynths.();
-	s.sync;
-	ServerTree.add(~serverTree);
-	s.freeAll;
-	s.sync;
-	"done".postln;
-});
+
+~main = {
+	~implementation.loadRelative;
+	~configServer.();
+
+	s.waitForBoot({
+		s.sync;
+		~defineSynths.();
+		s.sync;
+		ServerTree.add(~serverTree);
+		s.freeAll;
+		s.sync;
+		"done".postln;
+	});
+};
+
+~main.();
 
 )
