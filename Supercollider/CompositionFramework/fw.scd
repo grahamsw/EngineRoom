@@ -1,11 +1,18 @@
 (
-
-
 // these are the heart of any implementation:
 // the synths and the events that are created
 // with them - along with any effects and buffers and
 // busses that they need
 
+~makeEvents = {
+
+};
+
+~defineSynths = {
+
+};
+
+// may be needed
 ~makeBuffers = {
 	// read any sound files the synths will need
 
@@ -17,14 +24,6 @@
 };
 
 ~addEffectSynths = {
-
-};
-
-~makeEvents = {
-
-};
-
-~defineSynths = {
 
 };
 
@@ -41,7 +40,6 @@
 };
 
 ~addControllers = {
-	/*
 	"~addControllers".postln;
 		~osc = OSCFunc({
 		|msg|
@@ -51,7 +49,6 @@
 		{~events[eventName].value;eventName.postln;}
 		{(eventName ++ " not found").postln};
 	}, ~framework_osc_name);
-	*/
 };
 
 ~implementation = "testImp.scd";
@@ -78,7 +75,7 @@
 	ServerBoot.add(~serverBoot);
 	ServerQuit.add(~serverQuit);
 };
-//OSCFunc.free
+
 ~makeNodes = {
 	s.bind({
 		~mainGrp = Group.new;
@@ -108,6 +105,8 @@
 	~init.();
 	~makeBuffers.();
 	~makeBusses.();
+
+
 };
 
 ~configServer.();

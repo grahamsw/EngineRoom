@@ -8,6 +8,7 @@
 };
 
 ~makeBusses = {
+	"~makeBusses now".postln;
 	~bus = Dictionary.new;
 	~bus.add(\reverb -> Bus.audio(s,2));
 	~bus.add(\freq -> Bus.control(s, 1));
@@ -17,6 +18,8 @@
 ~addEffectSynths = {
 
 };
+//~bus[\amp].get({|x| x.postln;})
+//~bus[\freq].set(400)
 
 ~makeEvents = {
 	"~framework_addEvents".postln;
@@ -34,21 +37,22 @@
 		~syn.set(\gate, 0);
 	});
 	~events.add(\setFreq -> {
-		|freq = 440|
+		|msg|
 		"\setFreq playing".postln;
-		~bus[\freq].set(freq);
+		"freq is: ".post;
+		msg[2].postln;
+		~bus[\freq].set(msg[2]);
 	});
 	~events.add(\setAmp -> {
-		|amp = 0.4|
+		|msg|
+		"amp is: ".post;
+		msg[2].postln;
 		"\setAmp playing".postln;
-		~bus[\amp].set(amp);
+		~bus[\amp].set(msg[2]);
 	});
-
-
-
-
 };
 
+//~bus[\freq].set(0.400);
 
 ~defineSynths = {
 	SynthDef(\s, {
