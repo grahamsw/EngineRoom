@@ -1,61 +1,41 @@
 (
-~framework_osc_name = "/testImplOsc";
+~impl_osc_name = "/implOsc";
 ~out = 0;
 
-~makeBuffers = {
-	// read any sound files the synths will need
-
-};
-
 ~makeBusses = {
-	"~makeBusses now".postln;
+	"~makeBusses".postln;
 	~bus = Dictionary.new;
 	~bus.add(\reverb -> Bus.audio(s,2));
 	~bus.add(\freq -> Bus.control(s, 1));
 	~bus.add(\amp -> Bus.control(s, 1));
 };
 
-~addEffectSynths = {
-
-};
-//~bus[\amp].get({|x| x.postln;})
-//~bus[\freq].set(400)
-
 ~makeEvents = {
-	"~framework_addEvents".postln;
+	"~makeEvents".postln;
 	~events = Dictionary.new;
 	~events.add(\makeS -> {
-		"\makeS playing".postln;
 		~bus[\amp].set(0.1);
 		~bus[\freq].set(440);
-		~syn = Synth(\s, [\out, ~out]);
 
+		~syn = Synth(\s, [\out, ~out], ~mainGroup);
 		~syn.map(\amp, ~bus[\amp]);
 		~syn.map(\freq, ~bus[\freq]);
 	});
 	~events.add(\killS -> {
-		"\killS playing".postln;
 		~syn.set(\gate, 0);
 	});
 	~events.add(\setFreq -> {
 		|msg|
-		"\setFreq playing".postln;
-		"freq is: ".post;
-		msg[2].postln;
 		~bus[\freq].set(msg[2]);
 	});
 	~events.add(\setAmp -> {
 		|msg|
-		"amp is: ".post;
-		msg[2].postln;
-		"\setAmp playing".postln;
 		~bus[\amp].set(msg[2]);
 	});
 };
 
-//~bus[\freq].set(0.400);
-
 ~defineSynths = {
+	"~defineSynths".postln;
 	SynthDef(\s, {
 		|freq = 440, amp = 1, out = 0, gate = 1|
 		var signal = SinOsc.ar(freq, mul: amp);
@@ -64,33 +44,63 @@
 	}).add;
 };
 
+~makeBuffers = {
+	// read any sound files the synths will need
+
+};
+
 // these implementations will work as is for many
 // pieces, but can be overridden if desired
 
+
+~addEffectSynths = {
+	"~addEffectSynths".postln;
+
+};
+
 ~init = {
+	"~init".postln;
 	~out = 0;
 };
 
 ~cleanup = {
-	"~framework_cleanup".postln;
+	"~cleanup".postln;
 	~osc.free;
 };
 
 ~addControllers = {
-	"~addControllers now".postln;
+	"~addControllers".postln;
 	   	~osc.free;
 		~osc = OSCFunc({
 		|msg|
+		// msg sent from Python as
+		//     sendSC(~impl_osc_name, [eventName, parameter_1, parameter_2, ... ])
+		// msg is received as
+		//     [~impl_osc_name, eventName, parameter_1, parameter_2, ....]
+		//
 		var eventName = msg[1];
-		msg.postln;
-		("got " ++ eventName).postln;
+		if (~traceOsc)
+		{
+			("got " ++ msg).postln;
+
+		};
+
 		if (~events[eventName] != nil)
 		{
 			~events[eventName].(msg);
-			eventName.postln;}
-		{(eventName ++ " not found").postln};
-
-	}, ~framework_osc_name);
+		}
+		{
+			if (~traceOsc)
+			{
+				(eventName ++ " not found").postln;
+			}
+		};
+	}, ~impl_osc_name);
 };
+
 )
+
+
+//~bus[\amp].get({|x| x.postln;})
+//~bus[\freq].set(400)
 //OSCFunc.trace(true, true)

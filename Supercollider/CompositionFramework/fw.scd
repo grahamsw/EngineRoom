@@ -1,8 +1,20 @@
 (
-// these are the heart of any implementation:
-// the synths and the events that are created
-// with them - along with any effects and buffers and
-// busses that they need
+
+/*
+these are the heart of any implementation:
+the synths and the events that are created
+with them - along with any effects and buffers and
+busses that they need
+
+the ~implementation file will define
+
+
+
+*/
+
+
+~implementation = "testImp.scd";
+~traceOsc = false;
 
 ~makeEvents = {
 
@@ -12,47 +24,69 @@
 
 };
 
+~makeBusses = {
+	~bus = Dictionary.new;
+	~bus.add(\reverb -> Bus.audio(s,2));
+};
+
 // may be needed
 ~makeBuffers = {
 	// read any sound files the synths will need
 
 };
 
-~makeBusses = {
 
-	~bus = Dictionary.new;
-	~bus.add(\reverb -> Bus.audio(s,2));
-};
 
 ~addEffectSynths = {
+	"~addEffectSynths".postln;
 
 };
+
 
 // these implementations will work as is for many
 // pieces, but can be overridden if desired
 
+
 ~init = {
+	"~init".postln;
 	~out = 0;
 };
 
 ~cleanup = {
-	"~framework_cleanup".postln;
+	"~cleanup".postln;
 	~osc.free;
 };
 
 ~addControllers = {
 	"~addControllers".postln;
+	   	~osc.free;
 		~osc = OSCFunc({
 		|msg|
+		// msg sent from Python as
+		//     sendSC(~impl_osc_name, [eventName, parameter_1, parameter_2, ... ])
+		// msg is received as
+		//     [~impl_osc_name, eventName, parameter_1, parameter_2, ....]
+		//
 		var eventName = msg[1];
-		("got " ++ eventName).postln;
+		if (~traceOsc)
+		{
+			("got " ++ msg).postln;
+
+		};
+
 		if (~events[eventName] != nil)
-		{~events[eventName].value;eventName.postln;}
-		{(eventName ++ " not found").postln};
-	}, ~framework_osc_name);
+		{
+			~events[eventName].(msg);
+		}
+		{
+			if (~traceOsc)
+			{
+				(eventName ++ " not found").postln;
+			}
+		};
+	}, ~impl_osc_name);
 };
 
-~implementation = "testImp.scd";
 
 // -----------
 // boilerplate
@@ -61,7 +95,7 @@
 ~implementation.loadRelative;
 
 ~configServer = {
-	"~configureServer".postln;
+	"~configServer".postln;
 	s = Server.local;
 	s.quit;
 	s.options.numOutputBusChannels_(2);
@@ -79,9 +113,10 @@
 };
 
 ~makeNodes = {
+	"~makeNodes".postln;
 	s.bind({
-		~mainGrp = Group.new;
-		~effectsGrp = Group.after(~mainGrp);
+		~mainGroup = Group.new;
+		~effectsGroup = Group.after(~mainGrp);
 	});
 };
 
@@ -107,26 +142,17 @@
 	~init.();
 	~makeBuffers.();
 	~makeBusses.();
-
-
 };
 
 ~configServer.();
 s.waitForBoot({
-
 	s.sync;
-
 	~defineSynths.();
-
 	s.sync;
-
-
 	ServerTree.add(~serverTree);
 	s.freeAll;
 	s.sync;
-
 	"done".postln;
-
 });
 
 )
