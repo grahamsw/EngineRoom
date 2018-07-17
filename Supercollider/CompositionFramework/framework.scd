@@ -4,15 +4,17 @@
 ~implementation = "implementation.scd";
 
 ~framework_defineSynths = {nil};
+~framework_attachControllers = {nil};
+
 ~framework_serverBoot = {nil};
 ~framework_createPermanentSynths = {nil};
+
 ~framework_addEvents = {
 	//~events.add(\eventName -> {});
 };
 ~framework_createBusses = {
 	//~bus.add(\reverb -> Bus.audio(s,2));
 };
-~framework_attachControllers = {nil};
 ~framework_cleanup = {nil};
 
 ~implementation.loadRelative;
@@ -29,18 +31,14 @@
 	ServerTree.removeAll;
 	ServerQuit.removeAll;
 
-    ServerQuit.add(~cleanup);
-   // ServerBoot.add(~makeBusses);
+	ServerBoot.add(~makeBuffers);
+	ServerQuit.add(~serverQuit);
 };
 
-
-~makeBusses = {
-	~bus = Dictionary.new;
-	~framework_createBusses.value;
-};
-
-~cleanup = {
+~serverQuit = {
 	~framework_cleanup.value;
+
+	// repeats the cleanup in ~configServer
 	s.newBusAllocators;
 	ServerBoot.removeAll;
 	ServerTree.removeAll;
@@ -66,7 +64,14 @@
 };
 
 
+~makeBusses = {
+	~bus = Dictionary.new;
+	~framework_createBusses.value;
+};
+
 ~configServer.value;
+
+
 //5. boot server
 s.waitForBoot({
 
@@ -74,7 +79,6 @@ s.waitForBoot({
 
 	~framework_serverBoot.value;
 	~framework_defineSynths.value;
-	~makeBusses.value;
 
 
 	s.sync;

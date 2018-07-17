@@ -19,6 +19,7 @@
 };
 
 ~makeBusses = {
+
 	~bus = Dictionary.new;
 	~bus.add(\reverb -> Bus.audio(s,2));
 };
@@ -62,6 +63,7 @@
 ~configServer = {
 	"~configureServer".postln;
 	s = Server.local;
+	s.quit;
 	s.options.numOutputBusChannels_(2);
 	s.options.numInputBusChannels_(2);
 	s.options.sampleRate_(44100);

@@ -27,6 +27,7 @@
 	~events.add(\makeS -> {
 		"\makeS playing".postln;
 		~bus[\amp].set(0.1);
+		~bus[\freq].set(440);
 		~syn = Synth(\s, [\out, ~out]);
 
 		~syn.map(\amp, ~bus[\amp]);
