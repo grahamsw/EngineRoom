@@ -31,24 +31,24 @@ def spriteValueGenerator(sprite, steps = 10):
 sndr = sender('/sprite_Osc')
 def sendMsg(name, prop, val):
     print(name + ' ' + prop + ' ' + str( val) )
-    sndr('setProp', name, prop, val)
+    send('/sprite_Osc', ['setProp', name, prop, val])
     
 
 
 sprite1 = {'name':'one',
-           'posRange':[-1, -0.7],
-           'freqRange':[400, 500],
+           'posRange':[-1.0, 1.0],
+           'freqRange':[1400, 2500],
            'ampRange':[0.1, 0.2],
            'rateRange':[4, 10],
            'attackRange':[0.0001, 0.1]
            }
 
 sprite2 = {'name':'two',
-           'posRange':[0, 0.7],
-           'freqRange':[2400, 3000],
+           'posRange':[-1.0, 1.0],
+           'freqRange':[400, 300],
            'ampRange':[0.1, 0.2],
-           'rateRange':[0.1, 0.5],
-           'attackRange':[0.1, 1]
+           'rateRange':[2, 5],.
+           'attackRange':[0.001, 0.1]
            }
 
 sprites = [

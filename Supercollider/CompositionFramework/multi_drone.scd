@@ -25,11 +25,13 @@ busses that they need
 	"~makeEvents".postln;
 	~events = Dictionary.new;
 	~events.add(\setProp -> {
-		| name, prop, val|
-		//val = name[0][4];
-		//prop = name[0][3];
-		//name = name[0][2];
+		| msg |
+		var val, prop, name;
+		val = msg[4];
+		prop = msg[3];
+		name = msg[2];
 		[name, prop, val].postln;
+		~synths[name].postln;
 		~synths[name].set(prop, val.asFloat);
 	});
 };
@@ -65,8 +67,8 @@ busses that they need
 ~addEffectSynths = {
 	"~addEffectSynths".postln;
 	~synths = Dictionary.new;
-	~synths.add(\one -> Synth(\sprite, [\amp, 0], ~mainGrp));
-	~synths.add(\two -> Synth(\sprite, [\amp, 0], ~mainGrp));
+	~synths.add(\one -> Synth(\sprite, [\amp, 0]));
+	~synths.add(\two -> Synth(\sprite, [\amp, 0]));
 };
 
 // -----------------------------------------------

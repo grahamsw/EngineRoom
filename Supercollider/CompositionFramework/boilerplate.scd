@@ -55,7 +55,7 @@
 		~defineSynths.();
 		s.sync;
 		ServerTree.add(~serverTree);
-		s.freeAll;
+		s.freeAll; // this triggers the ServerTree actions
 		s.sync;
 		"done".postln;
 

@@ -100,6 +100,8 @@
 		};
 	}, ~impl_osc_name);
 };
+"boilerplate.scd".loadRelative;
+
 
 )
 
