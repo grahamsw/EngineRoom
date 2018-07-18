@@ -13,6 +13,7 @@
 // this should point to the frameworks code, here it's in the
 // same folder
 ~fw = "boilerplate.scd";
+~impl_osc_name = "/sprite_Osc";
 
 /*
 these are the heart of any implementation:
@@ -23,24 +24,29 @@ busses that they need
 ~makeEvents = {
 	"~makeEvents".postln;
 	~events = Dictionary.new;
-	~events.add(\makeS -> {
-		~bus[\amp].set(0);
-		~bus[\freq].set(440);
-
-		~syn = Synth(\s, [\out, ~out], ~mainGroup);
-		~syn.map(\amp, ~bus[\amp]);
-		~syn.map(\freq, ~bus[\freq]);
+	~events.add(\setProp -> {
+		| name, prop, val|
+		//val = name[0][4];
+		//prop = name[0][3];
+		//name = name[0][2];
+		[name, prop, val].postln;
+		~synths[name].set(prop, val.asFloat);
 	});
 };
 
 ~defineSynths = {
 	"~defineSynths".postln;
 
-	SynthDef(\drone, {
-		|freq = 440, amp = 0.1, rate = 4,  attack = 0.1, timbre = 0.5, t_gate=1, pos = 0, out = 0|
-		var sig, env;
+	SynthDef(\sprite, {
+		|freq = 440, amp = 0.2, rate = 4, attack = 0.01, pos = 0, out = 0|
 
-		Out.ar(out, sig);
+		var env, trig, signal;
+		trig = LFPulse.kr(rate);
+		signal = Mix.fill(4, { Saw.ar(freq * (1 + 0.01.rand))}) * amp / 4;
+		env = EnvGen.kr(Env.perc(attack), trig);
+		signal = env * signal;
+		signal = Pan2.ar(signal, pos);
+		Out.ar(out, signal);
 	}).add;
 
 };
@@ -58,9 +64,9 @@ busses that they need
 
 ~addEffectSynths = {
 	"~addEffectSynths".postln;
-	// these probably read from the ~bus[\reverb]
-	// bus and write to ~out
-
+	~synths = Dictionary.new;
+	~synths.add(\one -> Synth(\sprite, [\amp, 0], ~mainGrp));
+	~synths.add(\two -> Synth(\sprite, [\amp, 0], ~mainGrp));
 };
 
 // -----------------------------------------------
