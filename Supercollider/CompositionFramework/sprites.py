@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import time
  
 
+def rangeKeys(obj):
+    return [k.replace('Range', '') for k in obj.keys() if k.endswith('Range')]
+        
 def spriteValueGenerator(sprite, steps = 10):
     def nextRandom(mn, mx, cur, steps=10 ):
         r = np.random.uniform(-0.5, 0.5)
@@ -13,27 +16,13 @@ def spriteValueGenerator(sprite, steps = 10):
         elif new > mx:
             new = mx - (new - mx)
         return new    
-    pos = sprite['posRange'][0] + (sprite['posRange'][1]-sprite['posRange'][0])/2.0
-    freq = sprite['freqRange'][0] + (sprite['freqRange'][1]-sprite['freqRange'][0])/2.0
-    amp = sprite['ampRange'][0] + (sprite['ampRange'][1]-sprite['ampRange'][0])/2.0
-    rate = sprite['rateRange'][0] + (sprite['rateRange'][1]-sprite['rateRange'][0])/2.0
+    rangekeys = rangeKeys(sprite)
+    keyVals = { k :sprite[k + 'Range'][0] + (sprite[k + 'Range'][1]-sprite[k +'Range'][0])/2.0 for k in rangekeys}
     def newVal(val):
-        if val == 'pos':
-            nonlocal pos
-            pos = nextRandom(sprite['posRange'][0], sprite['posRange'][1], pos, steps)
-            return pos
-        elif val == 'freq':
-            nonlocal freq
-            freq = nextRandom(sprite['freqRange'][0], sprite['freqRange'][1], freq, steps)
-            return freq
-        elif val == 'amp':
-            nonlocal amp
-            amp = nextRandom(sprite['ampRange'][0], sprite['ampRange'][1], amp, steps)
-            return amp
-        elif val == 'rate':
-            nonlocal rate
-            rate = nextRandom(sprite['rateRange'][0], sprite['rateRange'][1], rate, steps)
-            return rate
+        nonlocal keyVals
+        if val in keyVals:
+            keyVals[val] = nextRandom(sprite[val + 'Range'][0], sprite[val + 'Range'][1], keyVals[val], steps)
+            return keyVals[val]
         else:
             print ('bad property')
     return newVal
@@ -53,31 +42,44 @@ sprite1 = {'name':'one',
            'rateRange':[4, 10],
            'texture': 1
            }
-   
-        
-sprites = np.array([{'name':sprite1['name'], 'generator':spriteValueGenerator(sprite1, 10)}])
-properties = np.array( ['amp', 'freq', 'rate', 'pos'])
+
+sprite2 = {'name':'two',
+           'posRange':[0, 0.7],
+           'freqRange':[2400, 3000],
+           'ampRange':[0.1, 0.2],
+           'rateRange':[4, 10],
+           'textureRange':[0, 2]
+           }
+
+sprites = [
+            {'sprite':sprite1, 'generator':spriteValueGenerator(sprite1, 10)},
+            {'sprite':sprite2, 'generator':spriteValueGenerator(sprite2, 5)}
+           ]
+
     
 cont = True
-for r in range(100):
+for r in range(10):
     s = np.random.choice(sprites)
-    p = np.random.choice(properties)
-    n = s['name']
+    p = np.random.choice(rangeKeys(s['sprite']))
+    n = s['sprite']['name']
     v = s['generator'](p)
     sendMsg(n, p, v)
     time.sleep(np.random.uniform(0.01, 1))
     
     
-def demo():
-    generator = spriteValueGenerator(sprite1, 4)
     
-    a = [generator('amp') for _ in range(1000)]
-    f = [generator('freq') for _ in range(1000)]
-    r = [generator('rate') for _ in range(1000)]
-    p = [generator('pos') for _ in range(1000)]
+    
+    
+def demo(sprite, granularity, steps=1000):
+    generator = spriteValueGenerator(sprite, granularity)
+    
+    a = [generator('amp') for _ in range(steps)]
+  #  f = [generator('freq') for _ in range(1000)]
+    r = [generator('rate') for _ in range(steps)]
+    p = [generator('pos') for _ in range(steps)]
     
     plt.plot(a)
-    plt.plot(f)
+   # plt.plot(f)
     plt.plot(r)
     plt.plot(p)
 
