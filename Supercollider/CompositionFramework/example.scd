@@ -12,7 +12,7 @@
 	"~makeEvents".postln;
 	~events = Dictionary.new;
 	~events.add(\makeS -> {
-		~bus[\amp].set(0.1);
+		~bus[\amp].set(0);
 		~bus[\freq].set(440);
 
 		~syn = Synth(\s, [\out, ~out], ~mainGroup);

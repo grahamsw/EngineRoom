@@ -3,10 +3,11 @@
 // for code diagram
 
 // Point ~implementation to your own implementation file.
+// This should be the only change you need to make to this file
 ~implementation = "testImp.scd";
 
 // ---------------------------------------------------------
-// This is a sample implementation file
+// This is a sample implementation
 // Create your own, defining at least ~defineSynths
 // and ~makeEvents.
 // Define whatever other functions these need, and override
@@ -93,7 +94,7 @@ busses that they need
 };
 
 // you might want something more elaborate than this,
-// or you not need it, but but this is a good start
+// or you just stick everything in the root, but this is a good flexible set up
 ~makeNodes = {
 	"~makeNodes".postln;
 	s.bind({
@@ -102,8 +103,9 @@ busses that they need
 	});
 };
 
-// ----------------------------------------
-// Boilerplate. This
+
+// -----------
+// Boilerplate
 // -----------
 
 ~configServer = {
