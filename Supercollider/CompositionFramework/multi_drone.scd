@@ -10,13 +10,16 @@
 // any of the other "framework" functions as needed
 // ---------------------------------------------------------
 
-// this should point to the frameworks code, here it's in the
-// same folder
-~fw = "boilerplate.scd";
+// the OSC address we're listening for message at
 ~impl_osc_name = "/sprite_Osc";
 
 // for modularity define synths in their own files
 ~synthFiles = ["spriteSynth.scd"];
+~routineFiles = ["spriteRoutines.scd"];
+
+// this should point to the frameworks code, here it's in the
+// same folder
+~fw = "boilerplate.scd";
 
 /*
 these are the heart of any implementation:
@@ -27,43 +30,12 @@ busses that they need
 */
 ~makeEvents = {
 	"~makeEvents".postln;
+	~routineFiles.do { |filename| filename.loadRelative;};
+
 	~events = Dictionary.new;
-	~events.add(\setProp -> {
-		| msg |
-		var val, prop, name;
-		name = msg[2];
-		prop = msg[3];
-		val  = msg[4];
-		//[name, prop, val].postln;
-		//~synths[name].postln;
-		~synths[name].set(prop, val.asFloat);
-	});
-	~events.add(\addSynth -> {
-		|msg|
-		var name, freq, amp, rate, attack, pos;
-		name = msg[2];
-		freq = msg[3];
-		amp  = msg[4];
-		rate = msg[5];
-		attack = msg[6];
-		pos = msg[7];
-		[name, freq, amp, rate, attack, pos].postln;
-		~synths[name] = Synth(\sprite, [\freq, freq,
-			                            \amp, amp,
-			                            \rate, rate,
-			                            \attack, attack,
-			                            \pos, pos
-		                               ]);
-	});
-	~events.add(\clearAll -> {
-		~synths.keysValuesDo {
-			|key, value|
-			value.free;
-			~synths.removeAt(key);
-	};
-
-	});
-
+	~events.add(\setProp -> ~spriteSetProp);
+	~events.add(\addSprite -> ~spriteAddSprite);
+	~events.add(\clearAll -> ~spriteClearAll);
 };
 ~defineSynths = {
 	"~defineSynths".postln;

@@ -73,7 +73,7 @@ def createSprites(sprites):
     for sprite in sprites:
         print(sprite)
         #freq, amp, rate, attack, pos;
-        send2framework.send('/sprite_Osc', ['addSynth', sprite['sprite']['name'], 
+        send2framework.send('/sprite_Osc', ['addSprite', sprite['sprite']['name'], 
                                          mid(sprite['sprite']['freqRange']),
                                          mid(sprite['sprite']['ampRange']),
                                          mid(sprite['sprite']['rateRange']),
@@ -126,5 +126,5 @@ def demo(sprite, granularity, steps=1000):
     plt.plot(p)
 
 
-demo(sprite1, 15, 1000)
+demo(sprite1, 150, 1000)
 
