@@ -25,7 +25,7 @@
 ~serverTree = {
 	"~serverTree".postln;
 	~makeNodes.();
-	~addEffectSynths.();
+	~addInititialSynths.();
 };
 
 ~serverQuit = {

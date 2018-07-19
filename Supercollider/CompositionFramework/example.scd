@@ -50,9 +50,9 @@
 // these implementations will work as is for many
 // pieces, but can be overridden if desired
 
-
-~addEffectSynths = {
-	"~addEffectSynths".postln;
+// start up synths (reverb, say)
+~addInititialSynths = {
+	"~addInititialSynths".postln;
 
 };
 

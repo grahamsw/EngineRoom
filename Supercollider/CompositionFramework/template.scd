@@ -39,10 +39,9 @@ busses that they need
 
 };
 
-~addEffectSynths = {
-	"~addEffectSynths".postln;
-	// these probably read from the ~bus[\reverb]
-	// bus and write to ~out
+~addInititialSynths = {
+	"~addInititialSynths".postln;
+	// any startup synths, reverb, say
 
 };
 

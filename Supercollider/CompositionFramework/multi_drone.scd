@@ -22,20 +22,45 @@ with them - along with any effects and buffers and
 busses that they need
 */
 ~makeEvents = {
-	"~makeEvents".postln;
+		"~makeEvents".postln;
 	~events = Dictionary.new;
 	~events.add(\setProp -> {
 		| msg |
 		var val, prop, name;
-		val = msg[4];
-		prop = msg[3];
 		name = msg[2];
-		[name, prop, val].postln;
-		~synths[name].postln;
+		prop = msg[3];
+		val  = msg[4];
+		//[name, prop, val].postln;
+		//~synths[name].postln;
 		~synths[name].set(prop, val.asFloat);
 	});
-};
+	~events.add(\addSynth -> {
+		|msg|
+		var name, freq, amp, rate, attack, pos;
+		name = msg[2];
+		freq = msg[3];
+		amp  = msg[4];
+		rate = msg[5];
+		attack = msg[6];
+		pos = msg[7];
+		[name, freq, amp, rate, attack, pos].postln;
+		~synths[name] = Synth(\sprite, [\freq, freq,
+			                            \amp, amp,
+			                            \rate, rate,
+			                            \attack, attack,
+			                            \pos, pos
+		                               ]);
+	});
+	~events.add(\clearAll -> {
+		~synths.keysValuesDo {
+			|key, value|
+			value.free;
+			~synths.removeAt(key);
+	};
 
+	});
+
+};
 ~defineSynths = {
 	"~defineSynths".postln;
 
@@ -64,21 +89,17 @@ busses that they need
 
 };
 
-~addEffectSynths = {
-	"~addEffectSynths".postln;
-	~synths = Dictionary.new;
-	~synths.add(\one -> Synth(\sprite, [\amp, 0]));
-	~synths.add(\two -> Synth(\sprite, [\amp, 0]));
+~addInititialSynths = {
+	"~addInititialSynths".postln;
+//	~synths.add(\one -> Synth(\sprite, [\amp, 0]));
+//	~synths.add(\two -> Synth(\sprite, [\amp, 0]));
 };
 
-// -----------------------------------------------
-// these implementations will work as is for many
-// pieces, but can be overridden if desired
-// -----------------------------------------------
 ~init = {
 	"~init".postln;
 	~out = 0;
 	~traceOsc = false;
+	~synths = Dictionary.new;
 };
 
 ~cleanup = {
@@ -86,6 +107,16 @@ busses that they need
 	~osc.free;
 };
 
+// you might want something more elaborate than this,
+// or you might just stick everything in the root,
+// but this is a good, organized & flexible set up
+~makeNodes = {
+	"~makeNodes".postln;
+	s.bind({
+		~mainGroup = Group.new;
+		~effectsGroup = Group.after(~mainGrp);
+	});
+	};
 // pretty powerful, generic OSC handler for mapping OSC messages
 // (from any source) to events
 // Can be replaced with MIDI or some other controller as desired
@@ -120,16 +151,6 @@ busses that they need
 	}, ~impl_osc_name);
 };
 
-// you might want something more elaborate than this,
-// or you might just stick everything in the root,
-// but this is a good, organized & flexible set up
-~makeNodes = {
-	"~makeNodes".postln;
-	s.bind({
-		~mainGroup = Group.new;
-		~effectsGroup = Group.after(~mainGrp);
-	});
-};
 
 
 ~fw.loadRelative;
