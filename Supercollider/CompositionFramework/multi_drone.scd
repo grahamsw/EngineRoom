@@ -15,14 +15,18 @@
 ~fw = "boilerplate.scd";
 ~impl_osc_name = "/sprite_Osc";
 
+// for modularity define synths in their own files
+~synthFiles = ["spriteSynth.scd"];
+
 /*
 these are the heart of any implementation:
-the synths and the events that are created
-with them - along with any effects and buffers and
+the synths and the routines that are created
+with them, and the events that trigger these routines
+- along with any effects, buffers and
 busses that they need
 */
 ~makeEvents = {
-		"~makeEvents".postln;
+	"~makeEvents".postln;
 	~events = Dictionary.new;
 	~events.add(\setProp -> {
 		| msg |
@@ -64,18 +68,7 @@ busses that they need
 ~defineSynths = {
 	"~defineSynths".postln;
 
-	SynthDef(\sprite, {
-		|freq = 440, amp = 0.2, rate = 4, attack = 0.01, pos = 0, out = 0|
-
-		var env, trig, signal;
-		trig = LFPulse.kr(rate);
-		signal = Mix.fill(4, { Saw.ar(freq * (1 + 0.01.rand))}) * amp / 4;
-		env = EnvGen.kr(Env.perc(attack), trig);
-		signal = env * signal;
-		signal = Pan2.ar(signal, pos);
-		Out.ar(out, signal);
-	}).add;
-
+	~synthFiles.do { |filename| filename.loadRelative;};
 };
 
 ~makeBusses = {
@@ -91,8 +84,7 @@ busses that they need
 
 ~addInititialSynths = {
 	"~addInititialSynths".postln;
-//	~synths.add(\one -> Synth(\sprite, [\amp, 0]));
-//	~synths.add(\two -> Synth(\sprite, [\amp, 0]));
+
 };
 
 ~init = {
@@ -116,7 +108,8 @@ busses that they need
 		~mainGroup = Group.new;
 		~effectsGroup = Group.after(~mainGrp);
 	});
-	};
+};
+
 // pretty powerful, generic OSC handler for mapping OSC messages
 // (from any source) to events
 // Can be replaced with MIDI or some other controller as desired
@@ -135,7 +128,6 @@ busses that they need
 		if (~traceOsc)
 		{
 			("got " ++ msg).postln;
-
 		};
 
 		if (~events[eventName] != nil)
