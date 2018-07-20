@@ -110,13 +110,11 @@ def clearSprites():
     send('/sprite_Osc', ['clearAll'])   
 
 
-
-    
 createSprites(sprites)    
 makeWander()
 #clearSprites()
  
-def demo(sprite, granularity, steps=1000):
+def demoWander(sprite, granularity, steps=1000):
     generator = spriteValueGenerator(sprite, granularity)
     
     a = [generator('amp') for _ in range(steps)]
@@ -130,5 +128,5 @@ def demo(sprite, granularity, steps=1000):
     plt.plot(p)
 
 
-demo(sprite1, 150, 1000)
+demoWander(sprite1, 150, 1000)
 

@@ -1,7 +1,8 @@
 "~spriteRoutines".postln;
 
 // depends on global dictionary ~synths
-
+// msg format is
+// [osc_address, messageName, param1, param2, param3, ....]
 ~spriteSetProp =  {
 		| msg |
 		var val, prop, name;
@@ -12,6 +13,7 @@
 		//~synths[name].postln;
 		~synths[name].set(prop, val.asFloat);
 	};
+
 ~spriteAddSprite =  {
 		|msg|
 		var name, freq, amp, rate, attack, pos;

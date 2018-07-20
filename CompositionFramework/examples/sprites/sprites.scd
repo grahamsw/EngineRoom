@@ -6,18 +6,18 @@
 // should go into three places:
 // * the definitions of the Synths
 // * the routines defined using the Synths
-// * the (python) code calling the routines
+// * the (python) code calling the routines (doesn't have to be python, can be anything that can send OSC)
 
-// the OSC address we're listening for message at
+// the OSC address we're listening for messages at
 ~impl_osc_name = "/sprite_Osc";
 
 // for modularity define synths and events/routines in their own files
 ~synthFiles = ["spriteSynth.scd"];
 ~routineFiles = ["spriteRoutines.scd"];
 
-// this should point to the frameworks code, here it's in the
-// same folder
+// this should point to the frameworks code
 ~fw = "../../boilerplate/boilerplate.scd";
+
 // .loadRelative is unreliable - giving "can't load relative to an unsaved file" errors
 // on some machines
 ~root = PathName(thisProcess.nowExecutingPath).parentPath;
