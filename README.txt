@@ -24,7 +24,8 @@ Essentially development consists of
 * In Python
   * writing code to send OSC messages that will trigger the SuperCollider Events
   
-The "framework" takes care of initializing SuperCollider, calling your code at the right time, listening for OSC messages and calling your Events. 
+The "framework" takes care of initializing SuperCollider, calling your code at the right time, listening for OSC messages and calling 
+your Events. 
  
 The Python messages will be in generated in response to whatever is being monitored: weather, financial information, biometrics, 
 anything producing time series data.
