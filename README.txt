@@ -1,24 +1,26 @@
 Engine Room 
-Feb 2014
+July 2018
 
-A tool for producing an ACP (auditory control panel). 
-Built using ChucK http://chuck.stanford.edu/
+This is a series of explorations around sonification - turning data into sound.
 
+It started from the observation that an engine conveys an enormous amount of information to an informed ear by the noise it makes. I wondered if I could reproduce this for monitoring, say, a web server. This turns out to be quite a large question.
 
-Input will be a series of readings - essentially name/value pairs
+The issues here are both technical and aesthetic/psycholological. The technical issues, while challenging, are the simpler. In fact the technical challenge is to create a framework wherein the aesthetic/psychological problem can be addressed. (Once you have something you like you could implement it in just about anything that makes a noise.)
 
-Each reading will be used to fire an event containing the value of that reading, each event will be associated with one or more monitors.
+The first attempt at this used ChucK (http://chuck.stanford.edu/), which is a fun language/environment for learning about sound synthesis, and can do great things, but then development switched to SuperCollider. (https://supercollider.github.io/)
 
-Monitors will produce a sound that varies with the reading (and possibly with the history of the readings, that's up to the monitor). Between readings the 
-monitor can do whatever it likes. It will probably keep doing the same thing.
+Current development is under "CompositionFramework". There is some boilerplate code ("framework" is a massive overstatement), and some samples.
 
-An example is an ACP for monitoring a web server. 
-An event monitor, Splunk, say, produces a series of readings associated with CPU load, memory use, disk faults, exceptions, visitors on site, pages per second, bad URLs, etc.
+Essentially development consists of
+* In SuperCollider
+  * writing Synths
+  * writing Routines that use instances of the Syths to create more elaborate sound events
+  * adding Events that respond to OSC messages to trigger Routines or to change their parameters
+* In Python
+  * writing code to send OSC messages that will trigger the SuperCollider Events
+ 
+The Python messages will be in generated in response to whatever is being monitored: weather, financial information, biometrics, anything producing time series data.
 
-Each monitor is associated with an instance of a MonitorEvent, a subclass of ChucK's Event class that contains a floating point reading value. When that event fires the monitor will, for example, vary its pitch, volune, vibrato, envelope, reverb.
+There is a lot of lee-way in deciding how to split up the responsibilities - how complex the Synths should be, how complex the Routines, the Events, and the Python message handling. (Does the OSC message tell SuperCollider to change a frequency, or to increase the urgency?) 
 
-With careful design it should be possible to create a barely noticable ambient sound that maintains awareness of the server state, and draws attention when something starts to go wrong.
-
-The model is a car or ship engine: a background hum that can be ignored, but communicates the state and health of the engine.
-
-Other data feeds could be weather, financial information, biometrics, anything producing time series.
+The correct approach seems to be to use the strengths of each technology, Python is good at data, SuperCollider is good at scheduling and sample accurate synthesis. But the "framework" is simple enough that it's possible to experiment.
