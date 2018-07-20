@@ -8,10 +8,14 @@
 // and ~makeEvents.
 // Define whatever other functions these need, and override
 // any of the other "framework" functions as needed
+// Once these are defined, and ~fw is pointing to the boilerplate file
+// running this file will reboot the server, load all the initialization code,
+// define synths and events, and wait for messages to trigger the events.
+// All by typing Ctrl + Enter
 // ---------------------------------------------------------
 
 // this should point to the frameworks code, here it's in the
-// same folder
+// same folder, usually it won't be
 ~fw = "boilerplate.scd";
 
 /*

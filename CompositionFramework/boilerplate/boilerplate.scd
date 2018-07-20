@@ -1,5 +1,19 @@
 (
 
+/*
+
+This is based on the excellent tutorial and example code by Eli Fieldsteel
+https://www.youtube.com/watch?v=P85X1Ut3Hfc
+
+In it he presents a framework for composing longer SuperCollider pieces.
+
+I have restructured his code, factoring the  code that doesn't need to change
+between implementations into its own file, and relabelling things.
+
+Can't recommend the tutorials enough.
+
+*/
+
 // -----------
 // Boilerplate
 // -----------
@@ -62,6 +76,7 @@
 	});
 };
 
+// call exactly one function at root
 ~main.();
 
 )

@@ -2,25 +2,24 @@
 // see https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
 // for code diagram
 
-// ---------------------------------------------------------
-// This is an outline of an implementation
-// Provide implementations for at least ~defineSynths
-// and ~makeEvents.
-// Define whatever other functions these need, and override
-// any of the other "framework" functions as needed
-// ---------------------------------------------------------
+// this is a slightly more complex example. As things get more elaborate the complexity
+// should go into three places:
+// * the definitions of the Synths
+// * the routines defined using the Synths
+// * the (python) code calling the routines
 
 // the OSC address we're listening for message at
 ~impl_osc_name = "/sprite_Osc";
 
-// for modularity define synths in their own files
+// for modularity define synths and events/routines in their own files
 ~synthFiles = ["spriteSynth.scd"];
 ~routineFiles = ["spriteRoutines.scd"];
 
 // this should point to the frameworks code, here it's in the
 // same folder
-~fw = "boilerplate.scd";
+~fw = "../../boilerplate/boilerplate.scd";
 // .loadRelative is unreliable - giving "can't load relative to an unsaved file" errors
+// on some machines
 ~root = PathName(thisProcess.nowExecutingPath).parentPath;
 
 /*
@@ -36,8 +35,8 @@ busses that they need
 	~routineFiles.do { |filename| (~root +/+ filename).load;};
 
 	~events = Dictionary.new;
-	~events.add(\setProp -> ~spriteSetProp);
 	~events.add(\addSprite -> ~spriteAddSprite);
+	~events.add(\setProp -> ~spriteSetProp);
 	~events.add(\clearAll -> ~spriteClearAll);
 };
 

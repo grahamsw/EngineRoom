@@ -1,4 +1,8 @@
-import send2framework 
+import sys
+sys.path.append('../../')
+
+from  boilerplate.send2framework import send, sender
+
 import numpy as np
 import matplotlib.pyplot as plt
 from threading import Event
@@ -73,7 +77,7 @@ def createSprites(sprites):
     for sprite in sprites:
         print(sprite)
         #freq, amp, rate, attack, pos;
-        send2framework.send('/sprite_Osc', ['addSprite', sprite['sprite']['name'], 
+        send('/sprite_Osc', ['addSprite', sprite['sprite']['name'], 
                                          mid(sprite['sprite']['freqRange']),
                                          mid(sprite['sprite']['ampRange']),
                                          mid(sprite['sprite']['rateRange']),
@@ -85,7 +89,7 @@ def createSprites(sprites):
 ex = Event()
     
 def makeWander(intervalMin = 0.01, intervalMax=1, trace=True):
-    sndr = send2framework.sender('/sprite_Osc')
+    sndr = sender('/sprite_Osc')
     while True:
         s = np.random.choice(sprites)
         p = np.random.choice(rangeKeys(s['sprite']))
@@ -103,7 +107,7 @@ def interruptWander():
 #interruptWander()
     
 def clearSprites():
-    send2framework.send('/sprite_Osc', ['clearAll'])   
+    send('/sprite_Osc', ['clearAll'])   
 
 
 
@@ -116,7 +120,7 @@ def demo(sprite, granularity, steps=1000):
     generator = spriteValueGenerator(sprite, granularity)
     
     a = [generator('amp') for _ in range(steps)]
-    f = [generator('freq') for _ in range(steps)]
+   # f = [generator('freq') for _ in range(steps)]
     r = [generator('rate') for _ in range(steps)]
     p = [generator('pos') for _ in range(steps)]
     

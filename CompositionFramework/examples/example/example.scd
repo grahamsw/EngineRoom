@@ -1,12 +1,7 @@
 (
+// path to boilerplate might change
+~fw = "../../boilerplate/boilerplate.scd";
 
-~makeBusses = {
-	"~makeBusses".postln;
-	~bus = Dictionary.new;
-	~bus.add(\reverb -> Bus.audio(s,2));
-	~bus.add(\freq -> Bus.control(s, 1));
-	~bus.add(\amp -> Bus.control(s, 1));
-};
 
 ~makeEvents = {
 	"~makeEvents".postln;
@@ -42,6 +37,12 @@
 	}).add;
 };
 
+~makeBusses = {
+	"~makeBusses".postln;
+	~bus = Dictionary.new;
+	~bus.add(\freq -> Bus.control(s, 1));
+	~bus.add(\amp -> Bus.control(s, 1));
+};
 ~makeBuffers = {
 	// read any sound files the synths will need
 
@@ -100,12 +101,9 @@
 		};
 	}, ~impl_osc_name);
 };
-"boilerplate.scd".loadRelative;
+
+~fw.loadRelative;
 
 
 )
 
-
-//~bus[\amp].get({|x| x.postln;})
-//~bus[\freq].set(400)
-//OSCFunc.trace(true, true)

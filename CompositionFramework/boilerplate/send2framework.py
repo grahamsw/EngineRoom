@@ -1,5 +1,4 @@
 from pythonosc import udp_client
-import time
 
 
 # save a sender and use it to send multiple messages to the same address
@@ -14,10 +13,9 @@ def send(addr, msg, ip='127.0.0.1', port=57120):
     sender(addr, ip, port)(*msg)
     
     
+import time
     
-    
-    
-# sample using testImp.scd
+# sample using example.scd
 # in practise event messages will be much less frequent - fast and 'musical' scheduling
 # should. be built in to the SuperCollider Events
 
@@ -48,4 +46,3 @@ def demo():
     send('/implOsc', ['setAmp', 0.4])
     time.sleep(3)
     send('/implOsc', ['killS'])
-    
