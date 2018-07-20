@@ -1,0 +1,4 @@
+~postSomething = {
+	"something".postln;
+
+};
