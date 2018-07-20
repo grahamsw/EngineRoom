@@ -19,10 +19,12 @@ and some samples.
 Essentially development consists of
 * In SuperCollider
   * writing Synths
-  * writing Routines that use instances of the Syths to create more elaborate sound events
+  * writing Routines/Pbinds that use instances of the Syths to create more elaborate sound events
   * adding Events that respond to OSC messages to trigger Routines or to change their parameters
 * In Python
   * writing code to send OSC messages that will trigger the SuperCollider Events
+  
+The "framework" takes care of initializing SuperCollider, calling your code at the right time, listening for OSC messages and calling your Events. 
  
 The Python messages will be in generated in response to whatever is being monitored: weather, financial information, biometrics, 
 anything producing time series data.
@@ -31,4 +33,4 @@ There is a lot of lee-way in deciding how to split up the responsibilities - how
 the Events, and the Python message handling. (Does the OSC message tell SuperCollider to change a frequency, or to increase the urgency?) 
 
 The correct approach seems to be to use the strengths of each technology, Python is good at data, SuperCollider is good at scheduling and 
-sample accurate synthesis. But the "framework" is simple enough that it's possible to experiment.
+sample accurate synthesis. But the "framework" is simple enough that it's possible to experiment. 
