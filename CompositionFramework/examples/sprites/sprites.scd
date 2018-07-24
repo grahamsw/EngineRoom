@@ -12,7 +12,7 @@
 ~impl_osc_name = "/sprite_Osc";
 
 // for modularity define synths and events/routines in their own files
-~synthFiles = ["spriteSynth.scd"];
+~synthFiles = ["spriteSynth.scd", "Sonifier.scd", "fieldsteelSynths.scd"];
 ~routineFiles = ["spriteRoutines.scd"];
 
 // this should point to the frameworks code
@@ -65,8 +65,10 @@ busses that they need
 ~init = {
 	"~init".postln;
 	~out = 0;
-	~traceOsc = false;
+	~traceOsc = true;
 	~synths = Dictionary.new;
+
+	//"../../boilerplate/registerOsc.scd".loadRelative;
 };
 
 ~cleanup = {
@@ -116,6 +118,7 @@ busses that they need
 			}
 		};
 	}, ~impl_osc_name);
+
 };
 
 

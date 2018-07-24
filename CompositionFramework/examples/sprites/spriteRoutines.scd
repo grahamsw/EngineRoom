@@ -9,7 +9,7 @@
 		name = msg[2];
 		prop = msg[3];
 		val  = msg[4];
-		//[name, prop, val].postln;
+		[name, prop, val].postln;
 		//~synths[name].postln;
 		~synths[name].set(prop, val.asFloat);
 	};

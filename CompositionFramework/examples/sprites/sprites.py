@@ -110,7 +110,8 @@ def clearSprites():
     send('/sprite_Osc', ['clearAll'])   
 
 
-createSprites(sprites)    
+createSprites(sprites)   
+ 
 makeWander()
 #clearSprites()
  
