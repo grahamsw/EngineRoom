@@ -4,7 +4,7 @@ a = [71, 74];
 c = [a,b,a];
 d = [b,a,b];
 ~midi_017_the_gold_theme = c ++ d ++ c ++ d ++ c ++ d ;
-~amp_017_the_gold_theme = [1, 0.7, 0.7, 0.8, 0.7, 0.7, 0.8, 0.7, 0.7];
+~amp_017_the_gold_theme = [1, 0.7, 0.7, 0.8, 0.7, 0.7, 0.8, 0.7, 0.7] * 0.3;
 )
 (
 Pdef(\pattern_017_the_gold,

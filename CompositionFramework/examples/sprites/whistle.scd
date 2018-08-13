@@ -7,18 +7,16 @@ SynthDef(\whistle, {
 	Out.ar(out, snd * env * amp);
 }).add;
 )
-(
 
-~testWhistle = {
+
 (
-Pbind(\instrument, \whistle,
+Pdef(\testWhistle, Pbind(\instrument, \whistle,
 	\focus, Pseq([1,3,7,6,3, 8, 3, 10] * 440, inf),
 	\dur, 0.1,
 	\amp, 0.8
-).play
+)
+)
 )
 
-};
-)
 
-~testWhistle.()
+Pdef(\testWhistle).play
