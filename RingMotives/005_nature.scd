@@ -10,4 +10,4 @@ Pdef(\pattern_005_nature, Pbind(
 ));
 )
 
-Pdef(\pattern_005_nature).play
+//Pdef(\pattern_005_nature).play
