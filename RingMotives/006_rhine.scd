@@ -1,5 +1,6 @@
 
 (
+~instrument = Pbind(\instrument, \default);
 ~theRhineMotive_midinotes = Pbind(\midinote, Pseq(
 [63, 58, 55, 58, 63, 65] ++
 [67, 63, 58, 63, 67, 68] ++
@@ -20,14 +21,10 @@
 ~tripleTimes = Pbind(\dur, Pseq(~theRhineTimeBasis.dup(6).dup(4).flat, inf));
 
 ~tripleBassTimes = Pbind(\dur, Pseq(( [5, 1].dup(3).flat ++ 6 ) * ~theRhineTimeBasis, inf));
-)
 
 
-(
-var melody = Pchain(~theRhineMotive_midinotes,	~triplesAmp, ~tripleTimes);
-
-var bass = Pchain(~theRhineMotive_bass_midnotes, ~tripleBassTimes, Pbind(\amp, 0.5));
-
-Ppar([melody, bass]).play
+~melody = Pchain( ~theRhineMotive_midinotes,	~triplesAmp, ~tripleTimes);
+~bass = Pchain( ~theRhineMotive_bass_midnotes, ~tripleBassTimes, Pbind(\amp, 0.5));
+Pdef(\theRhine, Ppar([~melody, ~bass]));
 
 )
