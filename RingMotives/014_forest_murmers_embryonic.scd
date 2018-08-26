@@ -24,8 +24,14 @@
     Pchain(Pbind(\instrument, instrument), notes, amps, durs);
 }
 )
+/*
+a = ~forest_murmers_embryonic_014.(transpose:10, timeBasis:0.3,instrument:\def).play
 
-//~forest_murmers_embryonic_014.(transpose:8, timeBasis:0.3,instrument:\def).play
+a.stop
+a.play
+a.reset
+*/
+
 
 
 
