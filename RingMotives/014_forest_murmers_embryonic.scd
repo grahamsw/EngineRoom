@@ -30,8 +30,8 @@ a = ~forest_murmers_embryonic_014.(transpose:10, timeBasis:0.3,instrument:\def).
 a.stop
 a.play
 a.reset
-*/
 
+*/
 
 
 
