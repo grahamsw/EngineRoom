@@ -61,7 +61,7 @@
 	"~init".postln;
 	~out = 0;
 	~impl_osc_name = "/implOsc";
-	~traceOsc = false;
+	~traceOsc = true;
 };
 
 ~cleanup = {
@@ -103,7 +103,6 @@
 };
 
 ~fw.loadRelative;
-
 
 )
 

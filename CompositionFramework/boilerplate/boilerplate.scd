@@ -1,6 +1,8 @@
 (
 
 /*
+see code diagram at
+https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
 
 This is based on the excellent tutorial and example code by Eli Fieldsteel
 https://www.youtube.com/watch?v=P85X1Ut3Hfc
