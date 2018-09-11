@@ -86,7 +86,6 @@ def createSprites(sprites):
                             ])
 
 
-ex = Event()
     
 def makeWander(intervalMin = 0.01, intervalMax=1, trace=True):
     sndr = sender('/sprite_Osc')
@@ -113,7 +112,7 @@ def clearSprites():
 createSprites(sprites)   
  
 makeWander()
-#clearSprites()
+clearSprites()
  
 def demoWander(sprite, granularity, steps=1000):
     generator = spriteValueGenerator(sprite, granularity)
