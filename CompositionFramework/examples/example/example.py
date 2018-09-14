@@ -1,7 +1,10 @@
+_FRAME_ROOT = 'C:\\Users\\graha\\Documents\\dev\\EngineRoom\\CompositionFramework\\'
 import sys
-sys.path.append('../../')
-
+sys.path.append(_FRAME_ROOT)
 from  boilerplate.send2framework import send, sender
+
+
+
 import time
     
 # sample using example.scd
