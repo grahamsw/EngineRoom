@@ -21,7 +21,9 @@ var tripleTimes = Pbind(\dur, Pseq(1.dup(6).dup(4).flat, inf));
 var tripleBassTimes = Pbind(\dur, Pseq(( [5, 1].dup(3).flat ++ 6 ), inf));
 
 var melody = Pchain(theRhineMotive_midinotes, tripleTimes);
-var bass = Pchain(theRhineMotive_bass_midnotes, tripleBassTimes);
+//var bass = Pchain(theRhineMotive_bass_midnotes, tripleBassTimes);
+	melody;
+
 Ppar([melody, bass]);
 }.();
 )

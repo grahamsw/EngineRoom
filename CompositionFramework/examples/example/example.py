@@ -1,4 +1,4 @@
-_FRAME_ROOT = 'C:\\Users\\graha\\Documents\\dev\\EngineRoom\\CompositionFramework\\'
+_FRAME_ROOT = 'C:\\Users\\graha\\Documents\\dev\\EngineRoom\\CompositionFramework\\examples\\example'
 import sys
 sys.path.append(_FRAME_ROOT)
 from  boilerplate.send2framework import send, sender
