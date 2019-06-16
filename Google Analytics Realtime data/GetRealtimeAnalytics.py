@@ -42,9 +42,8 @@ pageMetrics = makeMetricGetter(key_file_location, profile_id,
 
 userMetrics = makeMetricGetter(key_file_location, profile_id,
                                'rt:activeUsers',
-                               'rt:userType')  
+                               'rt:userType, rt:deviceCategory')  
 
 eventMetrics = makeMetricGetter(key_file_location, profile_id,
                                'rt:totalEvents',
-                               'rt:eventAction,
-                               rt:eventCategory,rt:eventLabel')  
+                               'rt:eventAction,rt:eventCategory,rt:eventLabel')  
