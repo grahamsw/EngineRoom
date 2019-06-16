@@ -4,10 +4,10 @@ import NewRelicMonitor as nrm
 # this will not be checked into Git for security reasons
 # (not that there's much security risk - it's read only access, and I don't think there's
 # a limit on reads - really, I'm just practicing open source security)
-import NewRelicCredentials 
+#import NewRelicCredentials 
 
 
-myDataGetter = nrm.makeNewRelicDataGetter(NewRelicCredentials.newRelicAccount, NewRelicCredentials.queryKey)
+myDataGetter = nrm.makeNewRelicDataGetter('954067', 'p-UlN_9XsfXj0ZD2G0SV6FZHxfjpgb9J')
 
 # A data getter takes a query and returns the large, complex JSON data object,
 # with all kinds of bookkeeping info, from New Relic, 
