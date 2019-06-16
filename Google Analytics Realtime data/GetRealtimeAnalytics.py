@@ -2,10 +2,6 @@ from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 
-key_file_location = r'C:\Users\graha\Downloads\FFOCREPORTING-a9a4a73210dd.json'
-profile_id = 'ga:175168708' #get_first_profile_id(service)
-
-
 def get_service(key_file_location):
     api_name='analytics'
     api_version='v3'
@@ -21,7 +17,8 @@ def get_results(service, profile_id, metrics, dimensions):
             ids=profile_id,
             metrics=metrics,
             dimensions=dimensions).execute()
-    return pd.DataFrame(ret['rows'], columns=[r['name'] for r in ret['columnHeaders']])
+    columns = [r['name'] for r in ret['columnHeaders']]
+    return pd.DataFrame(ret['rows'], columns=columns)
 
 
 def makeMetricGetter(key_file_location, profile_id, metrics, dimensions):
@@ -30,13 +27,24 @@ def makeMetricGetter(key_file_location, profile_id, metrics, dimensions):
         return get_results(service, profile_id, metrics, dimensions)
     return getMetrics
 
-    
+
+
+##############################################################################
+## sample use
+##############################################################################
+ 
+key_file_location = r'C:\Users\graha\Downloads\FFOCREPORTING-a9a4a73210dd.json'
+profile_id = 'ga:175168708' 
+
 pageMetrics = makeMetricGetter(key_file_location, profile_id,
                                     'rt:pageviews', 
                                     'rt:pageTitle, rt:pagePath')
 
-
-
 userMetrics = makeMetricGetter(key_file_location, profile_id,
                                'rt:activeUsers',
-                               'rt:userType')
+                               'rt:userType')  
+
+eventMetrics = makeMetricGetter(key_file_location, profile_id,
+                               'rt:totalEvents',
+                               'rt:eventAction,
+                               rt:eventCategory,rt:eventLabel')  
