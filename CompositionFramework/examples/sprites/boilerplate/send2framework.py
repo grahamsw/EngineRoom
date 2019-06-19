@@ -1,10 +1,18 @@
-_FRAME_ROOT = 'C:\\Users\\graha\\Documents\\dev\\EngineRoom\\CompositionFramework\\examples\\example'
-import sys
-sys.path.append(_FRAME_ROOT)
-from  boilerplate.send2framework import send, sender
+from pythonosc import udp_client
 
 
-
+# save a sender and use it to send multiple messages to the same address
+def sender(addr, ip='127.0.0.1', port=57120):
+    client = udp_client.SimpleUDPClient(ip, port)
+    def s(*args):
+        client.send_message(addr, args)
+    return s
+    
+# send a one-off message - msg must be an array
+def send(addr, msg, ip='127.0.0.1', port=57120):
+    sender(addr, ip, port)(*msg)
+    
+    
 import time
     
 # sample using example.scd
@@ -38,4 +46,3 @@ def demo():
     send('/implOsc', ['setAmp', 0.4])
     time.sleep(3)
     send('/implOsc', ['killS'])
-    

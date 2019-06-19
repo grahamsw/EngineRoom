@@ -1,5 +1,7 @@
 # this contains confidential account information
 NewRelicCredentials.py
+#logins, api keys, etc
+secrets.py
 
 ################
 ## Eclipse

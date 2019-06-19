@@ -1,6 +1,6 @@
+_FRAME_ROOT = 'C:\\Users\\graha\\Documents\\dev\\EngineRoom\\CompositionFramework\\'
 import sys
-sys.path.append('../../')
-
+sys.path.append(_FRAME_ROOT)
 from  boilerplate.send2framework import send, sender
 
 import numpy as np
@@ -73,6 +73,23 @@ sprites = [
           ]
 
 
+
+
+keep_wandering = True
+    
+def makeWander(intervalMin = 0.01, intervalMax=1, trace=True):
+    sndr = sender('/sprite_Osc')
+    global keep_wandering
+    while keep_wandering:
+        s = np.random.choice(sprites)
+        p = np.random.choice(rangeKeys(s['sprite']))
+        n = s['sprite']['name']
+        v = s['generator'](p)
+        sndr('setProp', n, p, v)
+        if trace:
+            print ("name: {0}, prop: {1}, val: {2}".format(n, p, v))
+        time.sleep(np.random.uniform(intervalMin, intervalMax))
+
 def createSprites(sprites):
     for sprite in sprites:
         print(sprite)
@@ -84,37 +101,22 @@ def createSprites(sprites):
                                          mid(sprite['sprite']['attackRange']),
                                          mid(sprite['sprite']['posRange'])                                         
                             ])
+    makeWander()
 
-
-ex = Event()
-    
-def makeWander(intervalMin = 0.01, intervalMax=1, trace=True):
-    sndr = sender('/sprite_Osc')
-    while True:
-        s = np.random.choice(sprites)
-        p = np.random.choice(rangeKeys(s['sprite']))
-        n = s['sprite']['name']
-        v = s['generator'](p)
-        sndr('setProp', n, p, v)
-        if trace:
-            print ("name: {0}, prop: {1}, val: {2}".format(n, p, v))
-        time.sleep(np.random.uniform(intervalMin, intervalMax))
-
-def interruptWander():
-    print ("exiting")
-    ex.set()
-
-#interruptWander()
-    
 def clearSprites():
     send('/sprite_Osc', ['clearAll'])   
 
-
+def interruptWander():
+    print ("exiting")
+    global keep_wandering
+    keep_wandering= False
+    clearSprites()
+    
 createSprites(sprites)   
- 
-makeWander()
-#clearSprites()
- 
+interruptWander()
+
+
+
 def demoWander(sprite, granularity, steps=1000):
     generator = spriteValueGenerator(sprite, granularity)
     

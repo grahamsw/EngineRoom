@@ -1,4 +1,0 @@
-~postSomething = {
-	"something".postln;
-
-};

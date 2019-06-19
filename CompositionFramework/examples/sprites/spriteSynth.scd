@@ -1,7 +1,7 @@
 "definining \sprite".postln;
 
 SynthDef(\sprite, {
-	|freq = 440, amp = 0.2, rate = 4, attack = 0.01, pos = 0, out = 0|
+	|freq = 440, amp = 0.2, rate = 4, attack = 0.01, pos = 0, out = 1|
 
 	var env, trig, signal;
 	trig = LFPulse.kr(rate);
