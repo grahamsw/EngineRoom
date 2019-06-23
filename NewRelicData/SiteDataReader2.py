@@ -1,6 +1,8 @@
 import NewRelicMonitor as nrm
 from secrets import account_id, key_id 
-
+import time
+from send2framework import sender
+from ValueMappers import makeConstrainMapper
 
 # A data getter takes a query and returns the large, complex JSON data object,
 # with all kinds of bookkeeping info, from New Relic, 
@@ -35,7 +37,19 @@ errorReader = nrm.makeNewRelicValueReader(myDataGetter,
 # 
 # =============================================================================
 
+def maxMin(vals):
+    pages = [p for (p,_,_) in vals]
+    durations = [d for (_,d,_) in vals]
+    errors = [e for (_,_,e) in vals]
+    print(f"pages:{min(pages)} - {max(pages)}")
+    print(f"durations:{min(durations)} - {max(durations)}")
+    print(f"errors:{min(errors)} - {max(errors)}")
 
 
+send = sender('/implOsc')
+send('init')
 
-
+constrainFreq = makeConstrainMapper(0, 40, 300, 1000)
+constrainRate = makeConstrainMapper(0, 1, 0, 0.5)
+#constrainRate = makeConstrainMapper(0, )
+.

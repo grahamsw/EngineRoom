@@ -27,24 +27,47 @@ busses that they need
 */
 ~makeEvents = {
 	~events = Dictionary.new;
-	~events.add(\pulseWidth -> {
+	~events.add(\init -> {
 		|msg|
-		~bus[\pulseWidth].set(msg[2]);
+		"creating synth".postln;
+
+		~synth = Synth(\sonifier, [\freq, 400, \amp, 0.1, \rate, 10]);
+		~bus[\freq].set(300);
+		~bus[\amp].set(0.1);
+		~bus[\rate].set(20);
+
+        ~synth.map(\freq, ~bus[\freq], \amp, ~bus[\amp], \rate, ~bus[\rate]);
+	});
+	~events.add(\rate -> {
+		|msg|
+		~bus[\rate].set(msg[2]);
 	});
 	~events.add(\freq -> {
 		|msg|
 		~bus[\freq].set(msg[2]);
 	});
+	~events.add(\amp -> {
+		|msg|
+		~bus[\amp].set(msg[2]);
+	});
 };
 
 ~defineSynths = {
+SynthDef(\sonifier, {
+	|freq, amp, rate|
+	var sound, env;
+	sound = SinOsc.ar(freq, mul:amp);
+	env = Pulse.ar(freq: rate, width: 0.5);
 
+	Out.ar(0, env * sound);
+}).add;
 };
 
 ~makeBusses = {
 	~bus = Dictionary.new;
 	~bus.add(\freq -> Bus.control(s, 1));
-	~bus.add(\pulseWidth -> Bus.control(s, 1));
+	~bus.add(\amp -> Bus.control(s,1));
+	~bus.add(\rate -> Bus.control(s, 1));
 };
 
 // may be needed
@@ -56,7 +79,6 @@ busses that they need
 
 ~addInititialSynths = {
 	"~addInititialSynths".postln;
-	// any startup synths, reverb, say
 
 };
 

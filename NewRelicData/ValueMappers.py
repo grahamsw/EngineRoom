@@ -15,4 +15,4 @@ def makeMapper(a,b,c,d):
     return lambda val: mapValue(val,a,b,c,d)
 
 def makeConstrainMapper(a,b,c,d):
-    return lambda val: mapConstrainValue(a, b, c, d)
+    return lambda val: mapConstrainValue(val, a, b, c, d)
