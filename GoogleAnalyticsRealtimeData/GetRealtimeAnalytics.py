@@ -1,7 +1,7 @@
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
-import from secrets import profile_id
+from secrets import profile_id
 
 def get_service(key_file_location):
     api_name='analytics'
@@ -34,7 +34,7 @@ def makeMetricGetter(key_file_location, profile_id, metrics, dimensions):
 ## sample use
 ##############################################################################
  
-key_file_location = r'C:\Users\graha\Downloads\FFOCREPORTING-a9a4a73210dd.json'
+key_file_location = r'C:\Users\g.stalker-wilde\Downloads\My Project-e08a1278b275.json'
 
 
 pageMetrics = makeMetricGetter(key_file_location, profile_id,
