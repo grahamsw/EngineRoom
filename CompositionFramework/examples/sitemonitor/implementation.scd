@@ -1,6 +1,3 @@
-
-
-
 (
 // see https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
 // for code diagram
@@ -17,9 +14,9 @@
 // All by typing Ctrl + Enter
 // ---------------------------------------------------------
 
-// this should point to the frameworks code, here it's in the
-// same folder, usually it won't be
+// this should point to the frameworks code
 ~fw = "../../boilerplate/boilerplate.scd";
+// the "channel name" that OSC listens on
 ~impl_osc_name = "/implOsc";
 
 /*
@@ -32,21 +29,33 @@ busses that they need
 	~events = Dictionary.new;
 	~events.add(\init -> {
 		|msg|
+		"creating synth and adding its events".postln;
+		var config = ~msg2Config.(msg);
+		~initSynth.(config);	
+	});
+
+	~events.add(\init1 -> {
+		|msg|
+		var config = (\synth:(\name:\sonifier, \key:\sonifier1,\killEventName:\killsonifier1),
+		              \controls: [(\controlName:\freq,
+					               \eventName:\freq1,
+								   \initialValue,300),
+								  (\controlName:\amp,
+								   \eventName:\amp1,
+								   \initialValue,0.1),
+								  (\controlName:\rate,
+								   \eventName:\rate1,
+								   \initialValue:10)
+								 ])
 		"creating synth".postln;
-
-		~synth = Synth(\sonifier, [\freq, 400, \amp, 0.1, \rate, 10]);
-		~bus[\freq].set(300);
-		~bus[\amp].set(0.1);
-		~bus[\rate].set(20);
-
-        ~synth.map(\freq, ~bus[\freq], \amp, ~bus[\amp], \rate, ~bus[\rate]);
+		~initSynth.(config);
 	});
 
 
 	~events.add(\init2 -> {
 		|msg|
 
-		var config =    (\synth:(\name:\sonifier2, \key:\sonifier2),
+		var config =    (\synth:(\name:\sonifier2, \key:\sonifier2, \killEventName:\killsonifier2),
 	          \controls: [(\controlName:\freq,
 		                   \eventName:\freq2,
 			               \initialValue:600),
@@ -71,18 +80,14 @@ busses that they need
 		"creating synth".postln;
 	});
 
-	~events.add(\rate -> {
-		|msg|
-		~bus[\rate].set(msg[2]);
-	});
-	~events.add(\freq -> {
-		|msg|
-		~bus[\freq].set(msg[2]);
-	});
-	~events.add(\amp -> {
-		|msg|
-		~bus[\amp].set(msg[2]);
-	});
+};
+
+// the message here will be sent via OSC from Python
+// it will be decoded into a config object
+~msg2Config = {
+	|msg|
+
+	// TODO
 };
 
 ~initSynth = {
@@ -98,34 +103,35 @@ busses that they need
 		|msg|
 		~bus[controlSettings[\eventName]].set(msg[2]);
 	});
+	~events.add(config[\synth][\killEventName] -> {
+		|msg|
+		~synths[config[\synth][\key]].free;	
+	})
 	});
 };
 
 ~defineSynths = {
-SynthDef(\sonifier, {
-	|freq, amp, rate|
-	var sound, env;
-	sound = SinOsc.ar(freq, mul:amp);
-	env = Pulse.ar(freq: rate, width: 0.5);
+	SynthDef(\sonifier, {
+		|freq, amp, rate|
+		var sound, env;
+		sound = SinOsc.ar(freq, mul:amp);
+		env = Pulse.ar(freq: rate, width: 0.5);
 
-	Out.ar(0, env * sound);
-}).add;
-	SynthDef(\sonifier2, {
-	|freq=500, amp=0.4, bwr=0.5, tremoloFreq=0.1, tremoloDepth=0.95|
-	var sound, res, env;
-	sound = WhiteNoise.ar();
-	res = Resonz.ar(sound, freq, bwr);
-	env = SinOsc.kr(freq: tremoloFreq).range(1-tremoloDepth, 1);
+		Out.ar(0, env * sound);
+	}).add;
+		SynthDef(\sonifier2, {
+		|freq=500, amp=0.4, bwr=0.5, tremoloFreq=0.1, tremoloDepth=0.95|
+		var sound, res, env;
+		sound = WhiteNoise.ar();
+		res = Resonz.ar(sound, freq, bwr);
+		env = SinOsc.kr(freq: tremoloFreq).range(1-tremoloDepth, 1);
 
-	Out.ar(0, env * res * amp);
-}).add;
+		Out.ar(0, env * res * amp);
+	}).add;
 };
 
 ~makeBusses = {
 	~bus = Dictionary.new;
-	~bus.add(\freq -> Bus.control(s, 1));
-	~bus.add(\amp -> Bus.control(s,1));
-	~bus.add(\rate -> Bus.control(s, 1));
 };
 
 // may be needed
@@ -137,7 +143,6 @@ SynthDef(\sonifier, {
 
 ~addInititialSynths = {
 	"~addInititialSynths".postln;
-
 };
 
 // -----------------------------------------------

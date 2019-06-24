@@ -1,23 +1,26 @@
-import NewRelicMonitor as nrm
-from secrets import account_id, key_id 
-
+from NewRelicMonitor import makeNewRelicDataGetter, makeNewRelicValueReader, makeNamedResultReader
+from NewRelic_secrets import account_id, key_id 
+import time
+from send2framework import sender
+from ValueMappers import makeConstrainMapper
 
 # A data getter takes a query and returns the large, complex JSON data object,
 # with all kinds of bookkeeping info, from New Relic, 
 # various parts of which might sometimes be of interest.
-myDataGetter = nrm.makeNewRelicDataGetter(account_id, key_id)
+myDataGetter = makeNewRelicDataGetter(account_id, key_id)
 
-pageViewReader = nrm.makeNewRelicValueReader(myDataGetter, 
+pageViewReader = makeNewRelicValueReader(myDataGetter, 
                                        'SELECT count(*) from PageView SINCE 1 minutes ago', 
-                                       nrm.makeNamedResultReader('count'))
+                                       makeNamedResultReader('count'))
 
-transactionDurationReader = nrm.makeNewRelicValueReader(myDataGetter,
+transactionDurationReader = makeNewRelicValueReader(myDataGetter,
                                         'SELECT average(duration) from Transaction since 1 minute ago', 
-                                        nrm.makeNamedResultReader('average'))
+                                        makeNamedResultReader('average'))
 
-errorReader = nrm.makeNewRelicValueReader(myDataGetter,
+errorReader = makeNewRelicValueReader(myDataGetter,
                                         'SELECT count(*) FROM TransactionError SINCE 10 MINUTES AGO', 
-                                        nrm.makeNamedResultReader('count'))
+                                        makeNamedResultReader('count'))
+
 # =============================================================================
 # 
 # #Calling, and extracting a named result
@@ -30,39 +33,56 @@ errorReader = nrm.makeNewRelicValueReader(myDataGetter,
 #                      'SELECT average(duration) from Transaction since 1 minute ago', 
 #                       lambda data: data['performanceStats']['responseBodyBytes'])
 # 
+# 
+# 
 # =============================================================================
 
-import time
-import ValueMappers as vm
-from collections import namedtuple
-from sendOSC2 import makeOscSender
+def maxMin(vals):
+    pages = [p for (p,_,_) in vals]
+    durations = [d for (_,d,_) in vals]
+    errors = [e for (_,_,e) in vals]
+    print(f"pages:{min(pages)} - {max(pages)}")
+    print(f"durations:{min(durations)} - {max(durations)}")
+    print(f"errors:{min(errors)} - {max(errors)}")
 
 
-MessageHandler = namedtuple("MessageHandler", "reader sender")
+send = sender('/implOsc')
+#send('init')
 
-send = makeOscSender('127.0.0.1', 6449)
-        
-def sendPageViews(val):
-    pulseWidth = vm.mapConstrainValue(val, 0, 20, 150, 10)
-    send('/implOsc', ['pulseWidth', pulseWidth])
-    print (f'PageViews: {val}, pulseWidth: {pulseWidth}')
- 
-    
-def sendDuration(val):
-    freq = vm.mapConstrainValue(val, 0, 4, 380, 500)
-    send('/implOsc' , ['freq', freq])
-    print (f'Duration {val}, freq: {freq}')
+mapPagesToFreq = makeConstrainMapper(0, 10, 300, 1000, True)
+mapDurationToBwr = makeConstrainMapper(0, 5, 0.2, 1)
+#constrainRate = makeConstrainMapper(0, )
 
-readers = {}
-readers['PageViews'] = MessageHandler(pageViewReader, sendPageViews)   
-readers['Duration'] = MessageHandler(transactionDurationReader, sendDuration )
- 
-
+vals = []
 while True:
-    for k in readers:
-        v = readers[k].reader()        
-        readers[k].sender(v)
-    time.sleep(5)
+    time.sleep(1)
+
     
+    pages = pageViewReader()
+    durations = transactionDurationReader()
+    errors = errorReader()
+    vals.append((pages, durations, errors))
+    print(f"pages: {pages}, durations: {durations}, errors: {errors}")
+    
+    bwr = mapDurationToBwr(durations)
+    freq = mapPagesToFreq(pages)
+    amp = 0.4 #constrainAmp(errors)
+    print(f"bwr: {bwr}, freq: {freq}, amp: {amp}")
+    send('bwr', bwr)
+    send('freq2', freq)
+    send('amp2', amp)
+    
+    
+    
+import matplotlib.pyplot as plt
+import numpy as np
 
+x = np.linspace(0, 1, 100)
+y = [constrainRate(a) for a in x]
+plt.plot(x,y)
 
+x = np.linspace(0, 10, 100)
+y = [constrainFreq(a) for a in x]
+plt.plot(x,y)
+
+plt.plot([d for (_,d,_) in vals])

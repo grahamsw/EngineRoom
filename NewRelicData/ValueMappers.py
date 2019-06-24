@@ -13,14 +13,14 @@ def mapValue(val, a, b, c, d, logmap = False):
     else:
         return fc + (fval - fa) * (fd - fc)/(fb - fa)
     
-def mapConstrainValue(val, a, b, c, d):
-    return mapValue(constrainValue(val, a, b), a, b, c, d)    
+def mapConstrainValue(val, a, b, c, d, logmap=False):
+    return mapValue(constrainValue(val, a, b), a, b, c, d, logmap)    
 
-def makeMapper(a,b,c,d):
-    return lambda val: mapValue(val,a,b,c,d)
+def makeMapper(a,b,c,d, logmap=False):
+    return lambda val: mapValue(val,a,b,c,d, logmap)
 
-def makeConstrainMapper(a,b,c,d):
-    return lambda val: mapConstrainValue(val, a, b, c, d)
+def makeConstrainMapper(a,b,c,d, logmap=False):
+    return lambda val: mapConstrainValue(val, a, b, c, d, logmap)
 
 
 #import matplotlib.pyplot as plt

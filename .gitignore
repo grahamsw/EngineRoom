@@ -1,6 +1,8 @@
 # this contains confidential account information
 NewRelicCredentials.py
 #logins, api keys, etc
+
+*secrets.py
 secrets.py
 
 ################
