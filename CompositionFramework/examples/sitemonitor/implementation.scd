@@ -131,7 +131,7 @@ busses that they need
 };
 
 ~makeBusses = {
-	~bus = Dictionary.new;
+
 };
 
 // may be needed
@@ -153,11 +153,14 @@ busses that they need
 	"~init".postln;
 	~out = 0;
 	~traceOsc = true;
+	~bus = Dictionary.new;
 	~synths = Dictionary.new;
 };
 
 ~cleanup = {
 	"~cleanup".postln;
+	~synths.asPairs.do({ |(k,v)| v.free;});
+	~bus.asPairs.do({ |(k,v)| v.free;});
 	~osc.free;
 };
 
