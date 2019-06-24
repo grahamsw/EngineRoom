@@ -47,9 +47,42 @@ def maxMin(vals):
 
 
 send = sender('/implOsc')
-send('init')
+#send('init')
 
-constrainFreq = makeConstrainMapper(0, 40, 300, 1000)
-constrainRate = makeConstrainMapper(0, 1, 0, 0.5)
+mapPagesToFreq = makeConstrainMapper(0, 10, 300, 1000)
+mapDurationToBwr = makeConstrainMapper(0, 5, 0.2, 1)
 #constrainRate = makeConstrainMapper(0, )
-.
+
+vals = []
+while True:
+    time.sleep(1)
+
+    
+    pages = pageViewReader()
+    durations = transactionDurationReader()
+    errors = errorReader()
+    vals.append((pages, durations, errors))
+    print(f"pages: {pages}, durations: {durations}, errors: {errors}")
+    
+    bwr = mapDurationToBwr(durations)
+    freq = mapPagesToFreq(pages)
+    amp = 0.4 #constrainAmp(errors)
+    print(f"bwr: {bwr}, freq: {freq}, amp: {amp}")
+    send('bwr', bwr)
+    send('freq2', freq)
+    send('amp2', amp)
+    
+    
+    
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 1, 100)
+y = [constrainRate(a) for a in x]
+plt.plot(x,y)
+
+x = np.linspace(0, 10, 100)
+y = [constrainFreq(a) for a in x]
+plt.plot(x,y)
+
+plt.plot([d for (_,d,_) in vals])

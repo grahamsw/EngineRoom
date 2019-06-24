@@ -1,3 +1,6 @@
+
+
+
 (
 // see https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
 // for code diagram
@@ -38,6 +41,36 @@ busses that they need
 
         ~synth.map(\freq, ~bus[\freq], \amp, ~bus[\amp], \rate, ~bus[\rate]);
 	});
+
+
+	~events.add(\init2 -> {
+		|msg|
+
+		var config =    (\synth:(\name:\sonifier2, \key:\sonifier2),
+	          \controls: [(\controlName:\freq,
+		                   \eventName:\freq2,
+			               \initialValue:600),
+
+	                       (\controlName:\amp,
+		                   \eventName:\amp2,
+			               \initialValue:0.01),
+
+	                       (\controlName:\bwr,
+		                   \eventName:\bwr,
+			               \initialValue:0.6),
+
+	                       (\controlName:\tremoloFreq,
+		                   \eventName:\tremoloFreq,
+			               \initialValue:0.1),
+
+	                       (\controlName:\tremoloDepth,
+		                   \eventName:\tremoloDepth,
+			               \initialValue:0.05)
+]);
+		~initSynth.(config);
+		"creating synth".postln;
+	});
+
 	~events.add(\rate -> {
 		|msg|
 		~bus[\rate].set(msg[2]);
@@ -52,6 +85,22 @@ busses that they need
 	});
 };
 
+~initSynth = {
+	|config|
+	~synths[config[\synth][\key]] = Synth(config[\synth][\name]);
+	config[\controls].do({
+		|controlSettings|
+		~bus.add(controlSettings[\eventName] -> Bus.control(s));
+		~bus[controlSettings[\eventName]].set(controlSettings[\initialValue]);
+		~synths[config[\synth][\key]].map(controlSettings[\controlName], ~bus[controlSettings[\eventName]]);
+
+	~events.add(controlSettings[\eventName] -> {
+		|msg|
+		~bus[controlSettings[\eventName]].set(msg[2]);
+	});
+	});
+};
+
 ~defineSynths = {
 SynthDef(\sonifier, {
 	|freq, amp, rate|
@@ -60,6 +109,15 @@ SynthDef(\sonifier, {
 	env = Pulse.ar(freq: rate, width: 0.5);
 
 	Out.ar(0, env * sound);
+}).add;
+	SynthDef(\sonifier2, {
+	|freq=500, amp=0.4, bwr=0.5, tremoloFreq=0.1, tremoloDepth=0.95|
+	var sound, res, env;
+	sound = WhiteNoise.ar();
+	res = Resonz.ar(sound, freq, bwr);
+	env = SinOsc.kr(freq: tremoloFreq).range(1-tremoloDepth, 1);
+
+	Out.ar(0, env * res * amp);
 }).add;
 };
 
@@ -90,6 +148,7 @@ SynthDef(\sonifier, {
 	"~init".postln;
 	~out = 0;
 	~traceOsc = true;
+	~synths = Dictionary.new;
 };
 
 ~cleanup = {
