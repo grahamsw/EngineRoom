@@ -27,26 +27,20 @@ busses that they need
 */
 ~makeEvents = {
 	~events = Dictionary.new;
-	~events.add(\init -> {
-		|msg|
-		"creating synth and adding its events".postln;
-		var config = ~msg2Config.(msg);
-		~initSynth.(config);	
-	});
 
 	~events.add(\init1 -> {
 		|msg|
 		var config = (\synth:(\name:\sonifier, \key:\sonifier1,\killEventName:\killsonifier1),
 		              \controls: [(\controlName:\freq,
 					               \eventName:\freq1,
-								   \initialValue,300),
+								   \initialValue:300),
 								  (\controlName:\amp,
 								   \eventName:\amp1,
-								   \initialValue,0.1),
+								   \initialValue:0.1),
 								  (\controlName:\rate,
 								   \eventName:\rate1,
 								   \initialValue:10)
-								 ])
+								 ]);
 		"creating synth".postln;
 		~initSynth.(config);
 	});
@@ -105,7 +99,7 @@ busses that they need
 	});
 	~events.add(config[\synth][\killEventName] -> {
 		|msg|
-		~synths[config[\synth][\key]].free;	
+		~synths[config[\synth][\key]].free;
 	})
 	});
 };
@@ -159,8 +153,8 @@ busses that they need
 
 ~cleanup = {
 	"~cleanup".postln;
-	~synths.asPairs.do({ |(k,v)| v.free;});
-	~bus.asPairs.do({ |(k,v)| v.free;});
+//	~synths.asPairs.do({ |(k,v)| v.free;});
+//	~bus.asPairs.do({ |(k,v)| v.free;});
 	~osc.free;
 };
 

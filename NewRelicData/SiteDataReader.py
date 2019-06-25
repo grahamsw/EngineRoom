@@ -47,7 +47,7 @@ def maxMin(vals):
 
 
 send = sender('/implOsc')
-#send('init')
+send('init2')
 
 mapPagesToFreq = makeConstrainMapper(0, 10, 300, 1000, True)
 mapDurationToBwr = makeConstrainMapper(0, 5, 0.2, 1)
