@@ -2,6 +2,7 @@
 NewRelicCredentials.py
 #logins, api keys, etc
 
+.ipynb_checkpoints/
 *secrets.py
 secrets.py
 
