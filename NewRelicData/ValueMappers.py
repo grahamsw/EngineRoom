@@ -14,6 +14,7 @@ def mapValue(val, a, b, c, d, logmap = False):
         return fc + (fval - fa) * (fd - fc)/(fb - fa)
     
 def mapConstrainValue(val, a, b, c, d, logmap=False):
+    '''returns constrain mapper'''
     return mapValue(constrainValue(val, a, b), a, b, c, d, logmap)    
 
 def makeMapper(a,b,c,d, logmap=False):

@@ -12,4 +12,3 @@ def sender(addr, ip='127.0.0.1', port=57120):
 def send(addr, msg, ip='127.0.0.1', port=57120):
     sender(addr, ip, port)(*msg)
     
-    

@@ -26,10 +26,22 @@ with them - along with any effects and buffers and
 busses that they need
 */
 ~makeEvents = {
+	"makeing events".postln;
 	~events = Dictionary.new;
 
-	~events.add(\init1 -> {
+	~events.add(\initSynth -> {
 		|msg|
+		var config = ~msg2Config.(msg);
+		~initSynth.(config);
+	});
+
+	~events.add(\loadCode -> {
+		|msg|
+		msg[2].asString.load;
+	});
+/*
+	~events.add(\init1 -> {
+		|msg|ss
 		var config = (\synth:(\name:\sonifier, \key:\sonifier1,\killEventName:\killsonifier1),
 		              \controls: [(\controlName:\freq,
 					               \eventName:\freq1,
@@ -73,19 +85,28 @@ busses that they need
 		~initSynth.(config);
 		"creating synth".postln;
 	});
-
+*/
 };
 
 // the message here will be sent via OSC from Python
 // it will be decoded into a config object
 ~msg2Config = {
 	|msg|
-
-	// TODO
+	var ctls, synth, ret;
+	synth = (\name: msg[2], \key: msg[3], \killEventName: msg[4]);
+	ctls = [];
+	msg.drop(5).clump(3).do({
+		|ctl|
+		ctls = ctls.add((\controlName: ctl[0], \eventName:ctl[1], \initialValue: ctl[2]));
+	});
+    ret = (\synth: synth, \controls: ctls);
+	ret.postln;
+	ret;
 };
 
 ~initSynth = {
 	|config|
+	"initing synth".postln;
 	~synths[config[\synth][\key]] = Synth(config[\synth][\name]);
 	config[\controls].do({
 		|controlSettings|
@@ -202,7 +223,6 @@ busses that they need
 		~effectsGroup = Group.after(~mainGrp);
 	});
 };
-
 
 ~fw.loadRelative;
 
