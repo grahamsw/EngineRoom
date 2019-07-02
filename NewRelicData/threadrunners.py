@@ -1,8 +1,11 @@
 import threading
 import numpy as np
 import time
-
 import functools
+
+
+
+
 def rlocker(func):
     rlock = threading.RLock()
     @functools.wraps(func)
@@ -13,31 +16,38 @@ def rlocker(func):
     return wrapper
 
 
-lockingPrinter = rlocker(print)
-
-def doSomething(msg, val):
-    lockingPrinter(msg, ': ', val)
-
-       
         
-def cycle(fn, args, durs, stopEvent = None):
+def cycle(fn, vals, durs, stopEvent = None):
     ''' 
-    args and durs are generators, they may end or may 
+    vals and durs are generators, they may end or may 
     go on forever (in which case the stopEvent can end things)
     '''
     while not(stopEvent and stopEvent.isSet()):
-        v = next(args)
+        v = next(vals)
         d = next(durs)
         if v == None or d == None:
             break
-        fn(v)
-       # print('dur: ',dd)
+        if isinstance(v, list) or isinstance(v, tuple):
+            if None in v:
+                break
+            fn(*v)
+        else:
+            fn(v)
         time.sleep(d)
         
+        
+# vals is a generator creating tuples (or lists, or individual values) of arguments for fn
+# durs is a generator creating a sequence of intervals between calls to fn
+# if neither of these generators is finite the thread can be stopped
+# by calling s.set()    
+def run_in_thread(fn, vals, durs, startImmediately=True):
+    s = threading.Event()
+    t  = threading.Thread(target = cycle, args=(fn, vals, durs,  s))   
+    if startImmediately:
+        t.start()
+    return s,t
 
 
-def pc(msg, args, durs, stopper):
-    cycle(lambda val: doSomething(msg, val), args, durs, stopper)
 
 def const_gen(n):
     while True:
@@ -64,13 +74,11 @@ def rng_gen(fr, to, steps, atEnd =  None):
                     yield None
                 else:
                     cur = 0
+       
         
-s = threading.Event()
-t  = threading.Thread(target = pc, args=("msg", const_gen(5), const_gen(0.5),  s))
-
-t.start()
-
-s.set()
-
-
-        
+def zip_gen(*args):
+    while True:
+        l = []
+        for g in args:
+            l.append(next(g))
+        yield l
