@@ -1,12 +1,15 @@
 
 (
+
+"load whistle".postln;
 SynthDef(\whistle, {
-	|freq = 440, focus = 4, rq = 0.03, pulseFreq = 5, amp = 0.5, out = 0|
-	var env = EnvGen.kr(Env.new([0, 1, 0.5, 0], [0.5,1, 3]), doneAction:2);
+	|freq = 440, focus = 4, rq = 0.03, pulseFreq = 5, timeScale=1, amp = 0.5, out = 0|
+	var env = EnvGen.kr(Env.new([0, 1, 0.5, 0], [0.5,1, 3]),timeScale:timeScale, doneAction:2);
 	var snd = BPF.ar(Pulse.ar(freq, LFTri.kr(pulseFreq).range(0.01, 0.5)), 4  * freq, rq);
 	Out.ar(out, snd * env * amp);
 }).add;
 )
+/*
 
 (
 Pdef(\testWhistle, Pbind(\instrument, \whistle,
@@ -26,3 +29,4 @@ Pdef(\testWhistle).stop
 
 Pdef(\testWhistle).play
 
+*/

@@ -26,13 +26,18 @@ with them - along with any effects and buffers and
 busses that they need
 */
 ~makeEvents = {
-	"makeing events".postln;
+	"making events".postln;
 	~events = Dictionary.new;
 
 	~events.add(\initSynth -> {
 		|msg|
 		var config = ~msg2Config.(msg);
 		~initSynth.(config);
+	});
+	~events.add(\playSynth -> {
+		|msg|
+		//[msg[2], msg.drop(3)].postln;
+		Synth(msg[2], msg.drop(3));
 	});
 
 	~events.add(\loadCode -> {
@@ -41,7 +46,7 @@ busses that they need
 	});
 /*
 	~events.add(\init1 -> {
-		|msg|ss
+		|msg|
 		var config = (\synth:(\name:\sonifier, \key:\sonifier1,\killEventName:\killsonifier1),
 		              \controls: [(\controlName:\freq,
 					               \eventName:\freq1,
@@ -103,6 +108,8 @@ busses that they need
 	ret.postln;
 	ret;
 };
+
+
 
 ~initSynth = {
 	|config|
@@ -167,7 +174,7 @@ busses that they need
 ~init = {
 	"~init".postln;
 	~out = 0;
-	~traceOsc = true;
+	~traceOsc = false;
 	~bus = Dictionary.new;
 	~synths = Dictionary.new;
 };
