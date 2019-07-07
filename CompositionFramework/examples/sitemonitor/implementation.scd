@@ -44,53 +44,6 @@ busses that they need
 		|msg|
 		msg[2].asString.load;
 	});
-/*
-	~events.add(\init1 -> {
-		|msg|
-		var config = (\synth:(\name:\sonifier, \key:\sonifier1,\killEventName:\killsonifier1),
-		              \controls: [(\controlName:\freq,
-					               \eventName:\freq1,
-								   \initialValue:300),
-								  (\controlName:\amp,
-								   \eventName:\amp1,
-								   \initialValue:0.1),
-								  (\controlName:\rate,
-								   \eventName:\rate1,
-								   \initialValue:10)
-								 ]);
-		"creating synth".postln;
-		~initSynth.(config);
-	});
-
-
-	~events.add(\init2 -> {
-		|msg|
-
-		var config =    (\synth:(\name:\sonifier2, \key:\sonifier2, \killEventName:\killsonifier2),
-	          \controls: [(\controlName:\freq,
-		                   \eventName:\freq2,
-			               \initialValue:600),
-
-	                       (\controlName:\amp,
-		                   \eventName:\amp2,
-			               \initialValue:0.01),
-
-	                       (\controlName:\bwr,
-		                   \eventName:\bwr,
-			               \initialValue:0.6),
-
-	                       (\controlName:\tremoloFreq,
-		                   \eventName:\tremoloFreq,
-			               \initialValue:0.1),
-
-	                       (\controlName:\tremoloDepth,
-		                   \eventName:\tremoloDepth,
-			               \initialValue:0.05)
-]);
-		~initSynth.(config);
-		"creating synth".postln;
-	});
-*/
 };
 
 // the message here will be sent via OSC from Python

@@ -21,7 +21,7 @@ SynthDef(\bell, {
 	Out.ar(0, sig!2);
 }).add
 )
-
+/*
 
 // 2. Test a single note
 x = Synth(\bell, [\fs, 60.midicps, \t60, 9.177, \pitchy, 8]);
@@ -72,3 +72,4 @@ Pbind(
 	\dur, 0.25
 ).play;
 )
+*/

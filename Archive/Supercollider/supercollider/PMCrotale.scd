@@ -17,9 +17,10 @@ SynthDef("PMCrotale", {
 	Out.ar(0, out);
 }).store;
 )
-
+/*
 Synth("PMCrotale", ["midi", rrand(48, 72).round(1), "tone", rrand(1,6), \art, rrand(1,10), \pan, rrand(0.0, 10.0)/10.0])
 
 
 [1,2,3].postln
 
+*/
