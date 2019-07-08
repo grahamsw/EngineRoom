@@ -4,7 +4,7 @@
 // 1. define the synth
 (
 SynthDef(\bell, {
-	|fs=1, t60=1, pitchy=1, amp=0.25, gate=1|
+	|fs=1, t60=1, pitchy=1, amp=0.25, gate=1, pos=0, out = 0|
 	var sig, exciter;
 	//exciter = Impulse.ar(0);
 	exciter = WhiteNoise.ar() * EnvGen.ar(Env.perc(0.001, 0.05), gate) * 0.25;
@@ -18,7 +18,7 @@ SynthDef(\bell, {
 		freqscale:fs*pitchy);
 	sig = FreeVerb.ar(sig) * amp;
 	DetectSilence.ar(sig, 0.001, 0.5, doneAction:2);
-	Out.ar(0, sig!2);
+	Out.ar(out, Pan2.ar(sig, pos));
 }).add
 )
 /*
