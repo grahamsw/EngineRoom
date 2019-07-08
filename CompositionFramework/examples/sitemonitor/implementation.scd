@@ -106,7 +106,6 @@ busses that they need
 };
 
 ~makeBusses = {
-	[0,1,2,3,5,6,7,8,9].do{|i| ~audioBusses[i] = Bus.audio(s);};
 
 };
 
@@ -130,7 +129,6 @@ busses that they need
 	~out = 0;
 	~traceOsc = false;
 	~bus = Dictionary.new;
-	~audioBusses = Dictionary.new;
 	~synths = Dictionary.new;
 };
 
