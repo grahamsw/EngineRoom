@@ -38,7 +38,7 @@ params = [const_gen('playSynth'), const_gen('bell'),
           const_gen('amp'),       gen_proxy(amp_getter),
           const_gen('pitchy'),    gen_proxy(pitchy_getter)]
  
-# run and save
+# run and save stopper event
 s1, _ = run_in_thread(s, zip_gen(*params),
                       gen_proxy(dur_getter))
 
@@ -107,7 +107,7 @@ s1.set()
 
 s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\supercollider\PMCrotale.scd")
 
-
+s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\sonifiers.scd")
 
 # a continuous synth that keeps playing
 
@@ -122,7 +122,7 @@ s('initSynth', 'sonifier2', 'synth2', 'killsynth2',
 
 # play with its controls
 s3, _ = run_in_thread(s, zip_gen(const_gen("freq2"), rng_gen(200, 1000,20, 'rev')), const_gen(0.2))
-s4,_ = run_in_thread(s, zip_gen(const_gen("bwr2"), rng_gen(0.1, 1, 30, 'rev')), const_gen(0.3))
+s4, _ = run_in_thread(s, zip_gen(const_gen("bwr2"), rng_gen(0.1, 1, 30, 'rev')), const_gen(0.3))
 s5, _ = run_in_thread(s, zip_gen(const_gen("tremoloFreq2"), rng_gen(0.2, 5, 20, 'rev')), const_gen(0.1))
 s6, _ = run_in_thread(s, zip_gen(const_gen("tremoloDepth2"), rng_gen(0.1, 1, 30, 'rev')), const_gen(0.05))
 
