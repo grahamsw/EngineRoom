@@ -9,6 +9,16 @@ class AtEnd(Enum):
     REPEAT = 1
     MIRROR = 2
     
+# convert note, or list of notes, from MIDI to freq
+# can "rebase" to transpose or for convenience
+def note2cps(note, refNote = 69,  refFreq = 440):
+    conv = lambda n: refFreq * 2**((n-refNote)/12)
+    if isinstance(note,list):
+        return [conv(n) for n in note]
+    else:
+        return conv(note)
+
+
     
 def const_gen(n):
     while True:
