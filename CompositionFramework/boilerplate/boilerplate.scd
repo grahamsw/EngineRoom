@@ -41,7 +41,6 @@ Can't recommend the tutorials enough.
 ~serverTree = {
 	"~serverTree".postln;
 	~makeNodes.();
-	~addInititialSynths.();
 };
 
 ~serverQuit = {
@@ -56,8 +55,6 @@ Can't recommend the tutorials enough.
 ~serverBoot = {
 	"~serverBoot".postln;
 	~init.();
-	~makeBuffers.();
-	~makeBusses.();
 	~makeEvents.();
 	~addControllers.();
 };
@@ -67,8 +64,6 @@ Can't recommend the tutorials enough.
 	~configServer.();
 
 	s.waitForBoot({
-		s.sync;
-		~defineSynths.();
 		s.sync;
 		ServerTree.add(~serverTree);
 		s.freeAll; // this triggers the ServerTree actions
