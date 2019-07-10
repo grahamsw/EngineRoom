@@ -5,7 +5,7 @@ os.chdir(r"C:\Users\graha\Documents\dev\EngineRoom\NewRelicData")
 from send2framework import sender
 from threadrunners import rlocker, run_in_thread
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
-                                    makeSafeKeyedSetterGetter, keyed_gen
+                                    makeSafeKeyedSetterGetter, keyed_gen, note2cps
 
 # a threadsafe sender
 s = rlocker(sender('/implOsc'))
@@ -44,6 +44,12 @@ s1, _ = run_in_thread(s, zip_gen(*params),
 
 t60_setter(const_gen(4))
 t60_setter(seq_gen([3,5,6], AtEnd.MIRROR))
+
+
+#modalites
+
+freq_setter(seq_gen(note2cps([0,2, 3, 5, 7, 9, 10, 12], refNote=1, refFreq=300), AtEnd.REPEAT))
+dur_setter(const_gen(0.5))
 
 # this is low wind
 dur_setter(rand_gen([0.1, 0.5, 1, 1.5,2], allowRepeats=False))
@@ -107,7 +113,7 @@ s1.set()
 
 s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\supercollider\PMCrotale.scd")
 
-s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\sonifiers.scd")
+s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\Sonifiers.scd")
 
 # a continuous synth that keeps playing
 
