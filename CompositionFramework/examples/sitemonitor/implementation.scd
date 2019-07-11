@@ -49,14 +49,15 @@ busses that they need
 // it will be decoded into a config object
 ~msg2Config = {
 	|msg|
-	var ctls, synth, ret;
+	var ctls, synth, busNum, ret;
 	synth = (\name: msg[2], \key: msg[3], \killEventName: msg[4]);
+	busNum = msg[5];
 	ctls = [];
-	msg.drop(5).clump(3).do({
+	msg.drop(6).clump(3).do({
 		|ctl|
 		ctls = ctls.add((\controlName: ctl[0], \eventName:ctl[1], \initialValue: ctl[2]));
 	});
-    ret = (\synth: synth, \controls: ctls);
+    ret = (\synth: synth, \busNum: busNum, \controls: ctls);
 	ret.postln;
 	ret;
 };
