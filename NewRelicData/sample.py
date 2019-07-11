@@ -5,7 +5,8 @@ os.chdir(r"C:\Users\graha\Documents\dev\EngineRoom\NewRelicData")
 from send2framework import sender
 from threadrunners import rlocker, run_in_thread
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
-                                    makeSafeKeyedSetterGetter, keyed_gen, note2cps
+                                    makeSafeKeyedSetterGetter, keyed_gen
+from scales import  midi2freq, n2f                                   
 
 # a threadsafe sender
 s = rlocker(sender('/implOsc'))
@@ -28,6 +29,9 @@ freq_setter, freq_getter = makeSafeKeyedSetterGetter(rand_gen([300, 450, 600, 75
 t60_setter, t60_getter = makeSafeKeyedSetterGetter(seq_gen([3,5,6], AtEnd.REPEAT))
 amp_setter, amp_getter = makeSafeKeyedSetterGetter(seq_gen([0.01, 0.02, 0.01, 0.01, 0.04], AtEnd.REPEAT))
 pitchy_setter, pitchy_getter = makeSafeKeyedSetterGetter(const_gen(3))
+out_setter, out_getter = makeSafeKeyedSetterGetter(const_gen(10))
+
+
 # create proxy for durations
 dur_setter, dur_getter = makeSafeKeyedSetterGetter(rand_gen([0.1, 0.5, 1, 1.5,2]))
 
@@ -36,7 +40,8 @@ params = [const_gen('playSynth'), const_gen('bell'),
           const_gen('fs'),        gen_proxy(freq_getter),
           const_gen('t60'),       gen_proxy(t60_getter),
           const_gen('amp'),       gen_proxy(amp_getter),
-          const_gen('pitchy'),    gen_proxy(pitchy_getter)]
+          const_gen('pitchy'),    gen_proxy(pitchy_getter),
+          const_gen('out'),       gen_proxy(out_getter)]
  
 # run and save stopper event
 s1, _ = run_in_thread(s, zip_gen(*params),
@@ -46,9 +51,7 @@ t60_setter(const_gen(4))
 t60_setter(seq_gen([3,5,6], AtEnd.MIRROR))
 
 
-#modalites
-
-freq_setter(seq_gen(note2cps([0,2, 3, 5, 7, 9, 10, 12], refNote=1, refFreq=300), AtEnd.REPEAT))
+freq_setter(seq_gen(midi2freq([0,2, 3, 5, 7, 9, 10, 12], refNote=1, refFreq=300), AtEnd.REPEAT))
 dur_setter(const_gen(0.5))
 
 # this is low wind
