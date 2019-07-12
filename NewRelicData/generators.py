@@ -38,7 +38,7 @@ def rng_gen(fr, to, steps, atEnd =  AtEnd.STOP):
     '''
     atEnd is AtEnd.STOP to stop, 'AtEnd.Mirror' to reverse, and continue
     forever, and AtEnd.REPEAT (or anything else, for now), to
-    repeat the forward sequence indefinitely
+    repeat the forward sequence indefi+nitely
     '''
     rg = list(np.linspace(fr, to, steps))
     if atEnd == AtEnd.MIRROR:
@@ -55,6 +55,8 @@ def rng_gen(fr, to, steps, atEnd =  AtEnd.STOP):
                     yield None
                 else:
                     cur = 0
+                    
+                    
 def seq_gen(sq, atEnd=AtEnd.STOP):
     cursor = rng_gen(0, len(sq)-1, len(sq), atEnd)
     while True:
@@ -63,8 +65,7 @@ def seq_gen(sq, atEnd=AtEnd.STOP):
             yield None
         else:
             yield sq[int(c)]
-  
-    
+      
 def gen_proxy(getter):
     while True:
         yield next(getter())

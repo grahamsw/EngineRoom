@@ -26,16 +26,14 @@ def n2m(n, s):
 def n2f(n,s):
     return midi2freq(n2m(n,s))
 
-Here are the seven modes that can be derived from the pitches of the C major scale:
-
-#C Ionian (major) — CDEFGABC
-#D Dorian — DEFGABCD
-#E Phrygian — EFGABCDE
-#F Lydian — FGABCDEF
-#G Mixolydian — GABCDEFG
-#A Aeolian (minor) — ABCDEFGA
-#B Locrian — BCDEFGAB
-
+# Here are the seven modes that can be derived from the pitches of the C major scale:
+# C Ionian (major) — CDEFGABC
+# D Dorian — DEFGABCD
+# E Phrygian — EFGABCDE
+# F Lydian — FGABCDEF
+# G Mixolydian — GABCDEFG
+# A Aeolian (minor) — ABCDEFGA
+# B Locrian — BCDEFGAB
 
 majorScale = [('C', 4),
               ('D', 4),
@@ -57,15 +55,15 @@ minorScale = [('C', 4),
               ('C', 5)
              ]    
 
-aeolian [('C', 4),
-         ('D', 4),
-         ('Eb', 4),
-         ('F', 4),
-         ('G', 4),
-         ('Ab', 5),
-         ('Bb', 5),
-         ('C', 5)
-         ]
+aeolian = [('C', 4),
+           ('D', 4),
+           ('Eb', 4),
+           ('F', 4),
+           ('G', 4),
+           ('Ab', 5),
+           ('Bb', 5),
+           ('C', 5)
+       ]
 
 pentatonic_minor = [('C', 4),
                     ('Eb', 4),

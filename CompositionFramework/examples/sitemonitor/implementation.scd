@@ -18,6 +18,11 @@
 // the "channel name" that OSC listens on
 ~impl_osc_name = "/implOsc";
 
+~controllerOscReceiveChannel = "/fromSC";
+~controllerIp = "127.0.0.1";
+~controllerPort = 5771;
+
+
 /*
 these are the heart of any implementation:
 the synths and the events that are created
@@ -105,11 +110,21 @@ busses that they need
 	~osc.free;
 };
 
+~sendToController = {
+	|key, value|
+	~oscSender.sendMsg(~controllerOscReceiveChannel, key, value);
+};
+
 // pretty powerful, generic OSC handler for mapping OSC messages
 // (from any source) to events
 // Can be replaced with MIDI or some other controller as desired
 // (Arduino, Wii, etc)
 ~addControllers = {
+
+	~oscSender = NetAddr.new(~controllerIp, ~controllerPort);
+
+
+
 	"~addControllers".postln;
 	   	~osc.free;
 		~osc = OSCFunc({
