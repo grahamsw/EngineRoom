@@ -12,7 +12,7 @@ SynthDef(\vocali, {
 	Out.ar(0, vowel.dup);
 }).add;
 )
-
+/*
 
 (
 ~synth = Synth(\vocali);
@@ -63,4 +63,4 @@ u.mouseOverAction_({|v, x, y|
 	);
 });
 )
-		
+		*/
