@@ -1,6 +1,6 @@
 import os
-#os.chdir(r"C:\Users\graha\Documents\dev\EngineRoom\NewRelicData")
-os.chdir(r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\NewRelicData")
+os.chdir(r"C:\Users\graha\Documents\dev\EngineRoom\NewRelicData")
+#os.chdir(r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\NewRelicData")
 
 
 
@@ -14,6 +14,29 @@ from osc_receiver import readSupercolliderVal
 # a threadsafe sender
 s = rlocker(sender('/implOsc'))
 
+
+
+# set up filter 
+# load synth
+s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\lpf.scd")
+# create bus
+s('createBus', 'lpfBus')
+lpfBusNum = None
+while lpfBusNum == None:
+    lpfBusNum = readSupercolliderVal('lpfBus')
+    
+print(f'bus: {lpfBusNum}')    
+    
+
+s('initSynth', 'lpf',  'lpf1',     'killLpf',
+               'passFreq', 'lpfFreq',   400,
+               'in',   'lpfInBus',  lpfBusNum,
+               'out',  'lpfOutBus', 0)
+
+
+s('lpfFreq', 1500)
+# and, eventually
+s('killLpf')
 #############
 #
 # Wind Chimes
@@ -32,7 +55,7 @@ freq_setter, freq_getter = makeSafeKeyedSetterGetter(rand_gen([300, 450, 600, 75
 t60_setter, t60_getter = makeSafeKeyedSetterGetter(seq_gen([3,5,6], AtEnd.REPEAT))
 amp_setter, amp_getter = makeSafeKeyedSetterGetter(seq_gen([0.01, 0.02, 0.01, 0.01, 0.04], AtEnd.REPEAT))
 pitchy_setter, pitchy_getter = makeSafeKeyedSetterGetter(const_gen(3))
-out_setter, out_getter = makeSafeKeyedSetterGetter(const_gen(10))
+out_setter, out_getter = makeSafeKeyedSetterGetter(const_gen(lpfBusNum))
 
 
 # create proxy for durations
@@ -53,7 +76,7 @@ s1, _ = run_in_thread(s, zip_gen(*params),
 t60_setter(const_gen(4))
 t60_setter(seq_gen([3,5,6], AtEnd.MIRROR))
 
-
+out_setter(const_gen(4))
 freq_setter(seq_gen(midi2freq([0,2, 3, 5, 7, 9, 10, 12], refNote=1, refFreq=300), AtEnd.REPEAT))
 dur_setter(const_gen(0.5))
 

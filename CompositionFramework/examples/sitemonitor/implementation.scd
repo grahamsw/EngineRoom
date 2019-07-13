@@ -48,6 +48,15 @@ busses that they need
 		|msg|
 		msg[2].asString.load;
 	});
+
+	~events.add(\createBus -> {
+		|msg|
+		var bus, key = msg[2];
+		bus = Bus.audio(s);
+		~audioBusses[key] = bus.index;
+		~sendToController.(key, ~audioBusses[key]);
+	});
+
 };
 
 // the message here will be sent via OSC from Python
@@ -56,9 +65,9 @@ busses that they need
 	|msg|
 	var ctls, synth, busNum, ret;
 	synth = (\name: msg[2], \key: msg[3], \killEventName: msg[4]);
-	busNum = msg[5];
+//	busNum = msg[5];
 	ctls = [];
-	msg.drop(6).clump(3).do({
+	msg.drop(5).clump(3).do({
 		|ctl|
 		ctls = ctls.add((\controlName: ctl[0], \eventName:ctl[1], \initialValue: ctl[2]));
 	});
@@ -75,13 +84,13 @@ busses that they need
 	~synths[config[\synth][\key]] = Synth(config[\synth][\name]);
 	config[\controls].do({
 		|controlSettings|
-		~bus.add(controlSettings[\eventName] -> Bus.control(s));
-		~bus[controlSettings[\eventName]].set(controlSettings[\initialValue]);
-		~synths[config[\synth][\key]].map(controlSettings[\controlName], ~bus[controlSettings[\eventName]]);
+		~controlBusses.add(controlSettings[\eventName] -> Bus.control(s));
+		~controlBusses[controlSettings[\eventName]].set(controlSettings[\initialValue]);
+		~synths[config[\synth][\key]].map(controlSettings[\controlName], ~controlBusses[controlSettings[\eventName]]);
 
 	~events.add(controlSettings[\eventName] -> {
 		|msg|
-		~bus[controlSettings[\eventName]].set(msg[2]);
+		~controlBusses[controlSettings[\eventName]].set(msg[2]);
 	});
 	~events.add(config[\synth][\killEventName] -> {
 		|msg|
@@ -98,18 +107,20 @@ busses that they need
 ~init = {
 	"~init".postln;
 	~out = 0;
-	~traceOsc = false;
-	~bus = Dictionary.new;
+	~traceOsc = true;
+	~controlBusses = Dictionary.new;
+	~audioBusses = Dictionary.new;
 	~synths = Dictionary.new;
 };
 
 ~cleanup = {
 	"~cleanup".postln;
 //	~synths.asPairs.do({ |(k,v)| v.free;});
-//	~bus.asPairs.do({ |(k,v)| v.free;});
+//	~controlBusses.asPairs.do({ |(k,v)| v.free;});
 	~osc.free;
 };
 
+// for communicating back to the external OSC sender (python)
 ~sendToController = {
 	|key, value|
 	~oscSender.sendMsg(~controllerOscReceiveChannel, key, value);

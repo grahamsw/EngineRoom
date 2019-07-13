@@ -6,14 +6,14 @@ SynthDef(\lpf, {
 	Out.ar(out, LPF.ar(In.ar(in), passFreq));
 }).add;
 )
-
+/*
 (
 SynthDef(\sn, {
 	|out = 0|
 	Out.ar(out, WhiteNoise.ar);
 }).add
 )
-/*
+
 (
 b = Bus.audio(s);
 l = Synth(\lpf, [\in, b, \passFreq, 800]);
@@ -25,7 +25,7 @@ Synth(\sn, [\out, b]);
 c = Bus.control
 l.set(\passFreq, 600)
 
-*/
+
 ~bbb = Dictionary.new;
 
 [1,2,3].do{|i| ~bbb[i] = Bus.audio(s)}
@@ -35,3 +35,4 @@ l = Synth(\lpf, [\in, 2, \passFreq, 800])
 l.set(\passFreq, 100)
 
 Synth(\sn, [\out, 1]);
+*/

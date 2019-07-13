@@ -12,7 +12,10 @@ _vals = {}
 
 @rlocker
 def readSupercolliderVal(key):
-    return _vals[key]
+    if key in _vals:
+        return _vals[key]
+    else:
+        return None
 
 @rlocker
 def _setSupercolliderVal(key, val):
