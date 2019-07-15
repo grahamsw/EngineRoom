@@ -44,6 +44,11 @@ busses that they need
 		Synth(msg[2], msg.drop(3));
 	});
 
+	// this is the catch-all. We can extend this
+	// framework's capabilities by loading new code.
+	// primarily used to add SynthDefs, but if necessary
+	// can add new event handlers, patterns, whatever
+	// is needed
 	~events.add(\loadCode -> {
 		|msg|
 		msg[2].asString.load;
