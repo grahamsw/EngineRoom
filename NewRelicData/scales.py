@@ -17,6 +17,7 @@ notes = {'C': 0,
     
 # convert note, or list of notes, from MIDI to freq
 # can "rebase" to transpose or for convenience
+# midinote 69 is A4 (440 Hz)
 def midi2freq(note, refNote = 69,  refFreq = 440):
     return refFreq * 2**((note-refNote)/12)
     
