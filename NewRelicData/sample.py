@@ -1,6 +1,7 @@
 import os
-os.chdir(r"C:\Users\graha\Documents\dev\EngineRoom\NewRelicData")
-#os.chdir(r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\NewRelicData")
+
+root = r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\\"
+os.chdir(root + r"NewRelicData")
 
 
 
@@ -18,7 +19,7 @@ s = rlocker(sender('/implOsc'))
 
 # set up filter 
 # load synth
-s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\lpf.scd")
+s('loadCode', root + r"Archive\Supercollider\lpf.scd")
 # create bus
 s('createBus', 'lpfBus')
 lpfBusNum = None
@@ -34,7 +35,7 @@ s('initSynth', 'lpf',  'lpf1',     'killLpf',
                'out',  'lpfOutBus', 0)
 
 
-s('lpfFreq', 1500)
+s('lpfFreq', 12500)
 # and, eventually
 s('killLpf')
 #############
@@ -46,8 +47,8 @@ s('killLpf')
 # this is actually quite pretty
 
 # load synth
-s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\bell.scd")
-
+s('loadCode', root + r"Archive\Supercollider\bell.scd")
+lpfBusNum = 0
 # create proxies for synth controls
 # these are the params
 # |fs=1000, t60=1, pitchy=1, amp=0.25, gate=1|
