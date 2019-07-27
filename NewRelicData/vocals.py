@@ -16,7 +16,7 @@ s = rlocker(sender('/implOsc'))
 
 # |f1, f2, fund = 70, amp =0.25|
 	
-s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\Formants.scd")
+s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\synths\Formants.scd")
 
 
 
@@ -50,4 +50,3 @@ s4.set()
 
 s('killvolcali1')
 
-.

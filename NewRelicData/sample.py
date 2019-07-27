@@ -1,6 +1,6 @@
 import os
 
-root = r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\\"
+root = r"C:\Users\graha\Documents\dev\EngineRoom\\"
 os.chdir(root + r"NewRelicData")
 
 
@@ -61,7 +61,7 @@ out_setter, out_getter = makeSafeKeyedSetterGetter(const_gen(lpfBusNum))
 
 # create proxy for durations
 dur_setter, dur_getter = makeSafeKeyedSetterGetter(rand_gen([0.1, 0.5, 1, 1.5,2]))
-
+amp_setter(seq_gen([0.01, 0.02, 0.005,0.01], AtEnd.REPEAT))
 
 params = [const_gen('playSynth'), const_gen('bell'),
           const_gen('fs'),        gen_proxy(freq_getter),
@@ -78,7 +78,8 @@ t60_setter(const_gen(4))
 t60_setter(seq_gen([3,5,6], AtEnd.MIRROR))
 
 out_setter(const_gen(4))
-freq_setter(seq_gen(midi2freq([0,2, 3, 5, 7, 9, 10, 12], refNote=1, refFreq=300), AtEnd.REPEAT))
+
+freq_setter(seq_gen([midi2freq(n, refNote=1, refFreq=300) for n in [0,2, 4, 5, 7, 9, 11, 12]], AtEnd.REPEAT))
 dur_setter(const_gen(0.5))
 
 # this is low wind
