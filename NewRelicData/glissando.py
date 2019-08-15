@@ -10,7 +10,7 @@ from threadrunners import rlocker, run_in_thread
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
                                     makeSafeKeyedSetterGetter, keyed_gen
 from scales import  midi2freq, n2f                                   
-from osc_receiver import readSupercolliderVal
+#from osc_receiver import readSupercolliderVal
 
 # a threadsafe sender
 s = rlocker(sender('/implOsc'))
@@ -20,6 +20,21 @@ s('loadCode', root + r"synths\glissando.scd")
 
 #| from = 200, to = 2000, len = 10, amp = 0.6, out = 0|
 
+import functools
+import operator
+
+def play_synth_pattern(sender, controls, durs):
+    setters_getters = {key:makeSafeKeyedSetterGetter(controls[key]) for key in controls}
+    ps = [[const_gen(key), gen_proxy(setters_getters[key][1])] for key in setters_getters]
+    # flatten
+    params = functools.reduce(operator.iconcat, ps, [])   
+    durs_setter, durs_getter = makeSafeKeyedSetterGetter(durs)   
+    s, _ = run_in_thread(sender, zip_gen(*params),
+                          gen_proxy(durs_getter))     
+    setters = {key:setters_getters[key][0] for key in setters_getters}
+    setters['durs'] = durs_setter
+    return s, setters
+    
 
 def start_glissando(sender, from_gen, to_gen, lens_gen, amps_gen, durs_gen):
     froms = makeSafeKeyedSetterGetter(from_gen)
@@ -42,8 +57,17 @@ def start_glissando(sender, from_gen, to_gen, lens_gen, amps_gen, durs_gen):
 
 
 
-
-
+ss, setters = play_synth_pattern(s, {'playSynth': const_gen('glissando'),
+                                    'from':rand_gen([200, 300, 400, 500, 600]),
+                                    'to':rand_gen([1200, 1300, 1400, 1500, 1600]),
+                                    'len':rand_gen([0.1, 0.2, 0.3, 0.4]),
+                                    'amp':const_gen(0.01),
+                                    'out':const_gen(0)},
+                                   rand_gen([0.1, 0.5, 0.1, 1.5,0.2]))
+    
+setters['len'](const_gen(0.001))
+setters['durs'](const_gen(0.001))
+ss.set()
 
 
 s1, setters = start_glissando(s,
@@ -67,3 +91,12 @@ s2, setters2 = start_glissando(s,
 
 setters2['durs'](rand_gen([0.1, 0.2, 0.4]))
 s2.set()
+
+
+import functools
+import operator
+
+r = [[a,a] for a in [1,2,3]]
+
+
+s = functools.reduce(operator.iconcat, r, [])

@@ -10,23 +10,25 @@ from threadrunners import rlocker, run_in_thread
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
                                     makeSafeKeyedSetterGetter, keyed_gen
 from scales import  midi2freq, n2f                                   
-from osc_receiver import readSupercolliderVal
+from osc_receiver import osc_receiver
 
 # a threadsafe sender
-s = rlocker(sender('/implOsc'))
+s = rlocker(sender('/implOsc', ip='127.0.0.1', port=57120))
 
+r = osc_receiver(ip='127.0.0.1', port=5771, oscChannel='/fromSC')
 
 
 # set up filter 
 # load synth
 s('loadCode', root + r"Archive\Supercollider\lpf.scd")
+
 # create bus
-s('createBus', 'lpfBus')
-lpfBusNum = None
-while lpfBusNum == None:
-    lpfBusNum = readSupercolliderVal('lpfBus')
+s('createBus', 'lpfBus4')
+lpfBusNum4 = None
+while lpfBusNum4 == None:
+    lpfBusNum4 = r('lpfBus4')
     
-print(f'bus: {lpfBusNum}')    
+print(f'bus: {lpfBusNum4}')    
     
 
 s('initSynth', 'lpf',  'lpf1',     'killLpf',
