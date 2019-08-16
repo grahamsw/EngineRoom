@@ -1,6 +1,7 @@
 import os
 
-root = r"C:\Users\graha\Documents\dev\EngineRoom\\"
+#root = r"C:\Users\graha\Documents\dev\EngineRoom\\"
+root = r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\\"
 os.chdir(root + r"NewRelicData")
 
 from send2framework import sender
@@ -19,11 +20,11 @@ s('loadCode', root + r"synths\glissando.scd")
 import functools
 import operator
 
-def play_synth_pattern(sender, controls, durs):
+def play_synth_pattern(sender, synthName, controls, durs):
     setters_getters = {key:makeSafeKeyedSetterGetter(controls[key]) for key in controls}
     ps = [[const_gen(key), gen_proxy(setters_getters[key][1])] for key in setters_getters]
     # flatten
-    params = functools.reduce(operator.iconcat, ps, [])   
+    params = functools.reduce(operator.iconcat, ps, [const_gen('playSynth'), const_gen(synthName)])   
     durs_setter, durs_getter = makeSafeKeyedSetterGetter(durs)   
     s, _ = run_in_thread(sender, zip_gen(*params),
                           gen_proxy(durs_getter))     
@@ -53,12 +54,14 @@ def start_glissando(sender, from_gen, to_gen, lens_gen, amps_gen, durs_gen):
 
 
 
-ss, setters = play_synth_pattern(s, {'playSynth': const_gen('glissando'),
-                                     'from':rand_gen([200, 300, 400, 500, 600]),
-                                     'to':rand_gen([1200, 1300, 1400, 1500, 1600]),
-                                     'len':rand_gen([0.1, 0.2, 0.3, 0.4]),
-                                     'amp':const_gen(0.01),
-                                     'out':const_gen(0)},
+ss, setters = play_synth_pattern(s, 'glissando',
+                                    {
+                                         'from':rand_gen([200, 300, 400, 500, 600]),
+                                         'to':rand_gen([1200, 1300, 1400, 1500, 1600]),
+                                         'len':rand_gen([0.1, 0.2, 0.3, 0.4]),
+                                         'amp':const_gen(0.01),
+                                         'out':const_gen(0)
+                                    },
                                     rand_gen([0.1, 0.5, 0.1, 1.5,0.2]))
     
 setters['len'](rand_gen([0.1, 0.2, 0.3, 0.4]))

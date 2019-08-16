@@ -55,61 +55,34 @@ lpfBusNum = 0
 
 
 
-ss, setters = play_synth_pattern(s, {'playSynth': const_gen('bell'),
+ss, setters = play_synth_pattern(s, 'bell', {
                                      'fs':rand_gen([300, 450, 600, 750, 900, 1000]),
                                      't60':seq_gen([3,5,6], AtEnd.REPEAT),
                                      'amp':seq_gen([0.01, 0.02, 0.01, 0.01, 0.04], AtEnd.REPEAT),
                                      'pitchy':const_gen(3),
                                      'out':const_gen(0)},
                                     rand_gen([0.1, 0.5, 1, 1.5,2]))
-ss.set()
+
 # create proxies for synth controls
 # these are the params
 # |fs=1000, t60=1, pitchy=1, amp=0.25, gate=1|
-freq_setter, freq_getter = makeSafeKeyedSetterGetter(rand_gen([300, 450, 600, 750, 900, 1000]))
-t60_setter, t60_getter = makeSafeKeyedSetterGetter(seq_gen([3,5,6], AtEnd.REPEAT))
-amp_setter, amp_getter = makeSafeKeyedSetterGetter(seq_gen([0.01, 0.02, 0.01, 0.01, 0.04], AtEnd.REPEAT))
-pitchy_setter, pitchy_getter = makeSafeKeyedSetterGetter(const_gen(3))
-out_setter, out_getter = makeSafeKeyedSetterGetter(const_gen(lpfBusNum))
 
 
-# create proxy for durations
-dur_setter, dur_getter = makeSafeKeyedSetterGetter(rand_gen([0.1, 0.5, 1, 1.5,2]))
-amp_setter(seq_gen([0.01, 0.02, 0.005,0.01], AtEnd.REPEAT))
-
-params = [const_gen('playSynth'), const_gen('bell'),
-          const_gen('fs'),        gen_proxy(freq_getter),
-          const_gen('t60'),       gen_proxy(t60_getter),
-          const_gen('amp'),       gen_proxy(amp_getter),
-          const_gen('pitchy'),    gen_proxy(pitchy_getter),
-          const_gen('out'),       gen_proxy(out_getter)]
- 
-# run and save stopper event
-s1, _ = run_in_thread(s, zip_gen(*params),
-                      gen_proxy(dur_getter))
-
-t60_setter(const_gen(4))
-t60_setter(seq_gen([3,5,6], AtEnd.MIRROR))
-
-out_setter(const_gen(4))
-
-freq_setter(seq_gen([midi2freq(n, refNote=1, refFreq=300) for n in [0,2, 4, 5, 7, 9, 11, 12]], AtEnd.REPEAT))
-dur_setter(const_gen(0.5))
 
 # this is low wind
-dur_setter(rand_gen([0.1, 0.5, 1, 1.5,2], allowRepeats=False))
-freq_setter(rand_gen([300, 450, 600, 750], allowRepeats=False))
+setters['durs'](rand_gen([0.1, 0.5, 1, 1.5,2], allowRepeats=False))
+setters['fs'](rand_gen([300, 450, 600, 750], allowRepeats=False))
 
 # slightly more agitated
-dur_setter(rand_gen([0.5, 0.1, 1], allowRepeats=False))
-freq_setter(rand_gen([750, 900, 1000, 1150, 1270], allowRepeats=False))
+setters['durs'](rand_gen([0.5, 0.1, 1], allowRepeats=False))
+setters['fs'](rand_gen([750, 900, 1000, 1150, 1270], allowRepeats=False))
 
 # even more agitated
-dur_setter(rand_gen([0.5, 0.1, 0.2, 0.05], allowRepeats=False))
-freq_setter(rand_gen([1000, 1150, 1270, 1500, 800], allowRepeats=False))
+setters['durs'](rand_gen([0.5, 0.1, 0.2, 0.05], allowRepeats=False))
+setters['fs'](rand_gen([1000, 1150, 1270, 1500, 800], allowRepeats=False))
 
 # stop the chimes
-s1.set()
+ss.set()
 
 
 
