@@ -8,32 +8,18 @@ class AtEnd(Enum):
     STOP = 0
     REPEAT = 1
     MIRROR = 2
-    
+ 
+# return the same thing every time - our cycle functin expects a generator    
 def const_gen(n):
     while True:
         yield n
 
-
-def rng_gen2(fr, to, delta, dur, atEnd =  AtEnd.STOP):
-    rg = rng_gen(fr, to, int(delta / dur), atEnd)
-    while True:
-        yield next(rg)
-
-def rand_gen(seq, weights = None, allowRepeats = True ):
-    last_choice = None
-    choice = None
-    while True:       
-        if allowRepeats == False:
-            while choice == last_choice:
-                choice = choices(seq, weights)[0]
-           #     print(choice)
-            last_choice = choice
-            yield choice
-        else:
-            yield choices(seq, weights)[0]
-        
-     
-        
+# generates from fr to to (inclusive) in steps steps.
+# behavior at end depends on "atEnd"
+# note that AtEnd.Mirror does not repeat end values
+# 1,2,3,4,5,4,3,2,1,2,3,4, ...
+# not
+# 1,2,3,4,5,5,4,3,2,1,1,2,3....        
 def rng_gen(fr, to, steps, atEnd =  AtEnd.STOP):
     '''
     atEnd is AtEnd.STOP to stop, 'AtEnd.Mirror' to reverse, and continue
@@ -55,7 +41,28 @@ def rng_gen(fr, to, steps, atEnd =  AtEnd.STOP):
                     yield None
                 else:
                     cur = 0
-                    
+
+                   
+def rng_gen2(fr, to, delta, dur, atEnd =  AtEnd.STOP):
+    rg = rng_gen(fr, to, int(delta / dur), atEnd)
+    while True:
+        yield next(rg)
+
+def rand_gen(seq, weights = None, allowRepeats = True ):
+    last_choice = None
+    choice = None
+    while True:       
+        if allowRepeats == False:
+            while choice == last_choice:
+                choice = choices(seq, weights)[0]
+           #     print(choice)
+            last_choice = choice
+            yield choice
+        else:
+            yield choices(seq, weights)[0]
+        
+     
+       
                     
 def seq_gen(sq, atEnd=AtEnd.STOP):
     cursor = rng_gen(0, len(sq)-1, len(sq), atEnd)
