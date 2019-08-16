@@ -3,8 +3,6 @@ import os
 root = r"C:\Users\graha\Documents\dev\EngineRoom\\"
 os.chdir(root + r"NewRelicData")
 
-
-
 from send2framework import sender
 from threadrunners import rlocker, run_in_thread
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
@@ -17,8 +15,6 @@ s = rlocker(sender('/implOsc'))
 
 # load synth
 s('loadCode', root + r"synths\glissando.scd")
-
-#| from = 200, to = 2000, len = 10, amp = 0.6, out = 0|
 
 import functools
 import operator
@@ -58,15 +54,15 @@ def start_glissando(sender, from_gen, to_gen, lens_gen, amps_gen, durs_gen):
 
 
 ss, setters = play_synth_pattern(s, {'playSynth': const_gen('glissando'),
-                                    'from':rand_gen([200, 300, 400, 500, 600]),
-                                    'to':rand_gen([1200, 1300, 1400, 1500, 1600]),
-                                    'len':rand_gen([0.1, 0.2, 0.3, 0.4]),
-                                    'amp':const_gen(0.01),
-                                    'out':const_gen(0)},
-                                   rand_gen([0.1, 0.5, 0.1, 1.5,0.2]))
+                                     'from':rand_gen([200, 300, 400, 500, 600]),
+                                     'to':rand_gen([1200, 1300, 1400, 1500, 1600]),
+                                     'len':rand_gen([0.1, 0.2, 0.3, 0.4]),
+                                     'amp':const_gen(0.01),
+                                     'out':const_gen(0)},
+                                    rand_gen([0.1, 0.5, 0.1, 1.5,0.2]))
     
-setters['len'](const_gen(0.001))
-setters['durs'](const_gen(0.001))
+setters['len'](rand_gen([0.1, 0.2, 0.3, 0.4]))
+setters['durs'](const_gen(0.1))
 ss.set()
 
 
@@ -93,8 +89,6 @@ setters2['durs'](rand_gen([0.1, 0.2, 0.4]))
 s2.set()
 
 
-import functools
-import operator
 
 r = [[a,a] for a in [1,2,3]]
 

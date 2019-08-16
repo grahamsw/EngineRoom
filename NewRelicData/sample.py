@@ -51,6 +51,18 @@ s('killLpf')
 # load synth
 s('loadCode', root + r"Archive\Supercollider\bell.scd")
 lpfBusNum = 0
+
+
+
+
+ss, setters = play_synth_pattern(s, {'playSynth': const_gen('bell'),
+                                     'fs':rand_gen([300, 450, 600, 750, 900, 1000]),
+                                     't60':seq_gen([3,5,6], AtEnd.REPEAT),
+                                     'amp':seq_gen([0.01, 0.02, 0.01, 0.01, 0.04], AtEnd.REPEAT),
+                                     'pitchy':const_gen(3),
+                                     'out':const_gen(0)},
+                                    rand_gen([0.1, 0.5, 1, 1.5,2]))
+ss.set()
 # create proxies for synth controls
 # these are the params
 # |fs=1000, t60=1, pitchy=1, amp=0.25, gate=1|

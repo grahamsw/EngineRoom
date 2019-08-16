@@ -3,7 +3,6 @@ os.chdir(r"C:\Users\graha\Documents\dev\EngineRoom\NewRelicData")
 #os.chdir(r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\NewRelicData")
 
 
-
 from send2framework import sender
 from threadrunners import rlocker, run_in_thread
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
@@ -21,7 +20,7 @@ s = rlocker(sender('/implOsc'))
 s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\synths\sonifier_sustain.scd")
 
 
-s('initSynth', 'sonifier_sustain', 'sonifier_sustain1', 'kilsonifier_sustain1',
+s('initSynth', 'sonifier_sustain', 'sonifier_sustain1', 'killsonifier_sustain1',
                'freq', 'freq1', 500,
                'amp', 'amp1', 0.2,
               # 'harmonics', 'haronics1', '[1,2,5],
@@ -29,4 +28,4 @@ s('initSynth', 'sonifier_sustain', 'sonifier_sustain1', 'kilsonifier_sustain1',
                'gate', 'gate1', 1)    
 s('harmonics1', [2, 3])
 s('gate1', 0)
-s('kilsonifier_sustain1')
+s('killsonifier_sustain1')
