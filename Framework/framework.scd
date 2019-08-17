@@ -1,26 +1,21 @@
 (
 // see https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
-// for code diagram
+// for out of date code diagram
+// TODO update diagram
 
 // ---------------------------------------------------------
-// This is an outline of an implementation
-// Provide implementations for at least ~makeEvents.
-// Define whatever other functions these need, and override
-// any of the other "framework" functions as needed
-// Once these are defined, and ~fw is pointing to the boilerplate file
-// running this file will reboot the server, load all the initialization code,
-// define synths and events, and wait for messages to trigger the events.
-// All by typing Ctrl + Enter
+// this is the single file framework.
+// run this in Supercollider, then all other work gets done in Python
 // ---------------------------------------------------------
 
-// this should point to the frameworks code
-~fw = "../../boilerplate/boilerplate.scd";
+
 // the "channel name" that OSC listens on
 ~impl_osc_name = "/implOsc";
 
 ~controllerOscReceiveChannel = "/fromSC";
 ~controllerIp = "127.0.0.1";
 ~controllerPort = 5771;
+~traceOsc = true;
 
 
 /*
@@ -105,14 +100,50 @@ busses that they need
 };
 
 
-// -----------------------------------------------
-// these implementations will work as is for many
-// pieces, but can be overridden if desired
-// -----------------------------------------------
+
+~configServer = {
+	"~configServer".postln;
+	s = Server.local;
+	s.quit;
+	s.options.numOutputBusChannels_(2);
+	s.options.numInputBusChannels_(2);
+	s.options.sampleRate_(44100);
+	s.options.memSize_(2.pow(20));
+
+	s.newBusAllocators;
+	ServerBoot.removeAll;
+	ServerTree.removeAll;
+	ServerQuit.removeAll;
+
+	ServerBoot.add(~serverBoot);
+	ServerQuit.add(~serverQuit);
+};
+
+~serverTree = {
+	"~serverTree".postln;
+	~makeNodes.();
+};
+
+~serverQuit = {
+	"~serverQuit".postln;
+	~cleanup.();
+	s.newBusAllocators;
+	ServerBoot.removeAll;
+	ServerTree.removeAll;
+	ServerQuit.removeAll;
+};
+
+~serverBoot = {
+	"~serverBoot".postln;
+	~init.();
+	~makeEvents.();
+	~addControllers.();
+};
+
+
 ~init = {
 	"~init".postln;
 	~out = 0;
-	~traceOsc = true;
 	~controlBusses = Dictionary.new;
 	~audioBusses = Dictionary.new;
 	~synths = Dictionary.new;
@@ -181,6 +212,20 @@ busses that they need
 	});
 };
 
-~fw.loadRelative;
+~main = {
+	~configServer.();
+
+	s.waitForBoot({
+		s.sync;
+		ServerTree.add(~serverTree);
+		s.freeAll; // this triggers the ServerTree actions
+		s.sync;
+		"done".postln;
+
+	});
+};
+
+// call exactly one function at root
+~main.();
 
 )

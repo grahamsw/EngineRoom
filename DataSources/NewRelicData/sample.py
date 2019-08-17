@@ -1,45 +1,44 @@
 import os
 
 root = r"C:\Users\graha\Documents\dev\EngineRoom\\"
+#root = r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\\"
 os.chdir(root + r"NewRelicData")
 
-
-
 from send2framework import sender
-from threadrunners import rlocker, run_in_thread
+from threadrunners import rlocker, play_synth_pattern
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
-                                    makeSafeKeyedSetterGetter, keyed_gen
-from scales import  midi2freq, n2f                                   
-from osc_receiver import osc_receiver
+                                    makeSafeKeyedSetterGetter, keyed_gen       
+from scales import  midi2freq, n2f          
+                         
+#from osc_receiver import osc_receiver
 
 # a threadsafe sender
 s = rlocker(sender('/implOsc', ip='127.0.0.1', port=57120))
+#r = osc_receiver(ip='127.0.0.1', port=5771, oscChannel='/fromSC')
 
-r = osc_receiver(ip='127.0.0.1', port=5771, oscChannel='/fromSC')
-
-
-# set up filter 
-# load synth
-s('loadCode', root + r"Archive\Supercollider\lpf.scd")
-
-# create bus
-s('createBus', 'lpfBus4')
-lpfBusNum4 = None
-while lpfBusNum4 == None:
-    lpfBusNum4 = r('lpfBus4')
-    
-print(f'bus: {lpfBusNum4}')    
-    
-
-s('initSynth', 'lpf',  'lpf1',     'killLpf',
-               'passFreq', 'lpfFreq',   400,
-               'in',   'lpfInBus',  lpfBusNum,
-               'out',  'lpfOutBus', 0)
-
-
-s('lpfFreq', 12500)
-# and, eventually
-s('killLpf')
+#
+## set up filter 
+## load synth
+#s('loadCode', root + r"synths\Lpf.scd")
+#
+## create bus
+#s('createBus', 'lpfBus')
+#lpfBusNum = None
+#while lpfBusNum == None:
+#    lpfBusNum = r('lpfBus')
+#    
+#print(f'bus: {lpfBusNum}')    
+#    
+#
+#s('initSynth', 'lpf',  'lpf1',     'killLpf',
+#               'passFreq', 'lpfFreq',   400,
+#               'in',   'lpfInBus',  lpfBusNum,
+#               'out',  'lpfOutBus', 0)
+#
+#
+#s('lpfFreq', 12500)
+## and, eventually
+#s('killLpf')
 #############
 #
 # Wind Chimes
@@ -49,7 +48,7 @@ s('killLpf')
 # this is actually quite pretty
 
 # load synth
-s('loadCode', root + r"Archive\Supercollider\bell.scd")
+s('loadCode', root + r"synths\bell.scd")
 lpfBusNum = 0
 
 
@@ -88,9 +87,6 @@ ss.set()
 
 
 
-
-
-s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\Archive\Supercollider\Lpf.scd")
 
 
 # another synth

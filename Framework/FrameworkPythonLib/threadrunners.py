@@ -1,7 +1,7 @@
 import threading
 import time
 import functools
-
+import operator
   
 
 def rlocker(func):
@@ -46,4 +46,17 @@ def run_in_thread(fn, vals, durs, startImmediately=True):
     return s,t
 
 
-            
+from generators import const_gen, gen_proxy, zip_gen, makeSafeKeyedSetterGetter
+
+def play_synth_pattern(sender, synthName, controls, durs):
+    setters_getters = {key:makeSafeKeyedSetterGetter(controls[key]) for key in controls}
+    ps = [[const_gen(key), gen_proxy(setters_getters[key][1])] for key in setters_getters]
+    # flatten
+    params = functools.reduce(operator.iconcat, ps, [const_gen('playSynth'), const_gen(synthName)])   
+    durs_setter, durs_getter = makeSafeKeyedSetterGetter(durs)   
+    s, _ = run_in_thread(sender, zip_gen(*params),
+                          gen_proxy(durs_getter))     
+    setters = {key:setters_getters[key][0] for key in setters_getters}
+    setters['durs'] = durs_setter
+    return s, setters
+                

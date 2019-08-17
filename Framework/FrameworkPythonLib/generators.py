@@ -61,9 +61,6 @@ def rand_gen(seq, weights = None, allowRepeats = True ):
         else:
             yield choices(seq, weights)[0]
         
-     
-       
-                    
 def seq_gen(sq, atEnd=AtEnd.STOP):
     cursor = rng_gen(0, len(sq)-1, len(sq), atEnd)
     while True:
