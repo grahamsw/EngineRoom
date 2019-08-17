@@ -12,31 +12,41 @@
 // the "channel name" that OSC listens on
 ~impl_osc_name = "/implOsc";
 
+// the channel, IP and port that the python client listens on
 ~controllerOscReceiveChannel = "/fromSC";
 ~controllerIp = "127.0.0.1";
 ~controllerPort = 5771;
+
 ~traceOsc = true;
 
 
-/*
-these are the heart of any implementation:
-the synths and the events that are created
-with them - along with any effects and buffers and
-busses that they need
-*/
+
 ~makeEvents = {
 	"making events".postln;
 	~events = Dictionary.new;
 
+	// for sustained synths, with parameters that will be changed, and
+	// then explicitly delted. including effects
 	~events.add(\initSynth -> {
 		|msg|
 		var config = ~msg2Config.(msg);
 		~initSynth.(config);
 	});
+
+	// for synths that play and then delete themselves
 	~events.add(\playSynth -> {
 		|msg|
 		//[msg[2], msg.drop(3)].postln;
 		Synth(msg[2], msg.drop(3));
+	});
+
+	// creates an audio bus and returns its bus number
+	~events.add(\createBus -> {
+		|msg|
+		var bus, key = msg[2];
+		bus = Bus.audio(s);
+		~audioBusses[key] = bus.index;
+		~sendToController.(key, ~audioBusses[key]);
 	});
 
 	// this is the catch-all. We can extend this
@@ -46,17 +56,8 @@ busses that they need
 	// is needed
 	~events.add(\loadCode -> {
 		|msg|
-		msg[2].asString.load;
+		msg[2].asString.loadRelative;
 	});
-
-	~events.add(\createBus -> {
-		|msg|
-		var bus, key = msg[2];
-		bus = Bus.audio(s);
-		~audioBusses[key] = bus.index;
-		~sendToController.(key, ~audioBusses[key]);
-	});
-
 };
 
 // the message here will be sent via OSC from Python
@@ -77,7 +78,11 @@ busses that they need
 };
 
 
-
+// creates a control bus for each named parameter of the synth, then maps the parameter to that
+// control bus.
+// Also creates an event handler to listen for named events that will set the value of the named
+// control bus (so the client can control the synth
+// Also adds a named kill event that will destroy the synth
 ~initSynth = {
 	|config|
 	"initing synth".postln;
@@ -147,6 +152,8 @@ busses that they need
 	~controlBusses = Dictionary.new;
 	~audioBusses = Dictionary.new;
 	~synths = Dictionary.new;
+	~oscSender = NetAddr.new(~controllerIp, ~controllerPort);
+
 };
 
 ~cleanup = {
@@ -164,14 +171,9 @@ busses that they need
 
 // pretty powerful, generic OSC handler for mapping OSC messages
 // (from any source) to events
-// Can be replaced with MIDI or some other controller as desired
+// Could be replaced with MIDI or some other controller as desired
 // (Arduino, Wii, etc)
 ~addControllers = {
-
-	~oscSender = NetAddr.new(~controllerIp, ~controllerPort);
-
-
-
 	"~addControllers".postln;
 	   	~osc.free;
 		~osc = OSCFunc({
