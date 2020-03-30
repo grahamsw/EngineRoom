@@ -19,6 +19,7 @@ s = rlocker(sender('/implOsc'))
 	
 s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\synths\sonifier_sustain.scd")
 
+s('initSynth', 'sonifier_sustain', 'sonifier_sustain1', 'kilsonifier_sustain1',
 
 s('initSynth', 'sonifier_sustain', 'sonifier_sustain1', 'killsonifier_sustain1',
                'freq', 'freq1', 500,
@@ -26,6 +27,10 @@ s('initSynth', 'sonifier_sustain', 'sonifier_sustain1', 'killsonifier_sustain1',
               # 'harmonics', 'haronics1', '[1,2,5],
                
                'gate', 'gate1', 1)    
+
+s('freq1', 800)
+s('freq1', 1000)
+
 s('harmonics1', [2, 3])
 s('gate1', 0)
 s('killsonifier_sustain1')

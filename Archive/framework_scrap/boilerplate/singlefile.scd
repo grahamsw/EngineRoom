@@ -1,56 +1,35 @@
 (
-// see https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
-// for out of date code diagram
-// TODO update diagram
-
-
-// ---------------------------------------------------------
-// this is the single file framework.
-// run this in Supercollider, then all other work gets done, or
-// initiated, in Python
-// ---------------------------------------------------------
-
 
 // the "channel name" that OSC listens on
+// for messages *from* the python driver
 ~impl_osc_name = "/implOsc";
 
-// the channel, IP and port that the python client listens on
+// the channel that OSC uses to send message
+// *to* the python driver
 ~controllerOscReceiveChannel = "/fromSC";
-~controllerIp = "127.0.0.1";
-~controllerPort = 5772;
-
-~traceOsc = true;
+~controllerIp = "192.168.1.3";
+~controllerPort = 5771;
 
 
-
+/*
+these are the heart of any implementation:
+the synths and the events that are created
+with them - along with any effects and buffers and
+busses that they need
+*/
 ~makeEvents = {
 	"making events".postln;
 	~events = Dictionary.new;
 
-	// for sustained synths, with parameters that will be changed, and
-	// then explicitly delted. including effects
 	~events.add(\initSynth -> {
 		|msg|
 		var config = ~msg2Config.(msg);
 		~initSynth.(config);
 	});
-
-	// for synths that play and then delete themselves
 	~events.add(\playSynth -> {
 		|msg|
 		//[msg[2], msg.drop(3)].postln;
 		Synth(msg[2], msg.drop(3));
-	});
-
-	// creates an audio bus and returns its bus number
-	~events.add(\createBus -> {
-		|msg|
-		var bus, key = msg[2];
-		["key: ", key].postln;
-
-		bus = Bus.audio(s);
-		~audioBusses[key] = bus.index;
-		~sendToController.(key, ~audioBusses[key]);
 	});
 
 	// this is the catch-all. We can extend this
@@ -60,8 +39,17 @@
 	// is needed
 	~events.add(\loadCode -> {
 		|msg|
-		msg[2].asString.loadRelative;
+		msg[2].asString.load;
 	});
+
+	~events.add(\createBus -> {
+		|msg|
+		var bus, key = msg[2];
+		bus = Bus.audio(s);
+		~audioBusses[key] = bus.index;
+		~sendToController.(key, ~audioBusses[key]);
+	});
+
 };
 
 // the message here will be sent via OSC from Python
@@ -82,11 +70,7 @@
 };
 
 
-// creates a control bus for each named parameter of the synth, then maps the parameter to that
-// control bus.
-// Also creates an event handler to listen for named events that will set the value of the named
-// control bus (so the client can control the synth
-// Also adds a named kill event that will destroy the synth
+
 ~initSynth = {
 	|config|
 	"initing synth".postln;
@@ -109,55 +93,17 @@
 };
 
 
-
-~configServer = {
-	"~configServer".postln;
-	s = Server.local;
-	s.quit;
-	s.options.numOutputBusChannels_(2);
-	s.options.numInputBusChannels_(2);
-	s.options.sampleRate_(44100);
-	s.options.memSize_(2.pow(20));
-
-	s.newBusAllocators;
-	ServerBoot.removeAll;
-	ServerTree.removeAll;
-	ServerQuit.removeAll;
-
-	ServerBoot.add(~serverBoot);
-	ServerQuit.add(~serverQuit);
-};
-
-~serverTree = {
-	"~serverTree".postln;
-	~makeNodes.();
-};
-
-~serverQuit = {
-	"~serverQuit".postln;
-	~cleanup.();
-	s.newBusAllocators;
-	ServerBoot.removeAll;
-	ServerTree.removeAll;
-	ServerQuit.removeAll;
-};
-
-~serverBoot = {
-	"~serverBoot".postln;
-	~init.();
-	~makeEvents.();
-	~addControllers.();
-};
-
-
+// -----------------------------------------------
+// these implementations will work as is for many
+// pieces, but can be overridden if desired
+// -----------------------------------------------
 ~init = {
 	"~init".postln;
 	~out = 0;
+	~traceOsc = true;
 	~controlBusses = Dictionary.new;
 	~audioBusses = Dictionary.new;
 	~synths = Dictionary.new;
-	~oscSender = NetAddr.new(~controllerIp, ~controllerPort);
-
 };
 
 ~cleanup = {
@@ -170,16 +116,19 @@
 // for communicating back to the external OSC sender (python)
 ~sendToController = {
 	|key, value|
-	["about to send", key, value].postln;
-	["controller ip", ~controllerIp, "controller port", ~controllerPort].postln;
 	~oscSender.sendMsg(~controllerOscReceiveChannel, key, value);
 };
 
 // pretty powerful, generic OSC handler for mapping OSC messages
 // (from any source) to events
-// Could be replaced with MIDI or some other controller as desired
+// Can be replaced with MIDI or some other controller as desired
 // (Arduino, Wii, etc)
 ~addControllers = {
+
+	~oscSender = NetAddr.new(~controllerIp, ~controllerPort);
+
+
+
 	"~addControllers".postln;
 	   	~osc.free;
 		~osc = OSCFunc({
@@ -220,6 +169,50 @@
 	});
 };
 
+
+
+
+
+~configServer = {
+	"~configServer".postln;
+	s = Server.local;
+	s.quit;
+	s.options.numOutputBusChannels_(2);
+	s.options.numInputBusChannels_(2);
+	s.options.sampleRate_(44100);
+	s.options.memSize_(2.pow(20));
+
+	s.newBusAllocators;
+	ServerBoot.removeAll;
+	ServerTree.removeAll;
+	ServerQuit.removeAll;
+
+	ServerBoot.add(~serverBoot);
+	ServerQuit.add(~serveQuit);
+};
+
+~serverTree = {
+	"~serverTree".postln;
+	~makeNodes.();
+};
+
+~serverQuit = {
+	"~serverQuit".postln;
+	~cleanup.();
+	s.newBusAllocators;
+	ServerBoot.removeAll;
+	ServerTree.removeAll;
+	ServerQuit.removeAll;
+};
+
+~serverBoot = {
+	"~serverBoot".postln;
+	~init.();
+	~makeEvents.();
+	~addControllers.();
+};
+
+
 ~main = {
 	~configServer.();
 
@@ -233,9 +226,9 @@
 	});
 };
 
+
+
 // call exactly one function at root
 ~main.();
 
 )
-
-

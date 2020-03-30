@@ -43,7 +43,7 @@ s('initSynth', 'vocali', 'vocali1', 'killvocali1',
                'f2', 'f21', 1)    
 s2, _ = run_in_thread(sendVowel, rand_gen(list(vowels.keys()), allowRepeats=False), const_gen(0.5))    
 s3, _ = run_in_thread(s, zip_gen(const_gen("fund1"), rand_gen([70, 80, 60])), const_gen(0.51))
-s4, _ = run_in_thread(s, zip_gen(const_gen("amp1"), rand_gen([0.85, 0.1, 0.15,0.2,  0.25], [5, 10, 10, 5, 1])), const_gen(0.49))
+s4, _ = run_in_thread(s, zip_gen(const_gen("amp1"), rand_gen([0.05, 0.01, 0.05,0.02,  0.05], [5, 10, 10, 5, 1])), const_gen(0.49))
 
 # tear it down
 s2.set()
