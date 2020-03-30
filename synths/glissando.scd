@@ -1,5 +1,4 @@
 
-(
 
 SynthDef (\glissando, {
 	| from = 200, to = 2000, len = 10, amp = 0.6, out = 0|
@@ -11,16 +10,14 @@ SynthDef (\glissando, {
 	Out.ar([0,1], sound);
 }).add;
 
-)
 
 
+/*
 (
 ~play = {|from, to, len, amp|
 	Synth(\glissando, [\from, from, \to, to, \len, len, \amp, amp]);
 };
 )
-().play
-Synth(\glissando)
 (
 
 ~playPattern = {
@@ -99,4 +96,4 @@ Pdef(\gliss, Pbind(
 
 )
 
-().play
+*/

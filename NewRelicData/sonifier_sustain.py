@@ -22,11 +22,15 @@ s('loadCode', r"C:\Users\graha\Documents\dev\EngineRoom\synths\sonifier_sustain.
 
 
 s('initSynth', 'sonifier_sustain', 'sonifier_sustain1', 'kilsonifier_sustain1',
-               'freq', 'freq1', 500,
+               'freq', 'freq1', 1800,
                'amp', 'amp1', 0.2,
               # 'harmonics', 'haronics1', '[1,2,5],
                
                'gate', 'gate1', 1)    
+
+s('freq1', 800)
+s('freq1', 1000)
+
 s('harmonics1', [2, 3])
 s('gate1', 0)
 s('kilsonifier_sustain1')

@@ -1,26 +1,13 @@
 (
-// see https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
-// for code diagram
 
-
-// ---------------------------------------------------------
-// This is an outline of an implementation
-// Provide implementations for at least ~makeEvents.
-// Define whatever other functions these need, and override
-// any of the other "framework" functions as needed
-// Once these are defined, and ~fw is pointing to the boilerplate file
-// running this file will reboot the server, load all the initialization code,
-// define synths and events, and wait for messages to trigger the events.
-// All by typing Ctrl + Enter
-// ---------------------------------------------------------
-
-// this should point to the frameworks code
-~fw = "../../boilerplate/boilerplate.scd";
 // the "channel name" that OSC listens on
+// for messages *from* the python driver
 ~impl_osc_name = "/implOsc";
 
+// the channel that OSC uses to send message
+// *to* the python driver
 ~controllerOscReceiveChannel = "/fromSC";
-~controllerIp = "127.0.0.1";
+~controllerIp = "192.168.1.3";
 ~controllerPort = 5771;
 
 
@@ -58,8 +45,6 @@ busses that they need
 	~events.add(\createBus -> {
 		|msg|
 		var bus, key = msg[2];
-		["key: ", key].postln;
-
 		bus = Bus.audio(s);
 		~audioBusses[key] = bus.index;
 		~sendToController.(key, ~audioBusses[key]);
@@ -131,8 +116,6 @@ busses that they need
 // for communicating back to the external OSC sender (python)
 ~sendToController = {
 	|key, value|
-	["about to send", key, value].postln;
-	["controller ip", ~controllerIp, "controller port", ~controllerPort].postln;
 	~oscSender.sendMsg(~controllerOscReceiveChannel, key, value);
 };
 
@@ -186,8 +169,66 @@ busses that they need
 	});
 };
 
-~fw.loadRelative;
+
+
+
+
+~configServer = {
+	"~configServer".postln;
+	s = Server.local;
+	s.quit;
+	s.options.numOutputBusChannels_(2);
+	s.options.numInputBusChannels_(2);
+	s.options.sampleRate_(44100);
+	s.options.memSize_(2.pow(20));
+
+	s.newBusAllocators;
+	ServerBoot.removeAll;
+	ServerTree.removeAll;
+	ServerQuit.removeAll;
+
+	ServerBoot.add(~serverBoot);
+	ServerQuit.add(~serveQuit);
+};
+
+~serverTree = {
+	"~serverTree".postln;
+	~makeNodes.();
+};
+
+~serverQuit = {
+	"~serverQuit".postln;
+	~cleanup.();
+	s.newBusAllocators;
+	ServerBoot.removeAll;
+	ServerTree.removeAll;
+	ServerQuit.removeAll;
+};
+
+~serverBoot = {
+	"~serverBoot".postln;
+	~init.();
+	~makeEvents.();
+	~addControllers.();
+};
+
+
+~main = {
+	~configServer.();
+
+	s.waitForBoot({
+		s.sync;
+		ServerTree.add(~serverTree);
+		s.freeAll; // this triggers the ServerTree actions
+		s.sync;
+		"done".postln;
+
+	});
+};
+
+
+
+// call exactly one function at root
+~main.();
 
 )
-
-
