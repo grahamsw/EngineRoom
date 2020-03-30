@@ -32,8 +32,10 @@ def sendVowel(v):
     s('f21', f2)
     
     
+s('killvocali1')
+
 # create an instance of sonfier2 and set up some controls for it
-s('initSynth', 'vocali', 'vocali1', 'killvolcali1',
+s('initSynth', 'vocali', 'vocali1', 'killvocali1',
                'fund', 'fund1', 70,
                'amp', 'amp1', 0.2,
                
@@ -47,6 +49,4 @@ s4, _ = run_in_thread(s, zip_gen(const_gen("amp1"), rand_gen([0.05, 0.01, 0.05,0
 s2.set()
 s3.set()
 s4.set()
-
-s('killvolcali1')
 

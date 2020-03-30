@@ -1,60 +1,47 @@
 (
 // see https://docs.google.com/drawings/d/1IcqFmk9DcE8ZPDrfxwas2uyjUz4zR4-34ApoXiAC4a0/edit?usp=sharing
-// for code diagram
+// for out of date code diagram
+// TODO update diagram
 
 
 // ---------------------------------------------------------
-// This is an outline of an implementation
-// Provide implementations for at least ~makeEvents.
-// Define whatever other functions these need, and override
-// any of the other "framework" functions as needed
-// Once these are defined, and ~fw is pointing to the boilerplate file
-// running this file will reboot the server, load all the initialization code,
-// define synths and events, and wait for messages to trigger the events.
-// All by typing Ctrl + Enter
+// this is the single file framework.
+// run this in Supercollider, then all other work gets done in Python
 // ---------------------------------------------------------
 
-// this should point to the frameworks code
-~fw = "../../boilerplate/boilerplate.scd";
+
 // the "channel name" that OSC listens on
 ~impl_osc_name = "/implOsc";
 
+// the channel, IP and port that the python client listens on
 ~controllerOscReceiveChannel = "/fromSC";
 ~controllerIp = "127.0.0.1";
 ~controllerPort = 5771;
 
+~traceOsc = true;
 
-/*
-these are the heart of any implementation:
-the synths and the events that are created
-with them - along with any effects and buffers and
-busses that they need
-*/
+
+
 ~makeEvents = {
 	"making events".postln;
 	~events = Dictionary.new;
 
+	// for sustained synths, with parameters that will be changed, and
+	// then explicitly delted. including effects
 	~events.add(\initSynth -> {
 		|msg|
 		var config = ~msg2Config.(msg);
 		~initSynth.(config);
 	});
+
+	// for synths that play and then delete themselves
 	~events.add(\playSynth -> {
 		|msg|
 		//[msg[2], msg.drop(3)].postln;
 		Synth(msg[2], msg.drop(3));
 	});
 
-	// this is the catch-all. We can extend this
-	// framework's capabilities by loading new code.
-	// primarily used to add SynthDefs, but if necessary
-	// can add new event handlers, patterns, whatever
-	// is needed
-	~events.add(\loadCode -> {
-		|msg|
-		msg[2].asString.load;
-	});
-
+	// creates an audio bus and returns its bus number
 	~events.add(\createBus -> {
 		|msg|
 		var bus, key = msg[2];
@@ -65,6 +52,15 @@ busses that they need
 		~sendToController.(key, ~audioBusses[key]);
 	});
 
+	// this is the catch-all. We can extend this
+	// framework's capabilities by loading new code.
+	// primarily used to add SynthDefs, but if necessary
+	// can add new event handlers, patterns, whatever
+	// is needed
+	~events.add(\loadCode -> {
+		|msg|
+		msg[2].asString.loadRelative;
+	});
 };
 
 // the message here will be sent via OSC from Python
@@ -85,7 +81,11 @@ busses that they need
 };
 
 
-
+// creates a control bus for each named parameter of the synth, then maps the parameter to that
+// control bus.
+// Also creates an event handler to listen for named events that will set the value of the named
+// control bus (so the client can control the synth
+// Also adds a named kill event that will destroy the synth
 ~initSynth = {
 	|config|
 	"initing synth".postln;
@@ -108,17 +108,55 @@ busses that they need
 };
 
 
-// -----------------------------------------------
-// these implementations will work as is for many
-// pieces, but can be overridden if desired
-// -----------------------------------------------
+
+~configServer = {
+	"~configServer".postln;
+	s = Server.local;
+	s.quit;
+	s.options.numOutputBusChannels_(2);
+	s.options.numInputBusChannels_(2);
+	s.options.sampleRate_(44100);
+	s.options.memSize_(2.pow(20));
+
+	s.newBusAllocators;
+	ServerBoot.removeAll;
+	ServerTree.removeAll;
+	ServerQuit.removeAll;
+
+	ServerBoot.add(~serverBoot);
+	ServerQuit.add(~serverQuit);
+};
+
+~serverTree = {
+	"~serverTree".postln;
+	~makeNodes.();
+};
+
+~serverQuit = {
+	"~serverQuit".postln;
+	~cleanup.();
+	s.newBusAllocators;
+	ServerBoot.removeAll;
+	ServerTree.removeAll;
+	ServerQuit.removeAll;
+};
+
+~serverBoot = {
+	"~serverBoot".postln;
+	~init.();
+	~makeEvents.();
+	~addControllers.();
+};
+
+
 ~init = {
 	"~init".postln;
 	~out = 0;
-	~traceOsc = true;
 	~controlBusses = Dictionary.new;
 	~audioBusses = Dictionary.new;
 	~synths = Dictionary.new;
+	~oscSender = NetAddr.new(~controllerIp, ~controllerPort);
+
 };
 
 ~cleanup = {
@@ -138,14 +176,9 @@ busses that they need
 
 // pretty powerful, generic OSC handler for mapping OSC messages
 // (from any source) to events
-// Can be replaced with MIDI or some other controller as desired
+// Could be replaced with MIDI or some other controller as desired
 // (Arduino, Wii, etc)
 ~addControllers = {
-
-	~oscSender = NetAddr.new(~controllerIp, ~controllerPort);
-
-
-
 	"~addControllers".postln;
 	   	~osc.free;
 		~osc = OSCFunc({
@@ -186,7 +219,21 @@ busses that they need
 	});
 };
 
-~fw.loadRelative;
+~main = {
+	~configServer.();
+
+	s.waitForBoot({
+		s.sync;
+		ServerTree.add(~serverTree);
+		s.freeAll; // this triggers the ServerTree actions
+		s.sync;
+		"done".postln;
+
+	});
+};
+
+// call exactly one function at root
+~main.();
 
 )
 
