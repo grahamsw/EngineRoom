@@ -5,7 +5,8 @@
 
 // ---------------------------------------------------------
 // this is the single file framework.
-// run this in Supercollider, then all other work gets done in Python
+// run this in Supercollider, then all other work gets done, or
+// initiated, in Python
 // ---------------------------------------------------------
 
 
@@ -15,7 +16,7 @@
 // the channel, IP and port that the python client listens on
 ~controllerOscReceiveChannel = "/fromSC";
 ~controllerIp = "127.0.0.1";
-~controllerPort = 5771;
+~controllerPort = 5772;
 
 ~traceOsc = true;
 

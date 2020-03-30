@@ -103,24 +103,6 @@ s('playSynth', 'whistle',
                'pulseFreq', 5,
                'rq', 0.03) 
 
-# play an endless sequence
-params_zip = [const_gen(arg) for arg in ['playSynth', 'whistle', 'amp', 1, 'focus', 1, 'pulseFreq', 4, 'rq', 0.3, 'freq']]
-params_zip.append(seq_gen([300, 600, 900, 1200], AtEnd.MIRROR))
-params_zip.append(const_gen('timeScale'))
-params_zip.append(rng_gen(0.1, 4, 20, AtEnd.REPEAT))
-
-params = [const_gen('playSynth'), const_gen('whistle'),
-          const_gen('amp'), const_gen(0.1),
-          const_gen('focus'), rng_gen(0, 0.1, 10, AtEnd.MIRROR),
-          const_gen('pulseFreq'), rng_gen(0.1, 5, 10, AtEnd.REPEAT),
-          const_gen('rq'), const_gen(0.9),
-          const_gen('timeScale'), seq_gen([0.5, 1, 2], AtEnd.REPEAT),
-          const_gen('freq'), seq_gen([300, 450, 600, 750, 900, 1000], AtEnd.MIRROR)]
-
-s1, _ = run_in_thread(s, zip_gen(*params),
-                      const_gen(0.5))
-# stop the sequence
-s1.set()
 
 
 
