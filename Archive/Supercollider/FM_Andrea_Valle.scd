@@ -1,7 +1,7 @@
 (
 
 SynthDef(\RmOctaver,
-}).add;
+
 	{
 		|bus|
 		var in, an, freq;
@@ -10,7 +10,7 @@ SynthDef(\RmOctaver,
 		freq = an[0];
 		Out.ar(0, SinOsc.ar(freq:freq * 0.5 ) * in + in);
 		//Out.ar(0,  in);
-
+}).add;
 )
 
 (

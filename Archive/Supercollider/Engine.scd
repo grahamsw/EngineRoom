@@ -113,5 +113,6 @@ SynthDef(\engine, {
 
 e = Synth(\engine);
 ~register.value(e, "/engine");
-e.set(\engineSpeed, 0.7)
-e.set(\wguideLength1, 0.991)
+e.set(\engineSpeed, 0.97)
+e.set(\wguideLength1, 0.94)
+e.set(\mixCylinders, 0.1)

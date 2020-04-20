@@ -134,3 +134,10 @@ s4.set()
 s5.set()
 s6.set()
 s('killsynth2')
+
+
+s('freq2', 80)
+s('bwr2', 0.8)
+s('tremoloFreq2', 0.1)
+
+

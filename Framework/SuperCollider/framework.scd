@@ -60,7 +60,7 @@
 	// is needed
 	~events.add(\loadCode -> {
 		|msg|
-		msg[2].asString.loadRelative;
+		msg[2].asString.load;
 	});
 };
 
