@@ -1,0 +1,65 @@
+~port = SerialPort.new("COM4", 115200);
+~port.read
+
+SerialPort.devices
+
+(
+x = [];
+10.do{x = x.add(~port.read)};
+x.collect(_.asAscii);
+)
+~port.close
+
+
+
+(
+
+~charArray = [];
+
+
+~getValues = Routine.new({
+	var ascii;
+	{
+	ascii = ~port.read.asAscii;
+	if (ascii.isDecDigit,{~charArray = ~charArray.add(ascii)});
+	if(ascii == $a, {
+			~val = ~charArray.collect(_.digit).convertDigits;
+			~charArray = [];
+	});
+	}.loop;
+}).play;
+)
+	x.collect(_.asAscii).collect(_.digit);
+	y = x.collect(_.asAscii).collect(_.digit);
+	size = y.size;
+
+	y.do{|item, i|
+		val = val + ( item * (10**(z - i - 1)));
+    };
+	val;
+};
+)
+
+(
+SynthDef(\saw,
+	{
+		|cutoff = 1000|
+		var sig;
+		sig = Saw.ar([50,51]);
+		sig = RLPF.ar(sig, cutoff.lag(0.02), 0.25, 0.2);
+		Out.ar(0, sig);
+}).add;
+)
+
+~synth = Synth(\saw, [\cutoff, 200]);
+
+~getValues.stop
+
+(
+~control = Routine.new({
+	{
+		~synth.set(\cutoff, ~val.linexp(0, 1023, 80, 4000));
+		0.01.wait;
+	}.loop;
+}).play;
+)
