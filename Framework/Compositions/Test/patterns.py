@@ -1,6 +1,7 @@
 import os
 
 root = r"C:\Users\graha\Documents\dev\EngineRoom\Framework\PythonLib"
+r = r"C:\Users\graha\Documents\dev\EngineRoom\Framework"
 #root = r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\\"
 os.chdir(root)
 
@@ -14,7 +15,7 @@ from scales import  midi2freq, n2f
 
 # a threadsafe sender
 s = rlocker(sender('/implOsc', ip='127.0.0.1', port=57120))
-s('loadCode', r"..\Synths\default.scd")
+s('loadCode', r + r"\Synths\default.scd")
 
-s('loadCode', r"..\Patterns\the_rhine_016.scd")
-s('loadCode', r"..\Patterns\play.scd")
+s('loadCode', r + r"\Patterns\the_rhine_016.scd")
+s('loadCode', r + r"\Patterns\play.scd")

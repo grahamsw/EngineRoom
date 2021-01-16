@@ -1,0 +1,38 @@
+digraph "Example" {
+CONTROL_0 [shape=trapezium,color=blue,label="bus:0"];
+CONTROL_1 [shape=trapezium,color=blue,label="freq:440"];
+UGEN_1 [shape=record,color=black,label="{{LFSaw|<IN_0> |<IN_1> 0.0}|{<OUT_0>}}"];
+UGEN_2 [shape=record,color=blue,label="{{EnvGen|<IN_0> 1.0|<IN_1> 0.3|<IN_2> 0.0|<IN_3> 1.0|<IN_4> 2|<IN_5> 0|<IN_6> 2|<IN_7> -99|<IN_8> -99|<IN_9> 1.0|<IN_10> 0.01|<IN_11> 5|<IN_12> -4.0|<IN_13> 0|<IN_14> 1.0|<IN_15> 5|<IN_16> -4.0}|{<OUT_0>}}"];
+UGEN_3 [shape=record,color=black,label="{{*|<IN_0> |<IN_1> }|{<OUT_0>}}"];
+UGEN_4 [shape=record,color=blue,label="{{LFNoise1|<IN_0> 1}|{<OUT_0>}}"];
+UGEN_5 [shape=record,color=blue,label="{{MulAdd|<IN_0> |<IN_1> 36|<IN_2> 110}|{<OUT_0>}}"];
+UGEN_6 [shape=record,color=blue,label="{{MIDICPS|<IN_0> }|{<OUT_0>}}"];
+UGEN_7 [shape=record,color=black,label="{{RLPF|<IN_0> |<IN_1> |<IN_2> 0.1}|{<OUT_0>}}"];
+UGEN_8 [shape=record,color=black,label="{{AllpassN|<IN_0> |<IN_1> 0.05|<IN_2> 0.030180114507675|<IN_3> 4}|{<OUT_0>}}"];
+UGEN_9 [shape=record,color=black,label="{{AllpassN|<IN_0> |<IN_1> 0.05|<IN_2> 0.025580888986588|<IN_3> 4}|{<OUT_0>}}"];
+UGEN_10 [shape=record,color=black,label="{{AllpassN|<IN_0> |<IN_1> 0.05|<IN_2> 0.011900281906128|<IN_3> 4}|{<OUT_0>}}"];
+UGEN_11 [shape=record,color=black,label="{{AllpassN|<IN_0> |<IN_1> 0.05|<IN_2> 0.041390246152878|<IN_3> 4}|{<OUT_0>}}"];
+UGEN_12 [shape=record,color=black,label="{{AllpassN|<IN_0> |<IN_1> 0.05|<IN_2> 0.020586103200912|<IN_3> 4}|{<OUT_0>}}"];
+UGEN_13 [shape=record,color=black,label="{{AllpassN|<IN_0> |<IN_1> 0.05|<IN_2> 0.0056626558303833|<IN_3> 4}|{<OUT_0>}}"];
+UGEN_14 [shape=record,color=black,label="{{AllpassN|<IN_0> |<IN_1> 0.05|<IN_2> 0.0033488929271698|<IN_3> 4}|{<OUT_0>}}"];
+UGEN_15 [shape=record,color=black,label="{{AllpassN|<IN_0> |<IN_1> 0.05|<IN_2> 0.026368641853333|<IN_3> 4}|{<OUT_0>}}"];
+UGEN_16 [shape=record,color=black,label="{{Out|<IN_0> |<IN_1> |<IN_2> }}"];
+CONTROL_1 -> UGEN_1:IN_0 [color=blue];
+UGEN_1:OUT_0 -> UGEN_3:IN_0 [color=black];
+UGEN_2:OUT_0 -> UGEN_3:IN_1 [color=blue];
+UGEN_4:OUT_0 -> UGEN_5:IN_0 [color=blue];
+UGEN_5:OUT_0 -> UGEN_6:IN_0 [color=blue];
+UGEN_3:OUT_0 -> UGEN_7:IN_0 [color=black];
+UGEN_6:OUT_0 -> UGEN_7:IN_1 [color=blue];
+UGEN_7:OUT_0 -> UGEN_8:IN_0 [color=black];
+UGEN_8:OUT_0 -> UGEN_9:IN_0 [color=black];
+UGEN_9:OUT_0 -> UGEN_10:IN_0 [color=black];
+UGEN_10:OUT_0 -> UGEN_11:IN_0 [color=black];
+UGEN_7:OUT_0 -> UGEN_12:IN_0 [color=black];
+UGEN_12:OUT_0 -> UGEN_13:IN_0 [color=black];
+UGEN_13:OUT_0 -> UGEN_14:IN_0 [color=black];
+UGEN_14:OUT_0 -> UGEN_15:IN_0 [color=black];
+CONTROL_0 -> UGEN_16:IN_0 [color=blue];
+UGEN_11:OUT_0 -> UGEN_16:IN_1 [color=black];
+UGEN_15:OUT_0 -> UGEN_16:IN_2 [color=black];
+}

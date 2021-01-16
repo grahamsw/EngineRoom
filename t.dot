@@ -1,0 +1,13 @@
+digraph "t" {
+CONTROL_0 [shape=trapezium,color=blue,label="bus:0"];
+CONTROL_1 [shape=trapezium,color=blue,label="freq:440"];
+UGEN_1 [shape=record,color=black,label="{{SinOsc|<IN_0> |<IN_1> 0.0}|{<OUT_0>}}"];
+UGEN_2 [shape=record,color=blue,label="{{EnvGen|<IN_0> 1.0|<IN_1> 0.3|<IN_2> 0.0|<IN_3> 1.0|<IN_4> 2|<IN_5> 0|<IN_6> 2|<IN_7> -99|<IN_8> -99|<IN_9> 1.0|<IN_10> 0.01|<IN_11> 5|<IN_12> -4.0|<IN_13> 0|<IN_14> 1.0|<IN_15> 5|<IN_16> -4.0}|{<OUT_0>}}"];
+UGEN_3 [shape=record,color=black,label="{{*|<IN_0> |<IN_1> }|{<OUT_0>}}"];
+UGEN_4 [shape=record,color=black,label="{{Out|<IN_0> |<IN_1> }}"];
+CONTROL_1 -> UGEN_1:IN_0 [color=blue];
+UGEN_1:OUT_0 -> UGEN_3:IN_0 [color=black];
+UGEN_2:OUT_0 -> UGEN_3:IN_1 [color=blue];
+CONTROL_0 -> UGEN_4:IN_0 [color=blue];
+UGEN_3:OUT_0 -> UGEN_4:IN_1 [color=black];
+}

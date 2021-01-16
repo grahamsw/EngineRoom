@@ -5,7 +5,7 @@ root = r"C:\Users\graha\Documents\dev\EngineRoom\Framework\PythonLib"
 os.chdir(root)
 
 from send2framework import sender
-from threadrunners import rlocker, play_synth_pattern
+from threadrunners import rlocker, play_synth_pattern, run_in_thread
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
                                     makeSafeKeyedSetterGetter, keyed_gen       
 from scales import  midi2freq, n2f          
