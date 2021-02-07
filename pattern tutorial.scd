@@ -6,7 +6,7 @@
 ~p3 = Pbind(\note, 5, \amp, 0.1, \dur, 1, \delta, 4);
 )
 
-~p1.play(\quant:0)
+~p1.play(quant:0)
 ~p2.play(quant:1)
 ~p3.play(quant:3)
 ~p0.play(quant:0)
@@ -25,8 +25,8 @@ Pbind(
 Pbind(
 
 	\degree, Ppatlace([
-		Pseries(0, 1, 8),b
-		Pseries(2,1,7)],inf),
+		Pseries(0, 1, 8),
+		Pseries(2,1,7)],inf).trace,
 	\dur, 0.25
 ).play
 )
