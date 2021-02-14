@@ -19,3 +19,60 @@ Create a tic-tac-toe game for two human players sharing the same computer. The g
 
 - If you're feeling motivated, add some code so that the game will produce a unique sound for all three possible outcomes (X wins, O wins, draw).
 */
+
+(
+
+~player = "X";
+
+~checkWin = {
+	var ret = false;
+	3.do{|i|
+		ret = ret || if ((~vals[i][0] == ~vals[i][1]) && (~vals[i][1] == ~vals[i][2]), {~vals[i][0]}, {false});
+		ret = ret || if ((~vals[0][i] == ~vals[1][i]) && (~vals[1][i] == ~vals[2][i]), {~vals[0][i]}, {false});
+};
+ret;
+};
+
+~togglePlayer = {
+	if (~player == "X", {~player = "O"}, {~player = "X"});
+};
+~vals = Array.fill(3, {Array.fill(3)});
+~makeButton = {
+	|w, x, y, width, height|
+	var button = Button.new(w, Rect(x*width, y*width, width, height))
+	.states_([
+		[""], ["X"], ["O"]
+	])
+	.font_(Font(Font.defaultSansFace, 90))
+	.action_({ arg button;
+		~vals[x][y] = ~player;
+		~vals.postln;
+		button.value_(if(~player == "X", {1},{2}));
+		button.enabled_(false);
+		~togglePlayer.();
+		~checkWin.value.postln;
+
+	});
+	button;
+};
+
+
+Window.closeAll;
+~width = 70;
+~height = 70;
+w = Window.new("tic tac fuck me", Rect(50, 50, 3*~width, 3*~height + 50))
+    .front
+    .alwaysOnTop_(true)
+ .background_(Color.magenta);
+~buttons = [[0,0], [0,1], [0,2],
+	[1,0],[1,1], [1,2],
+	[2,0], [2,1], [2,2]].collect({
+	 |ps|
+	~makeButton.(w, ps[0], ps[1], ~width, ~height);
+});
+
+
+)
+~vals
+~vals[0][0]==~vals[0][1]==~vals[0][2]
+~checkWin.value
