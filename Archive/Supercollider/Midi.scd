@@ -1,7 +1,28 @@
-MIDIClient.init;
-MIDIIn.connectAll;
+// connects a basic synth to any MIDI controller
 
 (
+
+
+~notes = Array.newClear(128);
+
+s.waitForBoot({
+    s.sync;
+
+  SynthDef(\tone, {
+    | freq = 440, amp = 0.3, gate = 1|
+    var sig, env;
+	sig = Mix.ar(SinOsc.ar(freq * [1, 1.0001]));
+    env = EnvGen.kr(Env.adsr, gate, doneAction:2);
+	sig = FreeVerb.ar(sig * env * amp, 0.1, 0.5);
+    Out.ar(0, sig);
+  }).add;
+    s.sync;
+});
+
+MIDIClient.init;
+MIDIIn.connectAll;
+MIDIdef.freeAll;
+
 MIDIdef.noteOn(\noteOnTest, {
   | vel, nn, chan, src |
   [vel, nn].postln;
@@ -10,7 +31,7 @@ MIDIdef.noteOn(\noteOnTest, {
                        \freq, nn.midicps,
                        \amp, vel.linexp(1,127, 0.1, 0.4),
                        \gate, 1,
-                       \bend, ~bend.linlin(0, 16838, -2, 2),
+
                     ]
                     );
   });
@@ -21,40 +42,5 @@ MIDIdef.noteOff(\noteOffTest, {
   ~notes[nn].set(\gate, 0);
   ~notes[nn] = nil;
   });
-
-MIDIdef.bend(\bendTest, {
-  | val, chan, src |
-	[val, chan, src].postln;
-  ~bend = val;
-  ~notes.do{ |synth| synth.set(\bend, val.linlin(0, 16383, -2, 2))};
-  });
-
-MIDIIn.control = {
-	| src, chan, num, val|
-	[src, chan,num,val/127].postln;
-}
-)
-  ~bend = 8192;
-
-
-(
-
-  (
-  SynthDef(\tone, {
-    | freq = 440, amp = 0.3, gate = 0, bend = 0 |
-    var sig, env;
-	sig = Mix.ar(SinOsc.ar(freq * bend.midiratio * [1, 1.004]));
-    env = EnvGen.kr(Env.adsr, gate, doneAction:2);
-		sig = FreeVerb.ar(sig * env * amp, 0.6, 0.5);
-    Out.ar(0, sig);
-  }).add;
-  )
-)
-  ~notes = Array.newClear(128);
-
-
-
 )
 
-
-().play

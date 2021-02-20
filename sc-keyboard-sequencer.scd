@@ -28,7 +28,7 @@ var keyX = {
 
 var keyRect = {
 	|note|
-	var kh = keyHeight * if(isWhiteKey.(note), {1}, {0.6});
+	var kh = keyHeight * if(isWhiteKey.(note), {1}, {0.4});
 	Rect(keyX.(note), 0, keyWidth, kh)
 };
 
@@ -52,7 +52,7 @@ notes.select(isWhiteKey).do(createButton);
 notes.reject(isWhiteKey).do(createButton);
 
 
-20*25
+
 )
 
 
