@@ -62,7 +62,7 @@
     ~odd_change = {
         |seq|
         // swap 0 - 1; 2 - 3 .... until you run out
-        // this only works for ~num_bells == 5
+       // this only works for ~num_bells == 5
         [1,0,3,2,4].collect({
                 |i|
                 seq[i]
