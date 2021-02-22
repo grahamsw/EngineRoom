@@ -119,11 +119,11 @@
 
     Pdef(\v1, Pmono(
         \violish,
-        \degree, Pseq([-2,  [-3,-5]], inf),
-        \lag, Pseq([0.2, 0.5],inf),
+        \degree, Pseq([2,  -5], inf),
+        \lag, Pseq([0.5, 0.5],inf),
         \dur,  2,
         \ctranspose, Pseq([-24, -24], inf),
-		\amp, 0.4,
+		\amp, 0.3,
         \out, ~reverbBus
     ));
     "defining synths".postln;
@@ -156,7 +156,7 @@
 	\start4: {Pbindef(\p4).play(t, quant:2);},
 	\startC1: {Pbindef(\c1).play(t, quant:2);},
 	\startC2: {Pbindef(\c2).play(t, quant:2);},
-	\startV1: {Pdef(\v1).play(t, quant:4);},
+	\startV1: {Pdef(\v1).play(t, quant:2);},
 
     \change1: {
         Pbindef(\p1,
@@ -284,7 +284,7 @@ s.waitForBoot {
     [\stopC2, 6],
 
     [\stop4, 4],
-    [\stopV1, 2]
+    [\stopV1, 4]
 
 ];
 
@@ -302,25 +302,32 @@ r = Routine({
     });
 
 });
-Event
+
 r.play;
 )
-(
-	Pbindef(\p3,
-		\instrument, \basic,
-		\dur, Pseq([0.25, 0.25,0.25, 0.25], inf),
-		\degree, Pseq([7,6,5,4], inf),
-		\amp, 0.01,
-        \out, ~reverbBus
-	).play(t, quant:2);
-Pdef(\v1, Pmono(
-        \violish,
-    \degree, Pseq([0], inf),
-    \mtranspose, Pseq([0, 2, 4,7], inf),
-    \lag, Pseq([0.1],inf),
 
-        \dur,  0.5,
-		\amp, 0.4,
-        \out, ~reverbBus
-    )).play
+
+
+
+(
+q = {|skip|
+    Routine({
+    ~sequence.selectIndices({|item,ix| ix < skip}).do({
+        |ix|
+        ~sequence[ix][0].postln;
+        ~events[~sequence[ix][0]].value;
+    });
+    ~sequence.rejectIndices({|item,ix| ix < skip}).do({
+        |ix|
+        ~sequence[ix][0].postln;
+        ~events[~sequence[ix][0]].value;
+            (4* ~sequence[ix][1]).wait;
+    });
+
+});};
+    q.(8).play;
 )
+
+
+
+

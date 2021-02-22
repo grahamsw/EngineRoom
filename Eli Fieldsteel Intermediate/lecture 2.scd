@@ -64,3 +64,5 @@ p = Routine({
 
 p.stop
 
+
+{SinOsc.ar(1000 + SinOsc.ar(8) + SinOsc.ar(1))}.plot

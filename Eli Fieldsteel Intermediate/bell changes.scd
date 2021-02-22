@@ -140,11 +140,11 @@
                 seq.do({
                     |c|
                     deg = 2 - c;
-                    (\degree: deg,\dur: 0.2, \instrument: \bell, \amp: 0.3 ).play;
-                    0.25.wait;
+                (\degree: deg,\dur: 0.2, \instrument: \bell, \amp: rrand(0.27,0.31) ).play;
+                   rrand(0.24, 0.26).wait;
                 });
                 //0.05.wait;
-            });
+            });0
 
     })};
 
