@@ -43,7 +43,7 @@ SynthDef(\ks_guitar, { arg note, pan, rand, delayTime, noiseType=1;
 
 }.fork
 
-)
+// )
 
 (
 SynthDef(\viol,
@@ -69,7 +69,9 @@ r = Routine({
         0.5.wait;
     })
 
-   y =  y.stop
+   //y =  y.stop
 
 
 })
+
+z =  r.play

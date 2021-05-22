@@ -27,8 +27,18 @@
 	Ppar([melody, bass]);
 }
 )
+(
+~transpose = 3;
+~timeBasis = 0;
+~clock = TempoClock(1);
+)
+~clock.tempo = 5;
+~rhine_16_pat = ~the_rhine_016.(transpose:~transpose, timeBasis:~timeBasis);
 
-~the_rhine_016.(transpose:5, timeBasis:0.1).play;
+~rhine_16_pat.play(~clock);
+
+~rhine_16_pat
+
 
 t = Bus.control(s)
 t.set(5)

@@ -48,9 +48,9 @@ p = Routine({
 	loop{
 		Synth(\fm,
 			[
-				\freq, exprand(20,20000),
-				\modfreq, exprand(20,20000),
-				\modamp, exprand(1,20000),
+                \freq, exprand(100,200).round(50),
+				\modfreq, exprand(1000,2000),
+				\modamp, exprand(1000,2000),
 				\rel, 0.1,
 			]
 		);
@@ -87,7 +87,7 @@ SynthDef(\fm, {
 p = Routine({
 	loop{
 		//higher ratio = wider spacing of sideband pairs
-		Synth(\fm, [\freq, 60.midicps, \ratio, rrand(1,10).postln]);
+        Synth(\fm, [\freq, rrand(60, 67).midicps, \ratio, rrand(1,10).postln]);
 		2.wait;
 	}
 }).play;

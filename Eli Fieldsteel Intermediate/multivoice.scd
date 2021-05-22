@@ -1,7 +1,5 @@
 (
-y = Synth(\complex_bass)
-y.set(\pos, -0.5)
-y.set(\gate,0)
+
 SynthDef(\complex_bass, {
 	|freqs = #[40, 80, 120, 160, 200, 240], amps = #[0.1, 0.1, 0.1, 0.1, 0.1, 0.1], gate = 1, pos = 0, out=0|
 	var sound, env;
@@ -70,3 +68,4 @@ r.stop;
 [~synthgroup, ~fxgroup, b, l, ~lfo, ~xfer].do({ arg x; x.free });
 currentEnvironment.clear; // clear all environment variables
 )
+

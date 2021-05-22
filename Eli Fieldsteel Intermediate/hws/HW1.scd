@@ -40,6 +40,26 @@ When finished, title your scd file "LastName_HW1.scd" and upload it to the cours
 // SynthDefs for the Synths used in the piece
 ~defineSynths = {
 
+    SynthDef(\fm3,
+        {
+            | freq=440,  mRatio = 1, cRatio = 1, index = 1, iScale=5, amp = 0.2, atk = 0.01, rel = 0.1, cAtk = 4, cRel = (-4), pan=0, out=0 |
+            var car, mod, env, iEnv;
+            iEnv  = EnvGen.kr(
+                Env(
+                    [index, index * iScale, index],
+                    [atk, rel],
+                    [cAtk, cRel]
+                )
+            );
+            env = EnvGen.kr(
+                Env.perc(atk, rel, curve:[cAtk, cRel]),
+                doneAction:Done.freeSelf
+            );
+            mod = SinOsc.ar(freq * mRatio, mul:freq*mRatio * iEnv);
+            car = SinOsc.ar(freq * cRatio + mod) * env * amp;
+            car = Pan2.ar(car, pan);
+            Out.ar(out, car);
+    }).add;
 };
 
 // list of Pbinds
@@ -54,7 +74,8 @@ When finished, title your scd file "LastName_HW1.scd" and upload it to the cours
 // code via OSC
 ~events = [
 
-];
+
+].asDict;
 
 
 
@@ -105,65 +126,29 @@ s.waitForBoot {
 
 
 
-(
-SynthDef(\fm1,
-    {
-        | freq=440, amp=0.1, ratio = 1, index=1, atk = 0.01, dec=0.3, rel = 0.1, gate=1, pos = 0, out=0 |
-        var sig, env, mod;
-        var modFreq = freq * ratio;
-        var modAmp =freq * ratio * index;
-        ["modFreq:  " + modFreq, "modAmp: " + modAmp].postln;
-        env = EnvGen.kr(Env.adsr(atk, dec, releaseTime:rel ),gate:gate, doneAction:2);
-        mod = SinOsc.ar(modFreq, mul: modAmp);
-        sig = SinOsc.ar(freq + mod);
-       // sig = sig * env;
-        sig = sig * amp;
-        sig = Pan2.ar(sig, pos);
-        Out.ar(out, sig);
-    }
-).add;
-
-)
-(
-~ratio =  Bus.control(s,1);
-~index =  Bus.control(s,1);
-~freq = Bus.control(s,1) ;
-)
-
-(
-~ratio.set(17);
-~index.set(5);
-~freq.set(100)
-
-)
-
-x = Synth(\fm1)
-x.map(\freq, ~freq, \ratio, ~ratio, \index, ~index);
-x.free;
 
 
-Pdef(\freq).
 
 
 (
-Pbindef(\fmp1,
-    \instrument, \fm1,
-    \degree, Pseq([1], inf),
-    \dur, 1,
-    \ratio, 1,
-    \index, 1
-)
-)
+Synth(\fm3, [\freq, 60.midicps, \rel, 0.1, \index, 2, \iScale, 0.04, \cRel, 12])
+
 (
-t =  TempoClock;
+t = TempoClock;
+Pbindef(\fmer,
+    \instrument, \fm,
+    \midinote, Pseq([60, 64, 67, 59], inf),
+    \dur, 1
 
-Pbindef(\fmp1).play(t, quant: 4)
+);
+Pbindef(\fmer).play(t, quant:2);
 )
 
-Pcable
+Pbindef(\fmer, \amp, 0.9, \atk, 1 \rel, 5, \cAtk, 4).quant_(2)
+Pbindef(\fmer, \index, Pseq([1], inf), \legato, 5).quant_(2)
+
+Pbindef(\fmer, \iScale, Pseq([0.2,0.9], inf)).quant_(2)
+Pbindef(\fmer, \cRatio, Pn(Pgeom(0.1, 1.6,10), inf).trace).quant_(2)
 
 
-Pbindef(\fmp1, \index, 5, \ratio, Pseq([1,5,17], inf)).quant_(4)
-
-)
-
+Synth(\fm3, [freq, 440,  mRatio, 1, cRatio, 1, index = 1, iScale=5, amp = 0.2, atk = 0.01, rel = 0.1, cAtk = 4, cRel = (-4), pan=0, out=0 |

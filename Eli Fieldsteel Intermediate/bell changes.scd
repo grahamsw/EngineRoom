@@ -1,7 +1,7 @@
 
 (
 // these functions are all defined by the composer, and may be
-// redefined, with care, and rerun while the piece is running
+// redefined,an with care, and rerun while the piece is running
 // in order to extend it and continue experimentation
 
 ~allocBusses = {
@@ -194,6 +194,7 @@ s.waitForBoot {
     });
     ServerTree.run;
 };
+
 
 ~definePbinds.value;
 

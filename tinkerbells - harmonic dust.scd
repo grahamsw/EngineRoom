@@ -9,15 +9,17 @@ SynthDef(\harms,
 		Out.ar(0, sig/20 * amp);
 }).add;
 )
-
-a = Synth(\harms, [\freq, 100])
+().play
+a = Synth(\harms, [\freq, 400, \amp, 1])
 
 a.set(\amp,0.5)
-a.set(\decay, 8)
-a.set(\freq, 70)
-a.set(\atk, 1)
-a.set(\tf, 15)
+a.set(\decay, 1)
+a.set(\freq, 1600)
+a.set(\atk, 0.1)
+a.set(\tf, 1)
 a.stop
+
+s.defaultGroup.freeAll
 
 Synth(\harms, [\freq, 150, \amp, 0.5])
 Synth(\harms, [\freq, 300])

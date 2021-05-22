@@ -52,7 +52,7 @@ r{
 )
 
 (
-{
+{.
 	var sig, mod;
 	mod = Osc.ar(~buf, MouseY.kr(10,10000,1), mul:1000);
 	sig = Osc.ar(~buf, MouseX.kr(20,2000,1) + mod) * 0.15!2;
