@@ -1,10 +1,10 @@
 import os
 
-root = r"C:\Users\graha\Documents\dev\EngineRoom\Framework\PythonLib"
+root = r"C:\Users\graha\Documents\dev\github\EngineRoom\Framework\PythonLib"
 #root = r"C:\Users\g.stalker-wilde\Google Drive\Documents\dev\repos\EngineRoom\\"
 os.chdir(root)
 
-from send2framework import sender
+from send2framework import sender, send
 from threadrunners import rlocker, play_synth_pattern, run_in_thread
 from generators import const_gen, rng_gen, rng_gen2, zip_gen, rand_gen, seq_gen, gen_proxy, AtEnd, \
                                     makeSafeKeyedSetterGetter, keyed_gen       
@@ -13,7 +13,7 @@ from scales import  midi2freq, n2f
 #from osc_receiver import osc_receiver
 
 # a threadsafe sender
-s = rlocker(sender('/implOsc', ip='127.0.0.1', port=57120))
+s = rlocker(sender('/implOsc', ip='127.0.0.1', port=57121))
 #r = osc_receiver(ip='127.0.0.1', port=5771, oscChannel='/fromSC')
 
 #
@@ -66,6 +66,7 @@ ss, setters = play_synth_pattern(s, 'bell', {
 # these are the params
 # |fs=1000, t60=1, pitchy=1, amp=0.25, gate=1|
 
+from gart import read_live_data
 
 
 # this is low wind

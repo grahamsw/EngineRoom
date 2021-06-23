@@ -13,10 +13,16 @@
 
 )
 
+
+
+~m_005 = EventPatternProxy(~nature_005.());
+
 ~nature_005.().play
 ~clock = TempoClock(1);
+~m_005.play(~clock, quant:4);
 
-~clock.tempo=10
+~m_005.source_(Pchain(~the_rhine_016.(),Pbind(\ctranspose, 7))).quant_(4)
+~clock.tempo=1
 
 Pdef(\nature, ~nature_005.())
 ().play
