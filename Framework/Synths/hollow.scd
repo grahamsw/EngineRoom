@@ -1,5 +1,5 @@
 /*
-
+ ambient from sonic pi
 
 use_synth :hollow
 with_fx :reverb, mix: 0.7 do
@@ -66,18 +66,3 @@ c = ~loop.(~notes[\a4], ~notes[\cs5], 5, 3, 11);
 [a, b, c].do{|i| i.fork};
 )
 
-
-(
-~pat = (
-	| note1, note2, attack, release, sleep |
-	Pdef(
-		\instrument, \hollow,
-		\note
-	inf.do({
-			var note = [note1, note2].choose.midicps;
-		Synth(\hollow, [\freq, note, \attack, attack, \release, release]);
-		sleep.wait;
-	});
-}
-};
-){ |note11

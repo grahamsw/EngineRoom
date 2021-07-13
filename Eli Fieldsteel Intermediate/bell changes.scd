@@ -193,17 +193,19 @@ s.waitForBoot {
         })
     });
     ServerTree.run;
+    s.sync;
+
+    ~definePbinds.value;
+    ~events[\start].value;
 };
 
 
-~definePbinds.value;
+
+
 
 )
-
-
-
-~events[\start].value;
-~events[\stopChanges].value;
+//~events[\start].value;
+//~events[\stopChanges].value;
 
 
 

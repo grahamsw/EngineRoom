@@ -1,16 +1,4 @@
-// from http://sccode.org/1-5as
-// by nicolaariutti
-
-// define the violin-like sound synth
-
-
-/*
-// play a chord (farfisa-like sound)
 (
-[60, 64, 67].do ({
-	| note |
-	Synth(\violin, [\midinote, note]);
-})(
 SynthDef(\violin_farfisa, {
 	| midinote=60, amp=0.25 |
 	var env = EnvGen.kr(Env.perc, doneAction:2);
@@ -24,17 +12,6 @@ SynthDef(\violin_farfisa, {
 )
 
 // play a single note (it seems also a flute!)
-x = Synth(\violin, [\midinote, 84, \dur, 0.3]);
+x = Synth(\violin_farfisa, [\midinote, 74, \dur, 2]);
 
 
-
-// play some random notes
-(
-p = Pbind(
-	\instrument, \violin,
-	\midinote, Prand( Scale.majorPentatonic.degrees, inf) + 60,
-	\dur, 3,
-	\legato, 1
-).play;
-)
-*/

@@ -15,7 +15,7 @@
 ~impl_osc_name = "/implOsc";
 
 // the channel, IP and port that the python client listens on
-~controllerOscReceiveChannel = "/implOsc";
+~controllerOscReceiveChannel = "/fromSC";
 ~controllerIp = "127.0.0.1";
 ~controllerPort = 5772;
 

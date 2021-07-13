@@ -36,7 +36,7 @@ def makeMetricGetter(key_file_location, profile_id, metrics, dimensions):
  
 key_file_location = r'/home/pi/PythonLib/FFOCREPORTING-8e839572ab2d.json'
 key_file_location = r'C:\Users\graha\Documents\dev\github\DataAnalysis\secrets\FFOCREPORTING-8e839572ab2d.json'
-
+key_file_location = 'secrets/FFOCREPORTING-8e839572ab2d.json'
 master_view_profile_id = 'ga:175168708' 
 
 profile_id = master_view_profile_id
@@ -56,21 +56,21 @@ eventMetrics = makeMetricGetter(key_file_location, profile_id,
 
 
 
-def read_live_data(sections):
+def read_live_data():
     pm = pageMetrics()
     um = userMetrics()
     em = eventMetrics()
     return {'numPageViews':pm['rt:pageViews'].astype('int').sum(), 
             'activeUsers':um['rt:activeUsers'].astype('int').sum(),
-            'sectionCounts': get_section_counts(pm, sections),
+         #   'sectionCounts': get_section_counts(pm, sections),
             'eventCounts': get_key_events(em)}
 
 
-def make_dummy_reading(sections):
+def make_dummy_reading():
     big_num = float('inf')
     return {'numPageViews': big_num, 
             'activeUsers': big_num,
-            'sectionCounts': {s:big_num for s in sections + ['other']},
+         #   'sectionCounts': get_section_counts(pm, sections),
             'eventCounts': {
                 'videoPlays': big_num,
                 'grantDetailViews':big_num,
@@ -79,7 +79,7 @@ def make_dummy_reading(sections):
                 }
           }
 
-def get_section_counts(df, sections):
+def get_section_counts(pm, sections):
     sections = sorted(sections, key=lambda s: -len(s))
     sections.remove('/')
     def best_match(path):
@@ -90,15 +90,10 @@ def get_section_counts(df, sections):
                 return s
         else: 
             return "other"
+    df = pm
     df['section'] = df['rt:pagePath'].apply(lambda p: best_match(p))
     df['cnt'] = pd.to_numeric(df['rt:pageViews'])
-    ret = df.groupby('section').sum()['cnt'].to_dict()
-    for s in sections:
-        if s not in ret.keys():
-            ret[s] = 0
-    return ret
-            
-    
+    return df.groupby('section').sum()['cnt'].to_dict()
 
 def get_key_events(events):
     vps = events[events['rt:eventAction']=='Play']
@@ -110,32 +105,14 @@ def get_key_events(events):
             'fileDownloads':len(fds),
             'signups': len(signups)}
 
-
-def calc_section_count_difference(nrsc, lrsc):
-    return {s: max(nrsc[s]-lrsc[s],0) for s in nrsc}
-
-
-sections = [
-                '/work/our-grants/',
-                '/work/',
-                '/the-latest/',
-                '/our-work-around-the-world/',
-                '/just-matters/',
-                '/campaigns/',
-                '/about/people/',
-                '/about/careers/',
-                '/about/',
-                '/'
-            ]
-
-lr = make_dummy_reading(sections)
-def get_new_data(sections):
+lr = make_dummy_reading()
+def get_new_data():
     global lr
-    nr = read_live_data(sections)
+    nr = read_live_data()
     ret  = {
-        'numPageViews': max(nr['numPageViews'] - lr['numPageViews'], 0),
-        'activeUsers': max(nr['activeUsers'] - lr['activeUsers'], 0),
-        'sectionCounts': calc_section_count_difference(nr['sectionCounts'], lr['sectionCounts']),
+            'numPageViews': max(nr['numPageViews'] - lr['numPageViews'], 0),
+            'activeUsers': max(nr['activeUsers'] - lr['activeUsers'], 0),
+     #   'sectionCounts': get_section_counts(pm, sections),
         'eventCounts': {
             'videoPlays': max(nr['eventCounts']['videoPlays'] - lr['eventCounts']['videoPlays'],0),
             'grantDetailViews': max(nr['eventCounts']['grantDetailViews'] - lr['eventCounts']['grantDetailViews'],0),                         

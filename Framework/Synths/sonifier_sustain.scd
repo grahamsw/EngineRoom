@@ -15,7 +15,7 @@ Synth(\sonifier_sustain);
 Pdef(\poo,
 	Pbind(
 		\instrument, \sonifier_sustain,
-		\dur, 0.07,
+		\dur, 0.7,
 		\midinote, Pseq([80, 63, 65, 71], inf),
 );).play(quant:0.5);
 

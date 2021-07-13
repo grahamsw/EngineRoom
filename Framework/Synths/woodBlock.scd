@@ -1,5 +1,3 @@
-s.boot;
-
 (
 SynthDef(\woodBlock, {|freq = 220, amp = 0.1, sustain = 1, bright = 1, pan = 0, out=0|
 	var partials = [1, 2.572, 4.644, 6.984, 9.723, 12];
@@ -11,6 +9,7 @@ SynthDef(\woodBlock, {|freq = 220, amp = 0.1, sustain = 1, bright = 1, pan = 0, 
 }).add
 
 )
+/*
 (
 Pdef(\chimes,
 	Pbind(
@@ -26,8 +25,8 @@ Pdef(\chimes,
 
 Pdef(\chimes).stop
 
-
-
+*/
+/*
 (
 var root = 110;
 
@@ -161,3 +160,5 @@ r=Routine({
 r.play;
 
 )
+
+*/
