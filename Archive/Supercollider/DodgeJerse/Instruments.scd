@@ -20,10 +20,13 @@ var freqs = [0.56, 0.56, 0.92, 0.92, 1.19, 1.7, 2, 2.74, 2, 2.76, 4.07] * freq +
 ).add;
 
 )
-
-
+(
+Pbind(\instrument, \rissetBell,
+    \note, Pseq((0..7),2),
+    \dur, 10
+).play
+)
 Synth(\rissetBell)
-
 
 
 (

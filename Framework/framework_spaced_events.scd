@@ -22,7 +22,7 @@
 };
 
 
-~basicTone = {|freq| Synth(\basic,  [\freq, freq])}
+~basicTone = {|freq| Synth(\basic,  [\freq, freq])};
 
 ~site_events = [
     \home_page_view: (\play_event: {~basicTone.(300)}),
@@ -147,19 +147,20 @@
     \play_site_events: {| event_name, num_events, interval|
 
         ~site_events[event_name][\running_event].stop;
-        if(num_events == 0, {},{
-        ~site_events[event_name][\running_event] =
-        {
-            // wrap this in a loop in case the signals are interrupted
-            loop {
-                var intervals = ~make_intervals.(num_events, interval);
-                intervals.do {|interval|
-                    interval.wait; // wait first, otherwise every time this gets you get a sound immediately
-                    ~site_events[event_name][\play_event].();
-                }
-            }
-        }.fork;
-        nil;
+
+        ~site_events[event_name][\running_event] = if(num_events == 0, {},
+            {
+                {
+                    // wrap this in a loop in case the signals are interrupted
+                    loop {
+                        var intervals = ~make_intervals.(num_events, interval);
+                        intervals.do {|interval|
+                            interval.wait; // wait first, otherwise every time this gets you get a sound immediately
+                            ~site_events[event_name][\play_event].();
+                        }
+                    }
+                }.fork;
+                nil;
         });
     }
 
@@ -249,6 +250,6 @@ s.waitForBoot {
 
 ~events[\play_site_events].(\home_page_view,10, 30)
 ~events[\play_site_events].(\grant_interaction,2, 30)
-~events[\play_site_events].(\email_signup, 0, 30)
+~events[\play_site_events].(\email_signup, 1, 30)
 ~events[\play_site_events].(\video_play,4, 10)
 

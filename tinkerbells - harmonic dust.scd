@@ -1,10 +1,10 @@
 (
 SynthDef(\harms,
 	{
-		|freq = 400, amp = 0.2, tf = 0.3, atk = 0.01, decay = 3|
+		|freq = 400, amp = 0.2, tf = 3, atk = 0.01, decay = 3|
 		var sig = Mix.fill(8, {
 			|n|
-			SinOsc.ar(freq * (1+n)) * Decay2.ar(Dust.ar(Rand(0.1, 1)), atk, decay, 1/(1+n))
+			SinOsc.ar(freq * (1+n)) * Decay2.ar(Dust.ar(tf * Rand(0.1, 1)), atk, decay, 1/(1+n))
 		});
 		Out.ar(0, sig/20 * amp);
 }).add;
@@ -14,9 +14,9 @@ a = Synth(\harms, [\freq, 400, \amp, 1])
 
 a.set(\amp,0.5)
 a.set(\decay, 1)
-a.set(\freq, 1600)
-a.set(\atk, 0.1)
-a.set(\tf, 1)
+a.set(\freq, 100 * (19).midiratio)
+a.set(\atk, 0.01)
+a.set(\tf, 3)
 a.stop
 
 s.defaultGroup.freeAll
