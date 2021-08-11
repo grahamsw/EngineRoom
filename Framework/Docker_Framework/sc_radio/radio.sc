@@ -162,6 +162,8 @@ s.waitForBoot {
     ~addControllers.();
     s.sync;
     ~events[\start].();
+    s.sync;
+    ~events[\setRate].(30,60);
     NetAddr.langPort.postln;
 
 };

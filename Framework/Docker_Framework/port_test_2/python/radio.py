@@ -5,26 +5,43 @@ from send2framework import sender
 from threadrunners import rlocker
 import time
 import os
+import random
 
 # a threadsafe sender
-host =  os.getenv('SC_IP') or '127.0.0.1'
+host =  os.getenv('SC_IP') or '172.20.0.2'
 port =  57120 if not os.getenv('SC_PORT') else int(os.getenv('SC_PORT'))
-osc_chan = os.getenv('SC_OSC_CHANNEL') or '/impl2'
+osc_chan = os.getenv('SC_OSC_CHANNEL') or '/implOsc'
+
 
 s = rlocker(sender(osc_chan, ip=host, port=port))
 
 
-inc = 1
+inc = 2
+
 def next_note(note):
     global inc
-    if note + inc > 17 or note + inc < 4: 
+
+    if note + inc > 67 or note + inc < 40: 
         inc = -1 * inc
     return note + inc
 
-note = 5
+def next_rate(rate):
+    global count
+    count = count + 1
+    if count % 5 == 0:
+        return random.uniform(0.5, 1)
+    else:
+        return rate
+
+count = 0
+note = 53
+rate = 0.25
+
 while True:
     note = next_note(note)
-    print(note, host, port)
+    rate = next_rate(rate)
+    print(note, rate, host, port, flush=True)
     s('setNote', note)
-    time.sleep(0.25)
+    s('setRate', rate)
+    time.sleep(2.1)
 

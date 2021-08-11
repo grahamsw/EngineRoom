@@ -1,8 +1,7 @@
 (
 
-// the "channel name" that OSC listens on, set as an
-// environmental variable
-~impl_osc_name = "/impl2"; //"OSC_CHANNEL".getenv; // or "/implOsc";
+// the "channel name" that OSC listens on
+~impl_osc_name = "/implOsc"; //"OSC_CHANNEL".getenv;
 
 ~allocBusses = {
 
@@ -11,6 +10,7 @@
 ~initServerNodes = {
     ~fxGroup = Group.new;
 };
+
 
 
 // SynthDefs for the Synths used in the piece
@@ -42,14 +42,16 @@ SynthDef(\tone, {
 
 };
 
+~base = 53;
+~rate = 0.25;
 // list of Pbinds
 ~definePbinds = {
      ~pb = EventPatternProxy(
             Pbind(
               \instrument, \tone,
-              \note, 0,
-              \amp, 0.5,
-              \dur, 1
+              \midinote, Pseq([0, 4, 7, 12] + ~base, inf),
+              \amp, 0.1,
+              \dur, ~rate
         ))
     ;
    ~clock = TempoClock.new(1).permanent_(true);
@@ -64,15 +66,27 @@ SynthDef(\tone, {
 
 ~events = [
     \start: {~player = ~pb.play(~clock, quant:4);},
-	\stop: {~player.stop;},
-    \setNote: {|note|
+    \stop: {~player.stop;},
+    \setNote: {|base|
+        ~base = base;
         ~pb.source_(
             Pbind(
               \instrument, \tone,
-              \note, note,
-              \dur, 1
+              \midinote, Pseq([0, 4, 7, 12] + ~base, inf),
+              \amp, 0.1,
+              \dur, ~rate
         )).quant_(1);
     },
+    \setRate: {|rate|
+		~rate = rate;
+        ~pb.source_(
+            Pbind(
+              \instrument, \tone,
+              \midinote, Pseq([0, 4, 7, 12] + ~base, inf),
+              \amp, 0.1,
+              \dur, ~rate
+        )).quant_(1);
+    }
 
 ].asDict;
 
@@ -129,7 +143,7 @@ s.waitForBoot {
 	s.sync;
 	~defineSynths.value;
 	s.sync;
-	//~buffs = ~loadBuffs.('sounds');
+	~buffs = ~loadBuffs.('sounds');
 	s.sync;
 	ServerTree.add({
             s.bind({
@@ -141,7 +155,7 @@ s.waitForBoot {
     s.sync;
 
     ~events[\start].();
-
+    s.sync;
     NetAddr.langPort.postln;
 
 };
@@ -149,7 +163,7 @@ s.waitForBoot {
 ~definePbinds.value;
 
 )
+//~base = 4
 
-
-~events[\setNote].(5);
-Synth(\tone)
+//~events[\setNote].(52);
+// Synth(\tone)

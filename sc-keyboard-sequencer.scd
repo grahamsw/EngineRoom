@@ -4,6 +4,7 @@
 (
 
 var notes = (60-24 .. 60 + 24);
+
 var keyHeight = 80;
 var keyWidth = 20;
 var numKeys = notes.size;

@@ -1,8 +1,7 @@
 (
 
-// the "channel name" that OSC listens on, set as an
-// environmental variable
-~impl_osc_name = "OSC_CHANNEL".getenv; // or "/implOsc";
+// the "channel name" that OSC listens on
+~impl_osc_name = "/implOsc"; // "OSC_CHANNEL".getenv;
 
 ~allocBusses = {
 
@@ -47,7 +46,7 @@ SynthDef(\tone, {
      ~pb = EventPatternProxy(
             Pbind(
               \instrument, \tone,
-              \note, 0,
+              \note, 7,
               \amp, 0.5,
               \dur, 1
         ))
@@ -72,7 +71,7 @@ SynthDef(\tone, {
               \note, note,
               \dur, 1
         )).quant_(1);
-    },
+    }
 
 ].asDict;
 
@@ -129,7 +128,7 @@ s.waitForBoot {
 	s.sync;
 	~defineSynths.value;
 	s.sync;
-	//~buffs = ~loadBuffs.('sounds');
+	~buffs = ~loadBuffs.('sounds');
 	s.sync;
 	ServerTree.add({
             s.bind({
@@ -140,8 +139,11 @@ s.waitForBoot {
     ~addControllers.();
     s.sync;
 
-    ~events[\start].();
-
+    ~events[\start].();   
+    s.sync;
+ 
+ 
+ 
     NetAddr.langPort.postln;
 
 };
@@ -151,5 +153,5 @@ s.waitForBoot {
 )
 
 
-~events[\setNote].(5);
-Synth(\tone)
+// ~events[\setNote].(5);
+// Synth(\tone)
