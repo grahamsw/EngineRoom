@@ -63,14 +63,6 @@
               \sust, Pwhite(2.0, 6.0, inf),
               \dur, 1
         ))
-    ~bells = EventPatternProxy(
-            Pbind(
-              \instrument, \PMCrotale,
-              \note, Pseq([0, 2, 4,8], inf),
-              \sust, Pwhite(2.0, 6.0, inf),
-              \dur, 1
-        ))
-    ;
     ;
 
 	~clock = TempoClock.new(1).permanent_(true);
