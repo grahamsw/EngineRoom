@@ -3,6 +3,7 @@ sys.path.append('./lib')
 
 from send2framework import sender
 from threadrunners import rlocker
+from gart import get_new_data
 import random
 import time
 import os
@@ -33,15 +34,44 @@ event_types = [
                 'email_signup'
               ]
 
-def get_next_event_val():
-    return (random.choice(event_types), random.randrange(0, 20))
+# {'numPageViews': 0, 
+#  'activeUsers': 0, 
+# 'sectionCounts': {'/': 0, 
+#     '/about/': 0, 
+#     '/about/careers/': 0, 
+#     '/about/people/': 0, 
+#     '/just-matters/': 0, 
+#     '/our-work-around-the-world/': 0, 
+#     '/the-latest/': 0, 
+#     '/work/': 0, 
+#     '/work/our-grants/': 0, 
+#                 'other': 0}, 
+# 'eventCounts': {
+#     'videoPlays': 0, 
+#     'grantDetailViews': 0, 
+#     'fileDownloads': 0, 
+#     'signups': 0}}
 
-for event_type in event_types:
-    s('play_site_events', event_type, random.randrange(0, 20), 30)
-    
-        
+def get_latest_traffic():
+    nd = get_new_data()
+    ret = {
+                'home_page_view': nd['sectionCounts']['/'],
+                'program_page_view': nd['sectionCounts']['/work/'],
+                'where_we_work_page_view': nd['sectionCounts']['/our-work-around-the-world/'],
+                'editorial_page_view': nd['sectionCounts']['/just-matters/'],
+                'about_page_view': nd['sectionCounts']['/about/'],
+                'careers_page_view': nd['sectionCounts']['/about/careers/'],
+                'grant_interaction': nd['sectionCounts']['/work/our-grants/'] + nd['eventCounts']['grantDetailViews'],
+                'video_play': nd['eventCounts']['videoPlays'],
+                'email_signup': nd['eventCounts']['signups']
+    }
+    return ret
+
+
 while True:
-    event_type, val = get_next_event_val()
-    print(event_type, val, flush=True)
-    s('play_site_events', event_type, val, 30)
-    time.sleep(10)
+    latest_traffic = get_latest_traffic()
+    print(latest_traffic, flush=True)
+    for event_type in event_types:
+        s('play_site_events', event_type, latest_traffic[event_type], 30)
+        time.sleep(30/len(event_types))
+
