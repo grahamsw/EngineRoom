@@ -78,6 +78,14 @@ SynthDef(\tone, {
 /////////////////////////////////
 // code that doesn't change
 ////////////////////////////////
+~loadBuffs = {
+	|foldername, isAbsolute = false|
+	var fn = if (isAbsolute, {foldername}, {PathName(thisProcess.nowExecutingPath).parentPath ++ foldername});
+	PathName(fn).files.collect({
+		|f|
+		Buffer.read(s, f.fullPath);
+	});
+};
 
 // pretty powerful, generic OSC handler for mapping OSC messages
 // (from any source) to events

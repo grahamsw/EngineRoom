@@ -6,8 +6,8 @@
 # It is used to tear down and set up the running containers (which is messy
 # enough that you don't want to be typing it )
 
-name=radio         # repo name - used as root for container names
-subnet_base=172.70 # unique to the docker instance
+name=sitestats         # repo name - used as root for container names
+subnet_base=172.80 # unique to the docker instance
 namespace=grahamsw/ # your docker namespace here
 
 subnet_mask=$subnet_base".0.0/16"
