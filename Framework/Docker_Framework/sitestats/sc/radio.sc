@@ -1,4 +1,11 @@
 (
+~loadBuff = {
+	|filename, isAbsolute = false|
+	var fn = if (isAbsolute, {filename}, {PathName(thisProcess.nowExecutingPath).parentPath ++ filename});
+	Buffer.read(s, fn);
+};
+
+
 
 ~make_intervals = {|n, total|
     (n.collect {1.0.rand}).normalizeSum * total
@@ -23,9 +30,13 @@
 
 // placeholders - to be redefined to something interesting, like
 // bird calls
+
 ~basicTone = {|freq| Synth(\basic,  [\freq, freq])};
 ~site_events = [
-    \home_page_view: (\play_event: {~basicTone.(300)}),
+    \home_page_view: (\play_event: {
+        Synth("playbuf", [buf:~sparrow, amp:0.1, start_secs:6.75, secs:0.7, pan:0]);
+             }
+    ),
     \program_page_view: (\play_event: {~basicTone.(400)}),
     \where_we_work_page_view: (\play_event: {~basicTone.(500)}),
     \editorial_page_view: (\play_event: {~basicTone.(600)}),
@@ -65,10 +76,13 @@
     }).add;
 
     // play buf starting at start_secs
-    SynthDef("playbuf", {
-        |buf=0, rate=1, amp=0.1, start_secs=0, secs=(-1), pan=0, out=0|
-        var sig = PlayBuf.ar(1, buf, rate * BufRateScale.ir(buf), doneAction:2);
-       // var env = EnvGen.kr(Env([0, 1, 1,0], [0.01, ]))
+SynthDef("playbuf", {
+        |buf=0, amp=0.1, start_secs=0, secs=1, pan=0, out=0|
+    var start, end, sig, env;
+    start = start_secs * BufSampleRate.kr(buf);
+        sig = PlayBuf.ar(1, buf, BufRateScale.kr(buf), startPos:start, loop: 0);
+        env = EnvGen.kr(Env([0, 1, 1,0], [0.01, secs, 0.01 ]),doneAction:2);
+        sig = sig * env;
         Out.ar(out,
             Pan2.ar(sig, pan, amp)
         );
@@ -178,6 +192,7 @@ s.waitForBoot {
     ~defineSynths.value;
     s.sync;
     ~buffs = ~loadBuffs.('sounds');
+    ~sparrow = ~loadBuff.("sounds/sparrow_1.wav");
     s.sync;
     ServerTree.add({
         s.bind({
@@ -189,7 +204,7 @@ s.waitForBoot {
     s.sync;
 
     // play startup sound
-    ~events.[\startup].()
+  //  ~events.[\startup].()
 };
 ~definePbinds.value;
 )
@@ -199,4 +214,9 @@ s.waitForBoot {
 ~events[\play_site_events].(\grant_interaction,2, 30)
 ~events[\play_site_events].(\email_signup, 1, 30)
 ~events[\play_site_events].(\video_play,4, 10)
+
+~sparrow.play
+Synth("playbuf", [buf:~sparrow, amp:0.2, start_secs:6.75, secs:0.7, pan:1]);
+Synth("playbuf", [buf:~sparrow, amp:0.1, start_secs:6.75, secs:1, pan:0]);
+
 */

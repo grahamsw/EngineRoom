@@ -1,6 +1,7 @@
 from googleapiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
+from collections import defaultdict
 #from secrets import profile_id
 
 def get_service(key_file_location):
@@ -52,6 +53,18 @@ eventMetrics = makeMetricGetter(key_file_location, profile_id,
                                'rt:eventAction,rt:eventCategory,rt:eventLabel')  
 
 
+sections = [
+                '/work/our-grants/',
+                '/work/',
+                '/the-latest/',
+                '/our-work-around-the-world/',
+                '/just-matters/',
+                '/campaigns/', 
+                '/about/people/',
+                '/about/careers/',
+                '/about/',
+                '/'
+            ]
 
 
 def read_live_data():
@@ -78,21 +91,21 @@ def make_dummy_reading():
           }
 
 
-def calc_section_count_difference(nrsc, lrsc):
-    return {s: max(nrsc[s]-lrsc[s],0) for s in nrsc}
+def zero():
+    return 0
 
-sections = [
-                '/work/our-grants/',
-                '/work/',
-                '/the-latest/',
-                '/our-work-around-the-world/',
-                '/just-matters/',
-                '/campaigns/',
-                '/about/people/',
-                '/about/careers/',
-                '/about/',
-                '/'
-            ]
+def calc_section_count_difference(nrsc, lrsc, sections):
+    # bit of a hack here - should probably use defaultdicts from go
+    # or supply defaults to n/lrsc
+    nrsc2 = defaultdict(zero)
+    lrsc2 = defaultdict(zero)
+    for s in nrsc:
+        nrsc2[s] = nrsc[s]
+    for s in lrsc:
+        lrsc2[s] = lrsc[s]
+
+    return {s: max(nrsc2[s]-lrsc2[s],0) for s in sections}
+
 
 
 def get_section_counts(pm, sections):
@@ -128,7 +141,7 @@ def get_new_data():
     ret  = {
             'numPageViews': max(nr['numPageViews'] - lr['numPageViews'], 0),
             'activeUsers': max(nr['activeUsers'] - lr['activeUsers'], 0),
-     'sectionCounts': calc_section_count_difference(nr['sectionCounts'], lr['sectionCounts']),
+     'sectionCounts': calc_section_count_difference(nr['sectionCounts'], lr['sectionCounts'], sections),
         'eventCounts': {
             'videoPlays': max(nr['eventCounts']['videoPlays'] - lr['eventCounts']['videoPlays'],0),
             'grantDetailViews': max(nr['eventCounts']['grantDetailViews'] - lr['eventCounts']['grantDetailViews'],0),                         
