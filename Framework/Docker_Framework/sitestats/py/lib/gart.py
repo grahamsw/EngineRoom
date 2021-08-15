@@ -20,7 +20,10 @@ def get_results(service, profile_id, metrics, dimensions):
             metrics=metrics,
             dimensions=dimensions).execute()
     columns = [r['name'] for r in ret['columnHeaders']]
-    return pd.DataFrame(ret['rows'], columns=columns)
+    if 'rows' in ret:
+        return pd.DataFrame(ret['rows'], columns=columns)
+    else:
+        return pd.DataFrame([], columns=columns)
 
 
 def makeMetricGetter(key_file_location, profile_id, metrics, dimensions):

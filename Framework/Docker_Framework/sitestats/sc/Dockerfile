@@ -24,7 +24,8 @@ COPY darkice.cfg /etc/darkice.cfg
 
 COPY startup.scd /root/.config/SuperCollider/startup.scd
 COPY radio.sc /radio.sc
-COPY sounds/sparrow_1.wav /sounds/sparrow_1.wav
+
+COPY sounds/ /sounds/
 
 COPY Procfile Procfile
 
