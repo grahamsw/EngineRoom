@@ -1,4 +1,8 @@
 (
+
+(PathName(thisProcess.nowExecutingPath).parentPath ++ "config.sc").load;
+//++ "config.sc".load;
+
 ~loadBuff = {
 	|filename, isAbsolute = false|
 	var fn = if (isAbsolute, {filename}, {PathName(thisProcess.nowExecutingPath).parentPath ++ filename});
@@ -8,8 +12,6 @@
 ~make_intervals = {|n, total|
     (n.collect {1.0.rand}).normalizeSum * total
 };
-
-
 
 ~loadEventSounds = {
     ~eventSounds.keys.do{ |key|
@@ -48,81 +50,6 @@
                 pan:~randPos.()]);
 };
 
-
-~eventSounds =[
-    \sparrow:(
-        [
-            (
-              \file: 'sounds/sparrow_1.wav',
-          //    \buffer: ~sparrow1, //loaded during ~loadEventSounds
-              \clips: [(\start: 6.75, \length: 1)]
-            )
-        ]
-    ),
-    \goldfinch: (
-        [
-            (
-                \file: 'sounds/goldfinch_1.wav',
-                \clips: [(\start: 5.0, \length: 1)]
-            )
-
-        ]
-    ),
-    \bluejay: (
-        [
-            (
-                \file: 'sounds/bluejay_1.wav',
-                \clips: [(\start: 19.0, \length: 0.78)]
-            )
-        ]
-    ),
-    \cardinal: (
-        [
-            (
-                \file: 'sounds/northern_cardinal_1.wav',
-                \clips: [(\start: 35.0, \length: 3.51)]
-            )
-        ]
-    ),
-    \chickadee: (
-        [
-            (
-        \file: 'sounds/chickadee_1.wav',
-        \clips:[(\start: 4.2, \length:1), (\start:12.91, \length: 1.7)]
-            )
-        ]
-    ),
-    \titmouse: (
-        [
-            (
-                \file: 'sounds/titmouse_1.wav',
-                \clips: [(\start: 23.25, \length: 1), (\start: 25.3, \length: 1.2)]
-            )
-        ]
-    ),
-    \nuthatch:(
-        [
-            (
-                \file: 'sounds/nuthatch_1.wav',
-                \clips: [(\start: 0.7, \length: 2.3), (\start: 31.25, \length: 2.75)]
-            )
-        ]
-    )
-
-].asDict;
-
-~site_events = [
-    \home_page_view: (\play_event: {~playClip.(\sparrow)}),
-    \program_page_view: (\play_event: {~playClip.(\goldfinch)}),
-    \where_we_work_page_view: (\play_event: {~playClip.(\bluejay)}),
-    \editorial_page_view: (\play_event: {~playClip.(\cardinal)}),
-    \about_page_view: (\play_event: {~playClip.(\chickadee)}),
-    \careers_page_view: (\play_event: {~playClip.(\chickadee)}),
-    \grant_interaction: (\play_event: {~playClip.(\goldfinch)}),
-    \video_play: (\play_event: {~playClip.(\titmouse)}),
-    \email_signup: (\play_event: {~playClip.(\nuthatch)})
-].asDict;
-
 // the "channel name" that OSC listens on
 ~impl_osc_name = "/implOsc";
 
@@ -137,7 +64,6 @@
 
 // SynthDefs for the Synths used in the piece
 ~defineSynths = {
-
     SynthDef.new(\basic, {
         arg freq=500, atk=0.002, sus=0, rel=1,
         pan=0, amp=0.1, out=0;
@@ -169,7 +95,7 @@ SynthDef("playbuf", {
 ~definePbinds = {
     // this is just used to signal that the framework is running
     // will stop after a couple of repeats
-    ~startbells = EventPatternProxy(
+    ~start = EventPatternProxy(
         Pbind(
             \instrument, \basic,
             \note, Pseq([0, 2, 4,8], 2),
@@ -190,7 +116,7 @@ SynthDef("playbuf", {
 // This is how you structure the composition
 
 ~events = [
-    \startup: {~startbells.play(~clock, quant:1);},
+    \startup: {~start.play(~clock, quant:1);},
     \play_site_events: {| event_name, num_events, interval|
         ~site_events[event_name][\running_event].stop;
         ~site_events[event_name][\running_event] = if(num_events == 0, {},

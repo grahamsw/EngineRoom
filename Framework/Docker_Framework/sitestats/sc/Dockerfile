@@ -24,6 +24,7 @@ COPY darkice.cfg /etc/darkice.cfg
 
 COPY startup.scd /root/.config/SuperCollider/startup.scd
 COPY radio.sc /radio.sc
+COPY config.sc /config.sc
 
 COPY sounds/ /sounds/
 
