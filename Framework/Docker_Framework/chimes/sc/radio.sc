@@ -163,7 +163,7 @@ s.waitForBoot {
     s.sync;
     ~events[\start].();
     s.sync;
-    ~events[\setRate].(30,60);
+  //  ~events[\setRate].(30,60);
     NetAddr.langPort.postln;
 
 };
@@ -176,5 +176,5 @@ s.waitForBoot {
 
 // for testing - in use these get called from python
 //~events[\start].()
-//~events[\setRate].(15, 60)
+//~events[\setRate].(50, 60)
 //~events[\stop].()
