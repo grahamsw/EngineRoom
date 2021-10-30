@@ -18,12 +18,41 @@
 
 };
 
+~melodies = Dictionary.new;
+
+~getMelody = {|key|
+    var default = (\melody: EventPatternProxy(), \player: 0);
+    ~melodies.atFail(key, {
+        ~melodies[key] = default;
+        default;
+    });
+};
+
+~setMelody = {|melody, proxy|
+    var panola = Panola.new(melody);
+    var midinotes = panola.midinotePattern.list;
+    var durs = panola.durationPattern.list;
+    var amps = panola.volumePattern.list;
+
+    proxy.source_(
+        Pbind(
+            \instrument, \default,
+            \midinote, Pseq(midinotes, inf),
+            \amp, Pseq(amps, inf),
+            \dur, Pseq(durs, inf)
+        )
+    );
+};
+
+
 // list of Pbinds
 ~definePbinds = {
     ~clock = TempoClock.new(1).permanent_(true);
 
-    ~accompaniment = EventPatternProxy();
-    ~set_acc_chord.("<c4 e c5>");
+    // for this the pbinds are created dynamically by events
+    // passing in Panola strings
+
+
 
 
 };
@@ -34,33 +63,24 @@
 // (control FX synths, for example, for fade in/out etc)
 // might be called manually, or from a Pattern or a Routine, or from
 // a GUI, or MIDI, or from external code via OSC
-~set_acc_chord = {|chord|
-    ~acc = Panola.new(chord);
-    ~acc_notes = ~acc.midinotePattern.list;
-
-        ~accompaniment.source_(
-            Pbind(
-            \instrument, \default,
-            \midinote, Pseq(~acc_notes, inf),
-            \amp, Pseq([0.15, 0.1, 0.12, 0.1]*0.5, inf),
-            \dur, Pseq([0.25], inf)
-        )
-        ).quant_(1);
-};
 
 ~events = [
     \start: {
-        "start".postln;
-        ~accompaniment_player = ~accompaniment.play(~clock, quant:4);},
-	\stop: {~accompaniment_player.stop;},
-
-    \minor: {
-        ~set_acc_chord.("<c4 e- c5>");
+        |melodyKey, melody, quant=4, clock=nil|
+        var mm = ~getMelody.(melodyKey);
+        clock = (clock == nil).if({~clock}, {clock});
+        ~setMelody.(melody, mm[\melody]);
+        mm[\player] =  mm[\melody].play(clock, quant:quant);
     },
-    \major: {
-        ~set_acc_chord.("<c4 e c5>");
-    }
+	\stop: {
+        |melodyKey|
+        ~getMelody.(melodyKey)[\player].stop;
+    },
 
+    \change: {
+        |melodyKey, melody|
+        ~setMelody.(melody, ~getMelody.(melodyKey)[\melody]);
+    },
 
 ].asDict;
 
@@ -144,7 +164,10 @@ s.waitForBoot {
 
 )
 
-~events[\start].();
-~events[\stop].();
-~events[\minor].();
+~events[\start].(\first, "c4 e g a");
+~events[\start].(\second, "a3 a b c4");
+~events[\change].(\second, "<a3_4\\vol[0.6] f b  f4>")
+~events[\stop].(\first);
+~events[\stop].(\second);
+~events[\change].(\first, "c5_4\\vol[0.5] b4\\vol[0.1] a. g_8");
 ~events[\major].();
