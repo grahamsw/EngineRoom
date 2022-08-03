@@ -83,6 +83,6 @@ s.waitForBoot {
 	//~events[\start].();
 };
 
-~definePbinds.value;
+~definePbinds.();
 
 )

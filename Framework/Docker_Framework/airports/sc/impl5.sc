@@ -75,7 +75,7 @@
             var snd=( EnvGen.ar(Env.perc(releaseTime:4), doneAction:2) *
                 MoogFF.ar(Pulse.ar(freq,mul:1.0), freq*1.5)
             );
-            Out.ar(out, snd);
+            Out.ar(out, snd*amp*10);
         }
     ).add;
 
@@ -229,20 +229,21 @@
             \out, ~fxBus
         );
     );
+
     ~airports=[
-    [5,7,4,2,0,12,7,5,7,4,2,0],
-    [5,7,4,2,0,12,4,7,5,0],
-    [-5,2,0,4,7,12,5,2,7,4,0,7,2,5,5,2,4,0],
-    [7,7,2,4,4,4,2,0,7,0,0],
+    [5,7,4,2,0,12,7,5,7,4,2,0,\rest, \rest],
+    [5,7,4,2,0,12,4,7,5,0,\rest, \rest],
+    [-5,2,0,4,7,12,5,2,7,4,0,7,2,5,5,2,4,0,\rest, \rest],
+    [7,7,2,4,4,4,2,0,7,0,0,\rest, \rest, \rest],
 ].collect({|a| Pseq((a+60).midicps,1)});
 
     Pdef(\piano,
         Pbind(
             \instrument, Pwrand([\comb_piano, \polyperc], [0.9, 0.1], inf),
             \freq, Pswitch(~airports, Prand([0,1,2,3], inf)),
-            \dur, 1+Prand([0.02,0.05,1,2,0.5,0.25,2]/2, inf).trace*rrand(0.78,1.32),
-            \legato, 2,
-            \amp, 0.1,
+            \dur, 1.5*rrand(0.78,1.32),
+            \legato, 1,
+            \amp, 0.07,
             \out, ~fxBus
         )
     );
@@ -271,8 +272,7 @@
 
 ].asDict;
 
-().play
-Pdef(\piano).
+
 /*
 ~fx.free
 ~events[\start].()
