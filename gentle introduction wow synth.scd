@@ -111,6 +111,41 @@ c = {Out.kr(~myControl, Pulse.kr(freq: MouseX.kr(1, 10), mul:MouseY.kr(0, 1)))}.
 
 
 
+(
+~fxbus =  Bus.audio(s, 1);
+~masterbus = Bus.audio(s, 1);
+
+)
+
+(
+SynthDef(\noise, {
+    Out.ar(~fxbus, WhiteNoise.ar(0.5))
+}).add;
+SynthDef(\filter, {
+    Out.ar(~masterbus, BPF.ar(in: In.ar(~fxbus), freq: MouseY.kr(1000, 3000), rq: 0.1))
+}).add;
+SynthDef(\masterout, {
+    |amp = 1|
+    Out.ar(0, In.ar(~masterbus) * Lag.kr(amp, 1))
+}).add;
+
+s.plotTree
+)
+(
+f = Synth(\filter, target: ~fxGroup);
+m = Synth(\masterout, target:~outGroup);
+n = Synth(\noise, target:~soundsGroup);
+)
+
+(
+~outGroup = Group.new(addAction:'addToTail');
+~fxGroup = Group.new(target:~outGroup, addAction:'addBefore');
+~soundsGroup = Group.new(addAction:'addToHead');
+
+
+)
+
+
 
 
 

@@ -1,5 +1,6 @@
+REM I'm running this on Windows, so it's a batch file. 
 
-SET REPO=grahamsw/radio
+SET REPO=grahamsw/demo
 
 cd sc
 docker build -t %REPO%:sc .
