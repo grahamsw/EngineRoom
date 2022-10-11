@@ -38,4 +38,6 @@ SynthDef(\klng, {
 
 a = Synth(\klng, [\freq, 200])
 a.set(\gate, 0)
+a.set(\freq, 90)
+a.set(\gate, 0)
 

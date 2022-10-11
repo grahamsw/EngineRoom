@@ -21,7 +21,9 @@ Quarks.install("panola");
     });
 };
 
-~setProxy = {|proxy, melody, instrument, repeats |
+
+
+~setProxy = {|proxy, melody, instrument, repeats=\inf |
     var panola = Panola.new(melody);
     var midinotes = panola.midinotePattern.list;
     var durs = panola.durationPattern.list;
@@ -73,6 +75,10 @@ Quarks.install("panola");
         ~setProxy.(mm[\proxy], melody, mm[\instrument], repeats);
     },
 
+    \playParam: {
+        (\instrument: \param, \freq: 600).play
+    }
+
 ].asDict;
 
 
@@ -89,7 +95,13 @@ Quarks.install("panola");
 
 // SynthDefs for the Synths used in the piece
 ~defineSynths = {
-    // using default (piano) for now
+    SynthDef(\param, {
+        | freq = 500, sustain = 2, amp=0.1, out=0 |
+	var sig;
+    sig = LFPar.ar(freq: freq) *
+    EnvGen.kr(Env.perc(0.01, sustain, amp), doneAction:2);
+	Out.ar(out, sig);
+}).add;
 
 };
 

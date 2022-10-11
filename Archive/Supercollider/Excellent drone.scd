@@ -1,6 +1,6 @@
 (
 SynthDef(\tone, {
-	|freq = 40, nharm=12, detune=0.2, gate=0, pan=0, amp=1, out=0|
+	|freq = 40, nharm=12, detune=0.2, gate=1, pan=0, amp=1, out=0|
 	var sig, env;
 	env = EnvGen.kr(Env.adsr(0.05, 0.1, 0.5, 3), gate);
 	sig = Blip.ar(freq *
@@ -17,9 +17,9 @@ SynthDef(\tone, {
 
 ().play
 x = Synth(\tone)
-x.set(\gate, 0)
+x.set(\gate, 1)
 x.set(\nharm, 15)
 x.set(\detune, 0.24)
 x.set(\pan, 0)
-x.set(\freq, 100)
+x.set(\freq, 60)
 x.set(\amp, 1)
