@@ -1,10 +1,13 @@
-
-
+fork {
+    var envBuf, envSignal, buffer;
+s.options.bindAddress = "0.0.0.0"; // allow connections from any address
+s.options.maxLogins = 2; // set to correct number of clients
+s.boot;
+NetAddr.langPort.postln;
+OSCFunc.newMatching({s.quit; 0.exit;}, '/s_quit');
 s.sync;
 
-
-
-SynthDef(\paulstretchMono, { |out = 0, bufnum, envBufnum, pan = 0, stretch = 50, window = 0.25, amp = 1|
+SynthDef(\paulstretchMono, { |out = 0, bufnum, envBufnum, pan = 0, stretch = 500, window = 0.25, amp = 1|
 	// Paulstretch for SuperCollider
 	// Based on the Paul's Extreme Sound Stretch algorithm by Nasca Octavian PAUL
 	// https://github.com/paulnasca/paulstretch_python/blob/master/paulstretch_steps.png
@@ -51,7 +54,11 @@ SynthDef(\paulstretchMono, { |out = 0, bufnum, envBufnum, pan = 0, stretch = 50,
 	// Panned output
 	Out.ar(out, Pan2.ar(Mix.new(sig), pan));
 }).add;
-var envBuf, envSignal, buffer;
+
+
+s.sync;
+
+
 	buffer = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01.wav");
 	// The grain envelope
 	envBuf = Buffer.alloc(s, s.sampleRate, 1);
@@ -61,3 +68,4 @@ var envBuf, envSignal, buffer;
 	// Runs indefinitely
 	Synth(\paulstretchMono, [\bufnum, buffer.bufnum, \envBufnum, envBuf.bufnum]);
 
+}

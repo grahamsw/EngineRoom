@@ -167,7 +167,11 @@ SynthDef(\echo, { arg out=0, maxdtime=0.2, dtime=0.2, decay=2, gate=1;
     [-5,2,0,4,7,12,5,2,7,4,0,7,2,5,5,2,4,0, \rest, \rest, \rest, \rest],
     [7,7,2,4,4,4,2,0,7,0,0, \rest, \rest, \rest, \rest],
 ].collect({|a| Pseq((a+60).midicps,1)});
-
+~airports = [
+    Scale.minor.degrees.scramble ++ [\rest, \rest, \rest],
+    Scale.minor.degrees.scramble ++ [\rest, \rest, \rest],
+    Scale.minor.degrees.scramble ++ [\rest, \rest, \rest]
+].collect({|a| Pseq((a+60).midicps,1)});
 ~chords=[
     [0,4,7,12],
     [4,7,11,16],
@@ -176,16 +180,15 @@ SynthDef(\echo, { arg out=0, maxdtime=0.2, dtime=0.2, decay=2, gate=1;
 ].collect({|c|[(c+60).midicps] });
 
 
-
 Pdef(\piano,
     Pfxb(
         Pbind(
-            \instrument, Pwrand([\comb_piano, \polyperc, \bell], [0.4, 0.1, 0.5], inf),
-            \freq, Pswitch(~airports, Pxrand([0,1,2,3], inf)),
+            \instrument, \comb_piano,
+            \degree, Prand(Scale.phrygian.degrees, inf),
             \dur, 1 *rrand(0.78,1.32),
-            \legato, 2,
-            \amp, 0.05,
-    ),\reverb, *[\mix, 0.5])
+            \legato, 3,
+            \amp, 0.02,
+    ),\reverb, *[\mix, 0.1])
 );
 
 
@@ -212,7 +215,8 @@ Pdef(\bass,
 
 )
 
-Ppar([Pdef(\piano), Pdef(\chords), Pdef(\bass)]).play
+Ppar([Pdef(\piano),  Pdef(\bass)]).play
 
 
-[Pdef(\piano), Pdef(\chords), Pdef(\bass)].do({|pp| pp.stop})
+[Pdef(\piano), Pdef(\chords),
+    Pdef(\bass)].do({|pp| pp.stop})

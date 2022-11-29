@@ -14,6 +14,8 @@
     Server.default = Server.local;
     Window.closeAll;
 };
+
+~chime = {(\amp: 0.5, \degree: [0, 2, 4, 7], \strum: 0.1).play}
 )
 
 
@@ -21,6 +23,7 @@
 
 ~quit_remote.()
 
+~chime.()
 
 
-(\amp: 0.5, \degree: [-4, 1]).play
+
