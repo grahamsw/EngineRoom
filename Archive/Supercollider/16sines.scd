@@ -20,3 +20,16 @@ b.scope;
 x = Synth(\sum, [\out, b]);
 
 Synth.after(x, \mix, [\in, b]);
+
+
+(
+SynthDef(\sum16, {|out = 0|
+	Out.ar(out, Splay.ar(Array.fill(16, {
+		SinOsc.ar(freq: Rand(48, 84).midicps,
+			mul: LFNoise1.kr(Rand(2, 0.1))
+    )
+})/16))}).add;
+)
+
+Synth(\sum16)
+

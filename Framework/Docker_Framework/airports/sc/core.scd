@@ -68,7 +68,7 @@ s.waitForBoot {
 	s.freeAll;
 	Buffer.freeAll;
 	s.sync;
-	~defineSynths.value;
+    ~defineSynths.();
 	s.sync;
 	~buffs = ~loadBuffs.('sounds');
 	s.sync;
@@ -80,9 +80,9 @@ s.waitForBoot {
     ServerTree.run;
     ~addControllers.();
     s.sync;
-	//~events[\start].();
+    ~definePbinds.();
+    s.sync;
+	~events[\start].();
 };
-
-~definePbinds.();
 
 )

@@ -6,9 +6,14 @@ SynthDef(\train, {
 }).add;
 )
 
-p = ProxySpace.push;
 
+Synth(\train)
+p = ProxySpace.push;
+p.pop()
+a.set(\gate, 0)
 ~z.play;
+
+
 
 (
 ~x = Pbind(

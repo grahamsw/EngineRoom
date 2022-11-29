@@ -116,3 +116,4 @@ e = Synth(\engine);
 e.set(\engineSpeed, 0.97)
 e.set(\wguideLength1, 0.94)
 e.set(\mixCylinders, 0.1)
+e.free

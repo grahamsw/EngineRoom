@@ -21,7 +21,7 @@ SynthDef(\cosc,
 x = Synth(\cosc, [\buf, ~cosbuff])
 
 x.set(\freq, 200)
-x.set(\beats, 1.4)(
+x.set(\beats, 2)(
     x.set(\amp, 0.1)
 
 x.set(\gate, 0)
