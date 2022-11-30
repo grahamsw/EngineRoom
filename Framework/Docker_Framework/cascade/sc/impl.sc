@@ -121,7 +121,7 @@ Pspawner({|sp|
               Pbind(
             \instrument, \chord_tone,
                         \degree,chord,
-                        \amp, Pseq([0.05],1),
+                        \amp, Pseq([0.1],1),
             \dur, total_dur,
             \out, 0
         ),
