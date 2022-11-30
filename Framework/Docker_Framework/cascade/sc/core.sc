@@ -1,6 +1,6 @@
 (
 
-~includes = ["impl5.sc"];
+~includes = ["impl.sc"];
 
 ~includes.do({|include|
     (PathName(thisProcess.nowExecutingPath).parentPath ++ include).load;
@@ -60,7 +60,8 @@
 
 s.newBusAllocators;
 ~allocBusses.();
-
+o = s.options;
+o.memSize =  8 * 8192;
 ServerTree.removeAll;
 
 s.waitForBoot {
@@ -81,6 +82,7 @@ s.waitForBoot {
     ~addControllers.();
     s.sync;
     ~events[\start].();
+
 };
 
 ~definePbinds.value;

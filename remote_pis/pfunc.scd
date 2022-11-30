@@ -53,6 +53,16 @@ p.nextN(5, ())
                 });
 )
 
+(
+
+~scales = [Pseq([0,1,2], 1), Pseq([7,6,5,4,3],1)];
+Pbind(
+    \type, \rest,
+    \aa, Pseq(~scales, inf).trace
+
+).play
+
+)
 
 ~ddd = Pseq([[0,1], [2,3], [4,5]], inf)
 (
@@ -61,7 +71,7 @@ a = Plazy({
 });
 
 Pbind(
-    \aa, a,
+    \aa, ,
     \degree, Pfunc{|evt| evt[\aa][0]},
     \cc, Pfunc{|evt| evt[\aa][1]},
     \amp, 0.5

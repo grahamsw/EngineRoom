@@ -1,34 +1,17 @@
+// busses and nodes may be needed for effects, and control
+// otherwise these two functions can be left empty
+"loading".postln;
 
-s.options.bindAddress = "0.0.0.0"; // allow connections from any address
-s.options.maxLogins = 2; // set to correct number of clients
-s.options.memSize = 10 * 8192;
-s.quit;
-s.waitForBoot({
-NetAddr.langPort.postln;
-OSCFunc.newMatching({s.quit; 0.exit;}, '/s_quit');
+~allocBusses = {
 
-SynthDef(\pluck, {arg freq=440, amp=1, trig=1, time=2, coef=0.1, cutoff=2, pan=0;
-    var pluck, burst;
-    burst = LPF.ar(WhiteNoise.ar(1), freq*cutoff);
-    pluck = Pluck.ar(burst, trig, freq.reciprocal, freq.reciprocal, time, coef:coef);
-    DetectSilence.ar(pluck, 0.001, doneAction:2);
-    Out.ar(0, Pan2.ar(pluck * amp, pan));
-}).add;
+};
 
-SynthDef(\reverb, {
-    | out = 0, mix = 0.1|
-    var dry = In.ar(out);
+~initServerNodes = {
+   // ~fxGroup = Group.new;
+};
 
-    var wet =FreeVerb.ar(dry,0.45,2.0,0.5);
-
-    wet = DelayN.ar(wet, 0.03, 0.03);
-    wet = CombN.ar(wet, 0.1, {Rand(0.01,0.099)}!32, 4);
-    wet = SplayAz.ar(2, wet);
-    wet = LPF.ar(wet, 1500);
-    5.do{wet = AllpassN.ar(wet, 0.1, {Rand(0.01,0.099)}!2, 3)};
-    XOut.ar(out, mix, wet);
-}).add;
-
+// SynthDefs for the Synths used in the piece
+~defineSynths = {
 
     SynthDef(\chord_tone, {
         |freq = 440, amp = 0.5, gate=1, out = 0|
@@ -48,30 +31,49 @@ SynthDef(\reverb, {
 
     }).add;
 
-    SynthDef(\chord, {
-        | chord = #[1,2,3,4], filterhz = 440, amp = 0.1, klangamp = 0.2, gate = 1, out = 0|
-        var env= 1 - EnvGen.kr(Env.asr(3,10,5), gate, doneAction:2);
-        var chrd = chord * ([24.neg.midiratio] ++ (36.neg.midiratio!3));
-        var snd =  Mix.ar(Saw.ar(chrd, amp));
+SynthDef(\pluck, {arg freq=440, amp=1, trig=1, time=2, coef=0.1, cutoff=2, pan=0;
+    var pluck, burst;
+    burst = LPF.ar(WhiteNoise.ar(1), freq*cutoff);
+    pluck = Pluck.ar(burst, trig, freq.reciprocal, freq.reciprocal, time, coef:coef);
+    DetectSilence.ar(pluck, 0.001, doneAction:2);
+    Out.ar(0, Pan2.ar(pluck * amp, pan));
+}).add;
+
+SynthDef(\reverb, {
+    | out = 0, mix = 0.1|
+    var dry = In.ar(out);
+
+    var wet =FreeVerb.ar(dry,0.45,2.0,0.5);
+
+    wet = DelayN.ar(wet, 0.03, 0.03);
+ //   wet = CombN.ar(wet, 0.1, {Rand(0.01,0.099)}!32, 4);
+    wet = SplayAz.ar(2, wet);
+    wet = LPF.ar(wet, 1500);
+  //  5.do{wet = AllpassN.ar(wet, 0.1, {Rand(0.01,0.099)}!2, 3)};
+    XOut.ar(out, mix, wet);
+}).add;
+
+};
+
+// list of Pbinds
+~definePbinds = {
 
 
-        snd = LPF.ar(snd,
-            LinExp.kr(SinOsc.kr(rrand(1/30,1/10),
-                rrand(0,2*pi)),-1,1,filterhz,filterhz*5)
-        );
 
-        snd = DelayC.ar(snd,
-            rrand(0.01,0.03),
-            LFNoise1.kr(Rand(5,10),0.01,0.02)/15
-        );
-        snd = Pan2.ar(snd,VarLag.kr(LFNoise0.kr(1/3),3,warp:\sine))/7;
-        snd = snd + DynKlank.ar(`[chord, nil, [1, 1, 1, 1]],
-            PinkNoise.ar([0.004, 0.004]))* klangamp;
-        Out.ar(out, snd * env);
 
-    }).add;
 
-    s.sync;
+};
+
+//performance events:
+// array (or dictionary) of functions that when called start/stop/alter
+// Pbinds, or possibly create and manipulate Synths directly via Routines
+// might be called manually, or from a Pattern or a Routine, or from
+// a GUI, or MIDI, or from external code via OSC
+
+
+~events = [
+    \start: {
+
       ~scales = [
             \major,
             \minor,
@@ -94,17 +96,8 @@ SynthDef(\reverb, {
                     |scale|
                     Scale.at(scale).degrees
                 });
-     ~chords=[
-        [0,4,7,12],
-        [4,7,11,16],
-        [-3,0,4,7],
-        [-3,0,5,9],
-    ].collect({|c|
-        [(c+60).midicps]
+~rev = Synth(\reverb, [\mix, 0.3]);
 
-    });
-~rev = Synth(\reverb, [\mix, 0.2]);
-    s.sync;
 Pspawner({|sp|
     loop ({
         var scale, amps, chord, dur, total_dur, repeats;
@@ -153,7 +146,7 @@ Pspawner({|sp|
 
     })
     }).play;
+    }
 
-})
-
+].asDict;
 
