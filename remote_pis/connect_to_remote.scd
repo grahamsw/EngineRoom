@@ -15,7 +15,7 @@
     Window.closeAll;
 };
 
-~chime = {(\amp: 0.5, \degree: [0, 2, 4, 7], \strum: 0.1).play}
+~chime = {(\amp: 0.5, \degree: [0, 2.5, 4, 7], \strum: 0.5, \amp: 0.2).play}
 )
 
 
@@ -23,7 +23,9 @@
 
 ~quit_remote.()
 
-~chime.()
+~chime.
+
+
 
 
 
