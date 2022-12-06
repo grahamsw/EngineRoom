@@ -9,6 +9,6 @@ cd ..
 
 cd py
 docker build -t %REPO%:py .
-dockser push %REPO%:py
+docker push %REPO%:py
 cd ..
 
