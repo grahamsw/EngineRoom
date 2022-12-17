@@ -41,6 +41,25 @@
 
     }).add;
 
+    SynthDef(\bell, {
+        |freq=1, t60=1, pitchy=1, amp=0.25, gate=1, pos=0, out = 0|
+        var sig, exciter;
+        //exciter = Impulse.ar(0);
+        exciter = WhiteNoise.ar() * EnvGen.ar(Env.perc(0.001, 0.05), gate) * 0.25;
+        sig = Klank.ar(
+            `[
+                [1, 2, 2.803, 3.871, 5.074, 7.81, 10.948, 14.421],   // freqs
+                [1, 0.044, 0.891, 0.0891, 0.794, 0.1, 0.281, 0.079], // amplitudes
+                [1, 0.205, 1, 0.196, 0.339, 0.047, 0.058, 0.047]*t60     // ring times
+            ],
+            exciter,
+            freqscale:freq*pitchy);
+        sig = FreeVerb.ar(sig) * amp;
+        DetectSilence.ar(sig, 0.001, 0.5, doneAction:2);
+        Out.ar(out, Pan2.ar(sig, pos));
+    }).add;
+
+
     SynthDef(\pluck, {arg freq=440, amp=1, trig=1, time=2, coef=0.1, cutoff=2, pan=0;
         var pluck, burst;
         burst = LPF.ar(WhiteNoise.ar(1), freq*cutoff);
@@ -82,8 +101,20 @@
 
 ~events = [
     \start: {
-
         ~scales = [
+            \ionian,
+            \dorian,
+            \phrygian,
+            \lydian,
+            \mixolydian,
+            \aeolian,
+            \locrian
+        ].collect({
+            |scale|
+            Scale.at(scale).degrees
+        });
+
+        ~scales2 = [
             \major,
             \minor,
             \augmented,
@@ -106,7 +137,7 @@
             Scale.at(scale).degrees
         });
         Pspawner({|sp|
-            var scale, amps, chord, dur, total_dur, repeats, slide_length, isSlide;
+            var scale, amps, chord, dur, total_dur, repeats, louder, quieter, slide_length, isSlide, bells, isBells, bellAmp, pbinds;
                 sp.par(
                     Pmono(\reverb,
                         \mix, Pexprand(0.02, 0.4).trace,
@@ -117,19 +148,28 @@
             loop ({
                 sp.seq(
                     isSlide = 0.3.coin.postln;
+                    isBells = 0.1.coin.postln;
+                    bellAmp = if(isBells, {0.05}, {0});
                     slide_length = 3;
                     repeats = if(isSlide, {7}, {5});
-                    dur = 0.5;
+                    dur = 0.15;
+                    louder = 0.45;
+                    quieter = 0.1;
                     scale = ~scales.choose;
                     chord = Array.fill((scale.size/2),{|i| scale[(i*2)] - if([0,1].choose == 0, {12}, {0})});
+                    bells = [scale[scale.size-1], scale[scale.size-4], scale[scale.size-3], scale[2]];
 
 
                     scale.postln;
                     chord.postln;
+                    bells.postln;
 
                     total_dur = if(isSlide, { dur * slide_length * repeats}, {dur * scale.size * repeats});
-                    amps = if(isSlide, {[0.3] ++ (0.1!(slide_length-1))}, {[0.25] ++ (0.1!(scale.size-2))});
-                    Ppar([
+                    "totaldur ".post;
+                    total_dur.postln;
+                    amps = if(isSlide, {[louder] ++ (quieter!(slide_length-1))}, {[louder] ++ (quieter!(scale.size-2))});
+                    amps.postln;
+                    pbinds = [
                         Pbind(
                             \instrument, \chord_tone,
                             \degree,chord,
@@ -139,23 +179,29 @@
                         ),
                         Pbind(
                             \instrument, \pluck,
-                            \degree, Pif(Pfunc({isSlide}),Pslide(scale, repeats, slide_length), Pseq(scale, repeats)),
+                            \degree, Pif(Pfunc({isSlide}),Pslide(scale, repeats, slide_length, wrapAtEnd:true), Pseq(scale, repeats)),
                             \coef, Pwhite(0.03, 0.1),
                             \time, Pwhite(2.0, 3.0, inf),
                             \dur, dur,
                             \amp, Pseq(amps, inf),
                             \pan, Pfunc({|ev| ev[\degree].linlin(0, 11, -0.5, 0.5)})
-                        )
+                    )];
 
-                    ])
+                    pbinds = if (isBells,{pbinds.add(Pbind(
 
+                            \instrument, \bell,
+                            \degree, Pseq(bells,1),
+                            \t60, 6,
+                            \pitchy, 4,
+                            \dur, 1,
+                            \amp, bellAmp
+                        ))}, {pbinds});
 
+                    Ppar(pbinds);
                 );
-                sp.wait(0.05);
+                sp.wait(dur);
             })
         }).play;
     }
 ].asDict;
-
-s.freeAll
 

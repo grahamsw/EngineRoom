@@ -61,7 +61,8 @@
 s.newBusAllocators;
 ~allocBusses.();
 o = s.options;
-o.memSize =  8 * 8192;
+o.memSize =  32 * 8192;
+
 ServerTree.removeAll;
 
 s.waitForBoot {
@@ -81,7 +82,10 @@ s.waitForBoot {
     ServerTree.run;
     ~addControllers.();
     s.sync;
-    ~events[\start].();
+
+
+ //   ~events[\start].();
+
 
 };
 
