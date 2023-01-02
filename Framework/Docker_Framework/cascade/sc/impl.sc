@@ -114,43 +114,45 @@
             Scale.at(scale).degrees
         });
 
-        ~scales2 = [
-            \major,
-            \minor,
-            \augmented,
-            \augmented2,
-            \diminished,
-            \romanianMinor,
-            //            \rast,
-            \phrygian,
-            //            \sikah,
-            //            \scriabin,
-            //            \hindu,
-            //            \indian,
-            //            \bastanikar,
-            //            \locrian,
-            \lydian,
-            \diminished2,
-            \zhi
-        ].collect({
-            |scale|
-            Scale.at(scale).degrees
-        });
-        Pspawner({|sp|
+        // ~scales = [
+        //     \major,
+        //     \minor,
+        //     \augmented,
+        //     \augmented2,
+        //     \diminished,
+        //     \romanianMinor,
+        //     //            \rast,
+        //     \phrygian,
+        //     //            \sikah,
+        //     //            \scriabin,
+        //     //            \hindu,
+        //     //            \indian,
+        //     //            \bastanikar,
+        //     //            \locrian,
+        //     \lydian,
+        //     \diminished2,
+        //     \zhi
+        // ].collect({
+        //     |scale|
+        //     Scale.at(scale).degrees
+        // });
+
+        Pspawner({
+            |sp|
             var scale, amps, chord, dur, total_dur, repeats, louder, quieter, slide_length, isSlide, bells, isBells, bellAmp, pbinds;
                 sp.par(
                     Pmono(\reverb,
-                        \mix, Pexprand(0.02, 0.4).trace,
-                        \dur, Pwhite(15, 30, inf).trace
+                        \mix, Pexprand(0.02, 0.4),
+                        \dur, Pwhite(15, 30, inf)
                     )
                 );
                 sp.wait(1);
             loop ({
                 sp.seq(
-                    isSlide = 0.3.coin.postln;
-                    isBells = 0.1.coin.postln;
+                    isSlide = 0.1.coin;
+                    isBells = 0.1.coin;
                     bellAmp = if(isBells, {0.05}, {0});
-                    slide_length = 3;
+                    slide_length = 3 + 4.rand;
                     repeats = if(isSlide, {7}, {5});
                     dur = 0.15;
                     louder = 0.45;
@@ -158,17 +160,12 @@
                     scale = ~scales.choose;
                     chord = Array.fill((scale.size/2),{|i| scale[(i*2)] - if([0,1].choose == 0, {12}, {0})});
                     bells = [scale[scale.size-1], scale[scale.size-4], scale[scale.size-3], scale[2]];
-
-
-                    scale.postln;
-                    chord.postln;
-                    bells.postln;
-
                     total_dur = if(isSlide, { dur * slide_length * repeats}, {dur * scale.size * repeats});
-                    "totaldur ".post;
-                    total_dur.postln;
-                    amps = if(isSlide, {[louder] ++ (quieter!(slide_length-1))}, {[louder] ++ (quieter!(scale.size-2))});
-                    amps.postln;
+                    amps = if(isSlide,
+                        {[louder] ++ (quieter!(slide_length-1))},
+                       // {[louder] ++ (quieter!(scale.size-2))}
+                        {[louder] ++ (quieter!rrand(3, scale.size-2))}//(scale.size-2))}
+                    );
                     pbinds = [
                         Pbind(
                             \instrument, \chord_tone,
@@ -187,15 +184,17 @@
                             \pan, Pfunc({|ev| ev[\degree].linlin(0, 11, -0.5, 0.5)})
                     )];
 
-                    pbinds = if (isBells,{pbinds.add(Pbind(
-
-                            \instrument, \bell,
-                            \degree, Pseq(bells,1),
-                            \t60, 6,
-                            \pitchy, 4,
-                            \dur, 1,
-                            \amp, bellAmp
-                        ))}, {pbinds});
+                    pbinds = if (isBells,
+                                {pbinds.add(Pbind(
+                                        \instrument, \bell,
+                                        \degree, Pseq(bells,1),
+                                        \t60, 6,
+                                        \pitchy, 4,
+                                        \dur, 1,
+                                        \amp, bellAmp
+                                    ))},
+                                {pbinds}
+                                );
 
                     Ppar(pbinds);
                 );

@@ -1,5 +1,5 @@
 
-SET REPO=grahamsw/radio
+SET REPO=grahamsw/panola
 
 cd sc
 docker build -t %REPO%:sc .

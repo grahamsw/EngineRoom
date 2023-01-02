@@ -1,5 +1,3 @@
-Quarks.install("panola");
-
 ~melodies = Dictionary.new;
 ~clocks = Dictionary.new;
 
@@ -11,6 +9,8 @@ Quarks.install("panola");
 };
 
 ~getMelody = {|key|
+    "in getMelody with key".postln;
+    key.postln;
     ~melodies.atFail(key, {
         ~melodies[key] = (
             \proxy: EventPatternProxy(),
@@ -24,10 +24,12 @@ Quarks.install("panola");
 
 
 ~setProxy = {|proxy, melody, instrument, repeats=\inf |
-    var panola = Panola.new(melody);
-    var midinotes = panola.midinotePattern.list;
-    var durs = panola.durationPattern.list;
-    var amps = panola.volumePattern.list;
+    var panola, midinotes, durs, amps;
+    melody = melody.asString;
+    panola = Panola.new(melody);
+    midinotes = panola.midinotePattern.list;
+    durs = panola.durationPattern.list;
+    amps = panola.volumePattern.list;
     // if the change/play message is sent over OSC
     // I won't be able to send numeric inf, so handle the
     // symbol \inf
@@ -60,7 +62,6 @@ Quarks.install("panola");
         ~setProxy.(mm[\proxy], melody, instrument, repeats);
         mm[\instrument] = instrument;
         mm[\player] =  mm[\proxy].play(~getClock.(clock), quant:quant);
-
     },
 
 

@@ -8,6 +8,7 @@ RUN pip3 install -r requirements.txt
 WORKDIR /app
 COPY . .
 
-CMD [ "radio.py"]
+CMD [ "web.py"]
 
+EXPOSE 8000
 ENTRYPOINT [ "python3" ]

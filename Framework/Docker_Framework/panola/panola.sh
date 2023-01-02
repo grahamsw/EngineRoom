@@ -6,8 +6,8 @@
 # It is used to tear down and set up the running containers (which is messy
 # enough that you don't want to be typing it )
 
-name=radio         # repo name - used as root for container names
-subnet_base=172.70 # unique to the docker instance
+name=panola         # repo name - used as root for container names
+subnet_base=172.90 # unique to the docker instance
 namespace=grahamsw/ # your docker namespace here
 
 subnet_mask=$subnet_base".0.0/16"
@@ -40,4 +40,4 @@ docker pull $repo":sc"
 docker pull $repo":py"
 
 docker run -d --name $sc_name --network $network_name --ip $ip $repo":sc"
-docker run -d --name $py_name --network $network_name --env SC_IP=$ip $repo":py"
+docker run -d --name $py_name --network $network_name --env SC_IP=$ip -p 8000:8000 $repo":py"

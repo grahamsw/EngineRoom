@@ -12,20 +12,21 @@ RUN apt-get update && \
 	apt-get update && \
     apt-get install -y darkice libasound2 libasound2-plugins alsa-utils alsa-oss jack-tools supercollider xvfb curl && \
     apt-get clean
-
-RUN curl -o forego.tgz https://bin.equinox.io/c/ekMN3bCZFUn/forego-stable-linux-amd64.tgz && \
-	tar xvf forego.tgz && \
-	rm forego.tgz && \
-	mv forego /usr/bin/forego && \
-	chmod +x /usr/bin/forego
+	
+COPY --from=grahamsw/forego /forego/forego /usr/bin/
+RUN chmod +x /usr/bin/forego
 
 COPY asoundrc /root/.asoundrc
 COPY darkice.cfg /etc/darkice.cfg
 
 COPY startup.scd /root/.config/SuperCollider/startup.scd
-COPY radio.sc /radio.sc
+COPY Panola.sc /usr/share/SuperCollider/Extensions/Panola.sc
+COPY impl.sc /impl.sc
+COPY core.sc /core.sc
 
 COPY Procfile Procfile
+
+ADD panola /root/panola
 
 EXPOSE 57120
 RUN mv /etc/security/limits.d/audio.conf.disabled /etc/security/limits.d/audio.conf && \

@@ -1,0 +1,4 @@
+jackd: jackd -r -d dummy -r 44100
+darkice: darkice -c /etc/darkice.cfg
+#sclang: xvfb-run -a sclang /install_quarks.sc
+sclang: xvfb-run -a sclang /core.sc

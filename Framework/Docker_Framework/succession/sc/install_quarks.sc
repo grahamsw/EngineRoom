@@ -1,1 +1,0 @@
-//Quarks.install("panola");
