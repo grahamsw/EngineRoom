@@ -37,3 +37,12 @@ s('stop', 'first')
 
 e-4_3@vol[0.2] b-3@vol[0.1] g b- e-4 f g@vol[0.2] e-@vol[0.1] b-3 e-4 g a- b-4@vol[0.2] g@vol[0.1] e- g b- e-5 g@vol[0.2] e-@vol[0.1] b-4 g e- b-3
 <e-4_4@vol[0.05] g3> <g4_4@vol[0.05] e- > <b-_4@vol[0.05] g> <g5_4@vol[0.05] e- >
+
+ex1 Hunding
+(<c4_4 a-3 f c a-2>)*2 f2_32 g a- b- c3_2  (<c4_32 a-3 f  a-2>)*2 <c4_8*2/3 a-3 f  a-2> <a-3_8*2/3 f  b-1> <c4_8*2/3 a-3 f  a-1>
+
+
+g4_8@vol[0.3] d@vol[0.1] e- b-3 c4_8@vol[0.3] g3@vol[0.1] a d g4_8@vol[0.3] d@vol[0.1] e- b-3 e-4_8@vol[0.3] b-3@vol[0.1] c4 g3
+
+
+(<d#5_16*1/3@vol[0.2] a4@vol[0.1] f#> <e5 c# a4> <d#5_16*1/3@vol[0.2] a3 f#3> <e4 c# a3> <d#4_16*1/3@vol[0.2] a3 f#3> <e4 c# a3>)*3

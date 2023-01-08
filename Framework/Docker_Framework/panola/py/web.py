@@ -105,22 +105,76 @@ class MyServer(CGIHTTPRequestHandler):
             print("bad input")
             return
         form_type = input_dict['formType']
-        if form_type == 'newInstrument' or form_type == 'changeInstrument':
+        if form_type == 'newInstrument':
             instrument = input_dict['iname']
+            if instrument == '': 
+                return
             melody = input_dict['melody']
             if instrument in state['instruments']:
                 change_instrument(instrument, melody)
             else:
                 start_instrument(instrument, melody)
             #state['instruments'][instrument] = melody
-        elif form_type == 'deleteInstrument':
-            stop_instrument(instrument)
+        elif form_type == 'editInstrument':
+            instrument = input_dict['iname']
+            if instrument == '': 
+                return
+            melody = input_dict['melody']
+
+            if 'delete' in input_dict:
+               stop_instrument(instrument)
+               return
+            else:
+                change_instrument(instrument, melody)
+                return
+
+
 
 
 
 
     def basic_item_formatter(key, item):
         return f'{escape(key)}: {escape(item)}'
+
+    def instrument_edit_formatter(key, item):
+        ret = [
+            '<form   method="POST">',
+            '<input type="hidden" id="formType" name="formType" value="editInstrument">',
+            f'<input type="hidden" id="iname" name="iname" value="{escape(key)}">'
+            f'{escape(key)}',
+            f'<input type="text" id="melody" size="100" name="melody" value="{escape(item)}">',
+            '<input name="delete" type="checkbox">',
+            '<input type="submit" value="Change/Delete">',
+            '</form>'
+
+        ]
+        return '\n'.join(ret)
+
+    def make_samples():
+        ret = [
+            '<div>',
+            '<em>Sample melodies</em>',
+
+            '<h3>Ex 7: The Rhine</h3>',
+            '<ul>'
+            f'<li><strong>{escape("e-4_32@vol[0.2] b-3@vol[0.1] g b- e-4 f g@vol[0.2] e-@vol[0.1] b-3 e-4 g a- b-4@vol[0.2] g@vol[0.1] e- g b- e-5 g@vol[0.2] e-@vol[0.1] b-4 g e- b-3")}</strong></li>',
+            f'<li><strong>{escape("<e-4_4@vol[0.05] g3> <g4_4@vol[0.05] e- > <b-_4@vol[0.05] g> <g5_4@vol[0.05] e- >")}</strong></li>',
+            '</ul>',
+
+            '<h3>Ex 4. Siegfried\'s Anger</h3>',
+            '<ul>',
+            f'<li><strong>{escape("g4_8@vol[0.3] d@vol[0.1] e- b-3 c4_8@vol[0.3] g3@vol[0.1] a d g4_8@vol[0.3] d@vol[0.1] e- b-3 e-4_8@vol[0.3] b-3@vol[0.1] c4 g3")}</li>',
+            '</ul>',
+            '</div>'
+        ]
+        return '\n'.join(ret)
+        
+
+    def make_panola_link():
+        ret = [
+         '<div> <a target="_blank" href="https://sccode.org/1-5aq">A brief explanation of the Panola notation</a></div><br>'
+        ]
+        return '\n'.join(ret)
 
     def make_list(title, dict, item_formatter=basic_item_formatter ):
         ret = [f'<div><span><em>{title}</em></span>', '<ul>']
@@ -147,22 +201,32 @@ class MyServer(CGIHTTPRequestHandler):
             '<input type="text" id="iname" name="iname"><br>',
             '<label for="melody">Melody:</label><br>',
             '<input type="text" id="melody" size="100" name="melody"><br>',
-            '<input type="submit" value="Submit">'
+            '<input type="submit" value="New Instrument">',
+            '</form>'
+
         ]
         return '\n'.join(ret)
+
+
 
 
 
     def create_page(self):
          response = BytesIO()
          response.write(bytes('<html><head><title>Panola</title></head>\n<body>', 'utf-8'))
-         response.write(bytes(MyServer.make_list('Clocks', state['clocks']), 'utf-8'))
-         response.write(bytes(MyServer.make_list('Instruments', state['instruments']), 'utf-8'))
+  #       response.write(bytes(MyServer.make_list('Clocks', state['clocks']), 'utf-8'))
+         response.write(bytes(MyServer.make_list('Instruments', state['instruments'], MyServer.instrument_edit_formatter), 'utf-8'))
+         response.write(bytes(MyServer.make_panola_link(), 'utf-8'))
 
          response.write(bytes(MyServer.make_instrument_form(), 'utf-8'))
     #    # response.write(bytes(MyServer.make_clock_form(), 'utf-8'))
 
          response.write(bytes(MyServer.make_audio_embed(), 'utf-8'))
+
+         response.write(bytes(MyServer.make_samples(), 'utf-8'))
+
+
+
          response.write(bytes('</body></html>', 'utf-8'))
 
          return response.getvalue()
