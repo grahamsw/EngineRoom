@@ -60,6 +60,7 @@
     \start: {
         |melodyKey, melody, repeats=\inf, instrument=\default, quant=4, clock=\default|
         var mm = ~getMelody.(melodyKey);
+        quant = quant.asFloat;
         ~setProxy.(mm[\proxy], melody, instrument, repeats);
         mm[\instrument] = instrument;
         mm[\player] =  mm[\proxy].play(~getClock.(clock), quant:quant);

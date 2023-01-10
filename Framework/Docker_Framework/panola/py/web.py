@@ -39,10 +39,10 @@ def set_clock(rate, name):
     s = make_sender()
     s('set_clock', rate, name)
 
-def start_instrument(name, melody):
-    state['instruments'][name] =  melody
+def start_instrument(name, melody, clock, quant):
+    state['instruments'][name] =  (melody, clock, quant)
     s = make_sender()
-    s('start', name, melody)
+    s('start', name, melody, 'inf', 'default', quant, clock)
 
 def change_instrument(name, melody): 
     if name in state['instruments']:   
@@ -83,10 +83,13 @@ class MyServer(CGIHTTPRequestHandler):
             if instrument == '': 
                 return
             melody = input_dict['melody']
+            clock = input_dict['clock']
+            quant = input_dict['quant']
+
             if instrument in state['instruments']:
                 change_instrument(instrument, melody)
             else:
-                start_instrument(instrument, melody)
+                start_instrument(instrument, melody, clock, quant)
         elif form_type == 'editInstrument':
             instrument = input_dict['iname']
             if instrument == '': 
@@ -111,12 +114,16 @@ class MyServer(CGIHTTPRequestHandler):
         return f'{escape(key)}: {escape(item)}'
 
     def instrument_edit_formatter(key, item):
+        melody = item[0]
+        clock = item[1]
+        quant = item[2]
+        
         ret = [
             '<form   method="POST">',
             '<input type="hidden" id="formType" name="formType" value="editInstrument">',
             f'<input type="hidden" id="iname" name="iname" value="{escape(key)}">'
-            f'{escape(key)}',
-            f'<input type="text" id="melody" size="100" name="melody" value="{escape(item)}">',
+            f'{escape(key)}: clock: {escape(clock)}, quant: {quant} ',
+            f'<input type="text" id="melody" size="100" name="melody" value="{escape(melody)}">',
             '<input name="delete" type="checkbox">',
             '<input type="submit" value="Change/Delete">',
             '</form>'
