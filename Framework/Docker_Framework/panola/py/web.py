@@ -20,34 +20,7 @@ state = {'clocks':{}, 'instruments':{}}
 
 print("hello from web server", flush=True)
 
-def parsePath(path):
-    description = f"path: {path} is invalid"
-    def split_path(path):
-        if path[0] == '/':
-            path = path[1:]      
-        return path.split('/')
-    parts = split_path(path)
-    if len(parts) == 3:
-        if parts[0] == 'clock':
-            if parts[2].isnumeric():
-                rate = int(parts[2])
-                set_clock(rate, parts[1])
-                description = f"set clock {parts[1]} to {rate}"
-        elif parts[0] == 'start':
-            mm = urllib.parse.unquote(parts[2])
 
-            start_instrument(parts[1], mm)
-            description = f"start instrument {parts[1]} with melody {mm}"
-        elif parts[0] == 'change':
-            mm = urllib.parse.unquote(parts[2])
-            change_instrument(parts[1], mm)
-            description = f"change instrument {parts[1]} with melody {mm}"    
-    elif len(parts) == 2:
-        if parts[0] == 'stop':
-            stop_instrument(parts[1])
-            description = f"stop instrument {parts[1]}"
-    
-    return description
 
 
 
@@ -60,7 +33,9 @@ def make_sender():
     return s
 
 def set_clock(rate, name):
-    state['clocks']['name'] =  rate
+    print(f'in set_clocks with rate: {rate} and name: {name}')
+    print(state['clocks'], flush=True)
+    state['clocks'][name] =  rate
     s = make_sender()
     s('set_clock', rate, name)
 
@@ -87,7 +62,6 @@ hostName = "0.0.0.0"
 serverPort = 8000
 
 class MyServer(CGIHTTPRequestHandler):
-
     def parse_inputs(inputs):
         def clean(st):
             return unquote_plus(st).strip()
@@ -98,7 +72,6 @@ class MyServer(CGIHTTPRequestHandler):
             ret[clean(p[0])] = clean(p[1])
         return ret
     
-
     def handle_inputs(input_dict):
         print('in handle_inputs', flush=True)
         if 'formType' not in input_dict:
@@ -114,7 +87,6 @@ class MyServer(CGIHTTPRequestHandler):
                 change_instrument(instrument, melody)
             else:
                 start_instrument(instrument, melody)
-            #state['instruments'][instrument] = melody
         elif form_type == 'editInstrument':
             instrument = input_dict['iname']
             if instrument == '': 
@@ -127,11 +99,13 @@ class MyServer(CGIHTTPRequestHandler):
             else:
                 change_instrument(instrument, melody)
                 return
-
-
-
-
-
+        elif form_type == 'newClock':
+            print(f'handling newClock', flush=True)
+            clockName = input_dict['clockName']
+            clockBeats = input_dict['clockBeats']
+            print(f'Name: {clockName}, Beats: {clockBeats}', flush=True)
+            set_clock(clockBeats, clockName)
+            return
 
     def basic_item_formatter(key, item):
         return f'{escape(key)}: {escape(item)}'
@@ -169,7 +143,6 @@ class MyServer(CGIHTTPRequestHandler):
         ]
         return '\n'.join(ret)
         
-
     def make_panola_link():
         ret = [
          '<div> <a target="_blank" href="https://sccode.org/1-5aq">A brief explanation of the Panola notation</a></div><br>'
@@ -182,7 +155,7 @@ class MyServer(CGIHTTPRequestHandler):
             ret.append(f'<li>{item_formatter(k, dict[k])}</li>')
         ret.append('</ul>\n</div>')
         return '\n'.join(ret)
-
+        
     def make_audio_embed():
         ret = [
             '<div>',
@@ -192,66 +165,68 @@ class MyServer(CGIHTTPRequestHandler):
         ]
         return '\n'.join(ret)
 
-
     def make_instrument_form():
         ret = [
             '<form   method="POST">',
-            '<input type="hidden" id="formType" name="formType" value="newInstrument">'
+            '<input type="hidden" id="formType" name="formType" value="newInstrument">',
             '<label for="iname">Instrument name:</label><br>',
             '<input type="text" id="iname" name="iname"><br>',
             '<label for="melody">Melody:</label><br>',
             '<input type="text" id="melody" size="100" name="melody"><br>',
-            '<input type="submit" value="New Instrument">',
-            '</form>'
+            '<label for="clock">Clock</label><br>',
+            '<select id="clock" name="clock">',
+        ]
 
+        for clock in state['clocks']:
+            ret.append(f'<option value="{clock}">{clock}</option>')
+
+        ret.extend([
+               '</select><br>',
+               '<label for="quant">Quant</label><br>',
+               '<input type="text" id="quant" name="quant"><br><br>',
+               '<input type="submit" value="New Instrument">',
+               '</form>'])
+
+        return '\n'.join(ret)
+
+    def make_clock_form():
+        ret = [
+            '<form method="POST">',
+            '<input type="hidden" id="formType" name="formType" value="newClock">',
+            '<label for="clockName">Clock name</label><br>',
+            '<input type="text" id="clockName" name="clockName"><br>',
+            '<label for="clockBeats">Beats per minute</clock><br>',
+            '<input type="text" id="clockBeats" name="clockBeats"><br><br>',
+            '<input type="submit" value="New Clock">',
+            '</form>'
         ]
         return '\n'.join(ret)
 
-
-
-
+    def write_response(self, response, txt):
+        response.write(bytes(txt, 'utf-8'))
 
     def create_page(self):
          response = BytesIO()
-         response.write(bytes('<html><head><title>Panola</title></head>\n<body>', 'utf-8'))
-  #       response.write(bytes(MyServer.make_list('Clocks', state['clocks']), 'utf-8'))
-         response.write(bytes(MyServer.make_list('Instruments', state['instruments'], MyServer.instrument_edit_formatter), 'utf-8'))
-         response.write(bytes(MyServer.make_panola_link(), 'utf-8'))
-
-         response.write(bytes(MyServer.make_instrument_form(), 'utf-8'))
-    #    # response.write(bytes(MyServer.make_clock_form(), 'utf-8'))
-
-         response.write(bytes(MyServer.make_audio_embed(), 'utf-8'))
-
-         response.write(bytes(MyServer.make_samples(), 'utf-8'))
-
-
-
-         response.write(bytes('</body></html>', 'utf-8'))
-
+         self.write_response(response, '<html><head><title>Panola</title></head>\n<body>')
+         self.write_response(response, MyServer.make_list('Clocks', state['clocks'], MyServer.basic_item_formatter))
+         self.write_response(response, MyServer.make_list('Instruments', state['instruments'], MyServer.instrument_edit_formatter))
+         self.write_response(response, MyServer.make_panola_link())        
+         self.write_response(response, '<hr>')
+         self.write_response(response, MyServer.make_instrument_form())     
+         self.write_response(response, '<hr>')
+         self.write_response(response, MyServer.make_clock_form())     
+         self.write_response(response, '<hr>')
+         self.write_response(response, MyServer.make_audio_embed())     
+         self.write_response(response, '<hr>')
+         self.write_response(response, MyServer.make_samples())
+         self.write_response(response, '</body></html>')
          return response.getvalue()
-
-
-
 
     def do_GET(self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
         self.wfile.write(self.create_page())
-        # self.wfile.write(bytes("<html><head><title>Panola</title></head>", "utf-8"))
-        # self.wfile.write(bytes("<body>", "utf-8"))
-        # call_type = parsePath(self.path)
-        # self.wfile.write(bytes(f"<p>Request: {call_type}<p>", "utf-8"))
-        # self.wfile.write(bytes("<form   method=\"POST\"> \
-        #                        <label for=\"fname\">First name:</label><br> \
-        #                        <input type=\"text\" id=\"fname\" name=\"fname\"><br> \
-        #                        <label for=\"lname\">Last name:</label><br> \
-        #                        <input type=\"text\" id=\"lname\" name=\"lname\"> \
-        #                        <input type=\"submit\" value=\"Submit\">", "utf-8"))
-
-        # self.wfile.write(bytes('<div><audio controls autoplay name="media"><source src="https://audio.spiderhats.com/panola" type="audio/mpeg"></audio></div>', "utf-8"))
-        # self.wfile.write(bytes("</body></html>", "utf-8"))
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
@@ -265,15 +240,9 @@ class MyServer(CGIHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
         self.wfile.write(self.create_page())
-        # response = BytesIO()
-        # response.write(b'This is POST request. ')
-        # response.write(b'Received: <br>')
-        # for k in inputs:
-        #     response.write(bytes(k, 'utf-8'))
-        #     response.write(b': ')
-        #     response.write(bytes(inputs[k], 'utf-8'))
-        #     response.write(b'<br>')
-        # self.wfile.write(response.getvalue())
+
+
+#set_clock(60, 'default')
 
 print("starting web server", flush=True)
 webServer = HTTPServer((hostName, serverPort), MyServer)

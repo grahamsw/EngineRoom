@@ -53,6 +53,7 @@
 
 ~events = [
     \set_clock: {|bpm, key=\default|
+        bpm = bpm.asFloat;
         ~getClock.(key).tempo_(bpm/60);
     },
 
