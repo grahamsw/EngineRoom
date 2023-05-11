@@ -10,10 +10,10 @@
 
 // write pitches into array
 ~dronenotes = [
-	{~chords[\fifth].choose}!8 * 44.midicps,
-	{~chords[\maj6].choose}!8 * 41.midicps,
-	{~chords[\fifth].choose}!8 * 44.midicps,
-	{~chords[\min6].choose}!8 * 40.midicps
+	{~chords[\fifth].choose}!8 * 64.midicps,
+	{~chords[\maj6].choose}!8 * 61.midicps,
+	{~chords[\fifth].choose}!8 * 64.midicps,
+	{~chords[\min6].choose}!8 * 60.midicps
 ];
 
 
@@ -41,7 +41,7 @@
 		\dur, Pwhite(18, 30),
 		\atk, Pwhite(3.2, 4),
 		\legato, 1.1,
-		\out, 0
+		\o.ut, 0
 	);
 	s.sync;
 	"done".postln;

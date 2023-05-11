@@ -23,7 +23,7 @@
 
 ~quit_remote.()
 
-~chime.
+~chime.()
 
 
 

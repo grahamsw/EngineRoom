@@ -54,8 +54,6 @@
 
 // list of Pbinds
 ~definePbinds = {
-        ~root = -13;
-
     Pdef(\octaves, Pbind(
         \type, \rest,
         \root, Pxrand([-13, -1, 4, 7], inf).trace,
@@ -91,12 +89,9 @@
 
 ~events = [
     \start: {
-        "poo".postln;
-        Ppar(
-        [Pdef(\octaves),
-                Pdef(\main)]).play;
+        Ppar([
+                Pdef(\octaves),
+                Pdef(\main)
+            ]).play;
     }
-
 ].asDict;
-
-~last_root

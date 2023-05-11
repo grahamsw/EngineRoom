@@ -19,7 +19,6 @@
         arg freq = 400, tone = 3, art = 1, amp = 0.2, pan = 0;
         var env, out, mod;
 
-
         env = Env.perc(0, art);
         mod = 5 + (1/IRand(2, 6));
 
