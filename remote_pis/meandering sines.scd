@@ -46,7 +46,7 @@
 	s.sync;
 	"done".postln;
 
-
+s
 // start performance
 Pbindef(\drones).play;
 
