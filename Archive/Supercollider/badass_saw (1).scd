@@ -22,7 +22,7 @@ SynthDef(\iter,{
 )
 
 
-Synth(\iter, [\freq, 400])
+Synth(\iter, [\freq, 40])
 
 (
 p = Pdef(\bind,

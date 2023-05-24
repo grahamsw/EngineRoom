@@ -1,7 +1,7 @@
 // 16: The Rhine
 (
 ~the_rhine_016 = {
-	| timeBasis = 0.15, ampBasis = 0.1, transpose = 0, instrument=\default|
+	| timeBasis = 0.15, ampBasis = 0.1, transpose = 0, instrument=\tone|
 
 
 	var inst = Pbind(\instrument, instrument);
@@ -29,7 +29,3 @@
 )
 
 ~the_rhine_016.(transpose:5, timeBasis:0.1).play;
-
-t = Bus.control(s)
-t.set(5)
-t.map(\

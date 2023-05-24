@@ -28,8 +28,5 @@
 }
 )
 
-~the_rhine_016.(transpose:5, timeBasis:0.1).play;
 
-t = Bus.control(s)
-t.set(5)
-t.map(\
+
