@@ -12,13 +12,15 @@ SynthDef (\glissando, {
 }).add;
 
 )
+
+
 (
 ~play = {|from, to, len, amp|
 	Synth(\glissando, [\from, from, \to, to, \len, len, \amp, amp]);
 };
 )
-
-
+().play
+Synth(\glissando)
 (
 
 ~playPattern = {

@@ -23,10 +23,11 @@
 postln(~ex.durationPattern.asStream.take(30));
 
 ~motif = ~forest_murmers_embryonic_014
-b = ~motifPlayer.(motif: ~motif)
+b = ~motifPlayer.(motif: ~motif);
 b.pbind.play;
 b.state.stretch = 1.19152;
 b.state.amp = 0.8;
-b.state.ctranspose = 7;
+b.state.ctranspose = 12;
 */
 
+~motifPlayer.(motif:~nature_005)

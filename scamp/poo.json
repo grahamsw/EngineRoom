@@ -1,0 +1,70 @@
+{
+    "_type": "Performance",
+    "parts": [
+        {
+            "_type": "PerformancePart",
+            "clef_preference": [
+                [
+                    "bass",
+                    59
+                ],
+                [
+                    "tenor",
+                    66
+                ],
+                [
+                    "treble",
+                    74
+                ]
+            ],
+            "instrument_id": [
+                "Cello",
+                0
+            ],
+            "name": "Cello",
+            "voice_quantization_records": null,
+            "voices": {
+                "_unspecified_": [
+                    {
+                        "_type": "PerformanceNote",
+                        "length": 1.0,
+                        "pitch": 48,
+                        "properties": {
+                            "_type": "NoteProperties"
+                        },
+                        "start_beat": 0.0,
+                        "volume": 0.5
+                    },
+                    {
+                        "_type": "PerformanceNote",
+                        "length": 1.0,
+                        "pitch": 53,
+                        "properties": {
+                            "_type": "NoteProperties"
+                        },
+                        "start_beat": 1.0,
+                        "volume": 0.5
+                    },
+                    {
+                        "_type": "PerformanceNote",
+                        "length": 1.0,
+                        "pitch": 67,
+                        "properties": {
+                            "_type": "NoteProperties"
+                        },
+                        "start_beat": 2.0,
+                        "volume": 0.5
+                    }
+                ]
+            }
+        }
+    ],
+    "tempo_envelope": {
+        "_type": "TempoEnvelope",
+        "length": 0,
+        "levels": [
+            1.0,
+            1.0
+        ]
+    }
+}

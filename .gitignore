@@ -5,6 +5,8 @@ NewRelicCredentials.py
 .ipynb_checkpoints/
 *secrets.py
 secrets.py
+secrets/
+
 
 ################
 ## Eclipse
