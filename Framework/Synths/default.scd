@@ -10,6 +10,7 @@ SynthDef(\default,
 OffsetOut.ar(out, Pan2.ar(z, pan, amp));
 }).add
  )
+ 
 
 Synth(\harpsichord1)
 
