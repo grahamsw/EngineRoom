@@ -1,5 +1,36 @@
-// busses and nodes may be needed for effects, and control
-// otherwise these two functions can be left empty
+~voscs = ();
+
+~createVoscObject = {
+    | out = 0, freq = 80, amp = 0.5,
+    detuneLow = 0.05, detuneHigh = 0.2,
+    durLow = 0.15, durHigh = 0.55,
+    buffSet = 1, controlSynth = \passThroughPan,
+    pan = 0
+    |
+    var ob = (
+        \out: out,
+        \freq:freq, \amp:amp,
+        \detuneLow:detuneLow, \detuneHigh:detuneHigh,
+        \durLow:durLow, \durHigh:durHigh,
+        \buffs:  ~makeBufs.(buffSet),
+        \playBus: Bus.audio(s, 1),
+        \pan: pan
+
+    );
+    var buffs = ob[\buffs];
+    ob[\controlSynth] = Synth(controlSynth, [\in, ob[\playBus], \out, out, \pan, pan ]);
+    ob[\pVosc] = Pmono(\VoscChorus,
+        \out, ob[\playBus],
+        \dur, Pwhite(Pfunc({ob[\durLow]}), Pfunc({ob[\durHigh]})),
+        \bufindex, Pbrown(buffs[0].bufnum, buffs[buffs.size - 2].bufnum, 0.3),
+        \detune, Pbrown(Pfunc({ob[\detuneLow]}), Pfunc({ob[\detuneHigh]})),
+        \freq, Pfunc({ob[\freq]}),
+        \amp, Pfunc({ob[\amp]})
+    );
+
+    ob;
+};
+
 
 ~freeBufs = {
     | bufs |
@@ -7,65 +38,63 @@
         buf.free;
     }
 };
+
+/*
 ~makeBufs1 = {
-    | numbuffs = 8|
+| numbuffs = 8|
 
-    var makeWaveform = {
-        |numLevs = 7|
-        var numPts = numLevs + 1;
-        var levs = {rrand(-1.0,1.0)}!numLevs;
-        var peak = levs.abs.maxItem;
-        levs = levs * peak.reciprocal;
-        Env(
-        [0]++ levs ++ [0],
-        {exprand(0.01,1)}!numPts,
-        {exprand(0.1,4)}!numPts
-    ).asSignal(512).asWavetable;
+var makeWaveform = {
+|numLevs = 7|
+var numPts = numLevs + 1;
+var levs = {rrand(-1.0,1.0)}!numLevs;
+var peak = levs.abs.maxItem;
+levs = levs * peak.reciprocal;
+Env(
+[0]++ levs ++ [0],
+{exprand(0.01,1)}!numPts,
+{exprand(0.1,4)}!numPts
+).asSignal(512).asWavetable;
 
-    };
-
-    ~freeBufs.(~bufs);
-    ~numbuffs = numbuffs;
-    ~bufs = numbuffs.collect({
-        | i |
-        Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
-    });
-    ~buffbase = ~bufs[0].bufnum;
 };
 
-~allocBufs = {
-    |numbuffs|
-    ~freeBufs.(~bufs);
-    // allocate table of consecutive buffers
-    ~bufs = Buffer.allocConsecutive(numbuffs, s, 1024, 1);
-    ~buffbase = ~bufs[0].bufnum;
-    ~numbuffs = numbuffs;
+~freeBufs.(~bufs);
+~numbuffs = numbuffs;
+~bufs = numbuffs.collect({
+| i |
+Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
+});
+~buffbase = ~bufs[0].bufnum;
 };
+*/
 
-~makeBufs2 = {
-    | numbuffs = 8 |
-    ~allocBufs.(numbuffs);
-    ~bufs.do({ arg buf, i;
-        var n, a;
-       // a = makeArray.(n);
-        // generate array of harmonic amplitudes
-//        a = Array.fill(n, { arg j; ((n-j)/n).squared.round(0.001) });
-//        a = Array.fill(i, 0) ++ [0.5, 1, 0.5];
-//     a = Array.fill(32,0);
-//     12.do({ arg i; a.put(32.rand, 1).postln })
-        a = Array.fill((i+1)**2, { arg j; 1.0.rand2 });
+~makeBufs = {
+    | which=1 |
+    var numbuffs = 8;
+    var buffs = Buffer.allocConsecutive(numbuffs, s, 1024, 1);
+    buffs.do({ arg buf, i;
+        var n =(numbuffs), a;
+        a = switch(which,
+            1, {Array.fill(i+1, { arg j; ((n-j)/n).squared.round(0.001) })},
+            2, {Array.fill(i, 0) ++ [0.5, 1, 0.5];},
+            3, {a = Array.fill(32,0);
+                12.do({a.put(32.rand, 1).postln });
+                a},
+            //a = Array.fill((i+1)**2, { arg j; 1.0.rand2 });
+            {Array.fill((i+1)**2, {1.0.rand2 })}
+        );
+        a.postln;
         buf.sine1(a);
     });
-
+    buffs;
 };
 
-
+//~makeBufs.(1).do({|i| i.plot})
 
 ~loadBuffs = {
-	~makeBufs2.();
+
 };
 
-//        n = (i+1)**2;
+
 ~allocBusses = {
 
 };
@@ -76,8 +105,7 @@
 
 // SynthDefs for the Synths used in the piece
 ~defineSynths = {
-
-    SynthDef("VoscChorus",{
+    SynthDef(\VoscChorus,{
         |out = 0, bufindex = 0, freq=400, detune=0.15, amp=1|
         var rats = Rand(0.08, 0.15)!8;
         var cfreq = freq  * (LFNoise1.kr(rats).bipolar(detune).midiratio);
@@ -90,33 +118,26 @@
     SynthDef(\reverb, {
         | out = 0, mix = 0.1|
         var dry = In.ar(out);
-
         var wet =FreeVerb.ar(dry,0.45,2.0,0.5);
-
         wet = DelayN.ar(wet, 0.03, 0.03);
-  //      wet = CombN.ar(wet, 0.1, {Rand(0.01,0.099)}!32, 4);
         wet = SplayAz.ar(2, wet);
         wet = LPF.ar(wet, 1500);
-        //  5.do{wet = AllpassN.ar(wet, 0.1, {Rand(0.01,0.099)}!2, 3)};
         XOut.ar(out, mix, wet);
     }).add;
 
+    SynthDef(\passThrough, {
+        |in, out = 0|
+        Out.ar(out, In.ar(in));
+    }).add;
+
+     SynthDef(\passThroughPan, {
+        |in, out = 0, amp=1, pan=0|
+        Out.ar(out, Pan2.ar(In.ar(in), pan, amp));
+    }).add;
 };
 
 // list of Pbinds
 ~definePbinds = {
-    ~pVosc = Pmono(\VoscChorus,
-        \dur, Pwhite(0.15, 0.55).trace,
-        \bufindex,  Pbrown(0, Pfunc({~numbuffs - 1}), 0.3).trace,
-        \detune, Pbrown(0.05, 0.2).trace,
-        \freq, 80, //Pbrown(60, 120).round(5).trace,
-        \amp, 0.5
-
-    );
-
-
-
-
 
 };
 
@@ -128,48 +149,73 @@
 
 ~events = [
     \start: {
-        ~reverb = Synth(\reverb, [\mix, 0.2]);
-        ~pVosc.play;
-/*        ~vosc = Synth("VoscChorus", [\out, 0,
-                         \bufindex, ~bufs[1].bufnum,
-                         \freq, 80,
-                         \detune, 0.15,
-                         \amp, 0.5])*/
-          },
-    \setBufindex: {
-        |bufindex|
-        // make sure bufindex is allowed
-        bufindex = 0.max(~numbuffs.min(bufindex));
-        ~vosc.set(\bufindex, bufindex);
+      //  ~reverb = Synth(\reverb, [\mix, 0.2]);
     },
-    \stop: {
-        ~pVosc.stop;
+    \addVosc: {
+        |key|
+        ~voscs[key] = ~createVoscObject.();
+    },
+    \playVosc: {
+        |key|
+        ~voscs[key][\stream] = ~voscs[key][\pVosc].play;
+    },
+    \stopVosc: {
+        |key|
+        ~voscs[key][\stream].stop;
     },
     \setFreq: {
-        |freq|
-        ~vosc.set(\freq, freq);
+        |key, freq|
+        ~voscs[key][\freq] = freq;
     },
     \setDetune: {
-        |detune|
-        ~vosc.set(\detune, detune);
+        |key, detuneLow=0.05, detuneHigh=0.2|
+        ~voscs[key][\detuneLow] = detuneLow;
+        ~voscs[key][\detuneHigh] = detuneHigh;
+    },
+    \setDur: {
+        |key, durLow=0.15, durHigh=0.55|
+        ~voscs[key][\durLow] = durLow;
+        ~voscs[key][\durHigh] = durHigh;
     },
     \setAmp: {
-        |amp|
-        ~vosc.set(\amp, amp);
+        |key, amp|
+        ~voscs[key][\amp] = amp;
     },
     \setReverbMix: {
         |mix|
         ~reverb.set(\mix, mix);
-    },
-    \regenBufs: {
-        |which, how_many=8|
-        ~events[\stop];
-        if(which==1, {~makeBufs1.(how_many)},
-            {
-                ~makeBufs2.(how_many)
-            }
-        );
-        ~events[\start].();
     }
 ].asDict;
 
+~runstart = {
+
+
+
+~events[\start].();
+~events[\addVosc].(\bass);
+~events[\playVosc].(\bass);
+~events[\setFreq].(\bass,100);
+~events[\setAmp].(\bass, 0.5);
+~events[\setDetune].(\bass, 0.1, 0.15);
+
+
+~events[\addVosc].(\aa);
+~events[\playVosc].(\aa);
+~events[\setFreq].(\aa,200);
+~events[\setAmp].(\aa, 0.3);
+~events[\setDetune].(\aa, 1, 2);
+
+
+
+
+~events[\addVosc].(\bb);
+~events[\playVosc].(\bb);
+~events[\setFreq].(\bb, 300);
+~events[\setAmp].(\bb, 0.3);
+~events[\setDetune].(\bb, 0.1, 0.12);
+
+
+~voscs[\bb][\controlSynth].set(\pan, 1, \amp, 0.5);
+~voscs[\aa][\controlSynth].set(\pan, -1, \amp, 0.5);
+~voscs[\bass][\controlSynth].set(\pan, 1, \amp, 0.5);
+}

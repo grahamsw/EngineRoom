@@ -78,17 +78,10 @@ s.waitForBoot {
 
 	"net address".postln;
 	NetAddr.localAddr.postln;
-};
 
 ~definePbinds.value;
-
+s.sync;
+~runstart.()
+};
 )
-//   ~events[\start].();
-//    ~events[\setBufindex].(2.6)
-//  ~events[\setFreq].(120)
-//    ~events[\setDetune].(0.15)
-//  ~events[\setReverbMix].(0.4)
-// ~events[\regenBufs].(2)
-//().play
-
-// ~bufs[0].plot
+//~voscs[\bass][\buffSet].do {|buf| buf.plot}
