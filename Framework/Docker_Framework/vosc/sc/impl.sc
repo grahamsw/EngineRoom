@@ -4,8 +4,11 @@
     | out = 0, freq = 80, amp = 0.5,
     detuneLow = 0.05, detuneHigh = 0.2,
     durLow = 0.15, durHigh = 0.55,
-    buffSet = 1, controlSynth = \passThroughPan,
-    pan = 0
+    buffSet = 1,
+    panLow = -1,
+    panHigh = 1,
+    spread = 0.25,
+    panSteps = 20
     |
     var ob = (
         \out: out,
@@ -13,19 +16,39 @@
         \detuneLow:detuneLow, \detuneHigh:detuneHigh,
         \durLow:durLow, \durHigh:durHigh,
         \buffs:  ~makeBufs.(buffSet),
-        \playBus: Bus.audio(s, 1),
-        \pan: pan
+        \panLow: panLow,
+        \panHigh: panHigh,
+        \spread: spread
 
     );
     var buffs = ob[\buffs];
-    ob[\controlSynth] = Synth(controlSynth, [\in, ob[\playBus], \out, out, \pan, pan ]);
+
     ob[\pVosc] = Pmono(\VoscChorus,
-        \out, ob[\playBus],
-        \dur, Pwhite(Pfunc({ob[\durLow]}), Pfunc({ob[\durHigh]})),
-        \bufindex, Pbrown(buffs[0].bufnum, buffs[buffs.size - 2].bufnum, 0.3),
-        \detune, Pbrown(Pfunc({ob[\detuneLow]}), Pfunc({ob[\detuneHigh]})),
+        \out, 0,
+        \dur, Pwhite(
+            Pfunc({ob[\durLow]}),
+            Pfunc({ob[\durHigh]})
+        ),
+        \bufindex, Pbrown(
+            buffs[0].bufnum,
+            buffs[buffs.size - 2].bufnum,
+            0.3
+        ),
+        \detune, Pbrown(
+            Pfunc({ob[\detuneLow]}),
+            Pfunc({ob[\detuneHigh]})
+        ),
         \freq, Pfunc({ob[\freq]}),
-        \amp, Pfunc({ob[\amp]})
+        \amp, Pfunc({ob[\amp]}),
+        \pan, Pseq([
+                Pseries(panLow,
+                        (panHigh - panLow)/panSteps,
+                        panSteps),
+                Pseries(panHigh,
+                        (panLow - panHigh)/panSteps,
+                        panSteps)
+                   ], inf),
+        \spread, Pfunc({ob[\spread]})
     );
 
     ob;
@@ -68,9 +91,11 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
 */
 
 ~makeBufs = {
-    | which=1 |
+    | which=1, randSeed = 5 |
     var numbuffs = 8;
     var buffs = Buffer.allocConsecutive(numbuffs, s, 1024, 1);
+    thisThread.randSeed = randSeed;
+
     buffs.do({ arg buf, i;
         var n =(numbuffs), a;
         a = switch(which,
@@ -106,11 +131,12 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
 // SynthDefs for the Synths used in the piece
 ~defineSynths = {
     SynthDef(\VoscChorus,{
-        |out = 0, bufindex = 0, freq=400, detune=0.15, amp=1|
-        var rats = Rand(0.08, 0.15)!8;
-        var cfreq = freq  * (LFNoise1.kr(rats).bipolar(detune).midiratio);
-        var sig = VOsc.ar(bufindex.lag(0.1), cfreq, Rand(0, 2pi), amp);
-        sig = Splay.ar(sig);
+        |out = 0, bufindex = 0, freq=400, detune=0.15, amp=1, pan=0, spread=1|
+        var rats, cfreq, sig;
+        rats = Rand(0.08, 0.15)!8;
+        cfreq = freq  * (LFNoise1.kr(rats).bipolar(detune).midiratio);
+        sig = VOsc.ar(bufindex.lag(0.1), cfreq, Rand(0, 2pi), amp);
+        sig = Splay.ar(sig,spread, center:pan);
         sig = LeakDC.ar(sig);
         Out.ar(out, sig * amp);
     }).add;
@@ -124,16 +150,16 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
         wet = LPF.ar(wet, 1500);
         XOut.ar(out, mix, wet);
     }).add;
-
-    SynthDef(\passThrough, {
-        |in, out = 0|
-        Out.ar(out, In.ar(in));
-    }).add;
-
-     SynthDef(\passThroughPan, {
-        |in, out = 0, amp=1, pan=0|
-        Out.ar(out, Pan2.ar(In.ar(in), pan, amp));
-    }).add;
+    //
+    // SynthDef(\passThrough, {
+    //     |in, out = 0|
+    //     Out.ar(out, In.ar(in));
+    // }).add;
+    //
+    // SynthDef(\passThroughPan, {
+    //     |in, out = 0, amp=1, pan=0|
+    //     Out.ar(out, Pan2.ar(In.ar(in), pan, amp));
+    // }).add;
 };
 
 // list of Pbinds
@@ -149,11 +175,34 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
 
 ~events = [
     \start: {
+
+        ~rand = {1000000.rand.round(1)};
+        ~runstart.()
       //  ~reverb = Synth(\reverb, [\mix, 0.2]);
     },
     \addVosc: {
-        |key|
-        ~voscs[key] = ~createVoscObject.();
+        |key,
+        freq = 80, amp = 0.5,
+        detuneLow = 0.05, detuneHigh = 0.2,
+        durLow = 0.15, durHigh = 0.55,
+        buffSet = 1, controlSynth = \passThroughPan,
+        panLow = -1,
+        panHigh = 1,
+        panSteps = 20,
+        spread = 1
+        |
+        ~voscs[key] = ~createVoscObject.(freq:freq,
+            amp:amp,
+            detuneLow:detuneLow,
+            detuneHigh:detuneHigh,
+            durLow:durLow,
+            durHigh:durHigh,
+            buffSet:buffSet,
+            panLow:panLow,
+            panHigh:panHigh,
+            panSteps:panSteps,
+            spread:spread
+        );
     },
     \playVosc: {
         |key|
@@ -181,6 +230,10 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
         |key, amp|
         ~voscs[key][\amp] = amp;
     },
+    \setPan: {
+        |key, pan|
+        ~voscs[key][\controlSynth].set(\pan, pan);
+    },
     \setReverbMix: {
         |mix|
         ~reverb.set(\mix, mix);
@@ -190,32 +243,39 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
 ~runstart = {
 
 
-
-~events[\start].();
-~events[\addVosc].(\bass);
+~events[\addVosc].(\bass,
+        freq: 100,
+        amp: 0.4,
+        detuneLow:0.1,
+        detuneHigh:0.15,
+        panLow:-0.1,
+        panHigh:0.1,
+        spread:1
+    );
 ~events[\playVosc].(\bass);
-~events[\setFreq].(\bass,100);
-~events[\setAmp].(\bass, 0.5);
-~events[\setDetune].(\bass, 0.1, 0.15);
 
-
-~events[\addVosc].(\aa);
+~events[\addVosc].(\aa,
+        freq: 200,
+        amp:0.3,
+        detuneLow:1,
+        detuneHigh:2,
+        panLow:-0.5,
+        panHigh:0.5,
+        panSteps:50,
+        spread:0.5
+    );
 ~events[\playVosc].(\aa);
-~events[\setFreq].(\aa,200);
-~events[\setAmp].(\aa, 0.3);
-~events[\setDetune].(\aa, 1, 2);
 
-
-
-
-~events[\addVosc].(\bb);
+~events[\addVosc].(\bb,
+        freq: 300,
+        amp: 0.15, //0.3,
+        detuneLow:0.1,
+        detuneHigh:0.12,
+        panLow:-1,
+        panHigh:1,
+        panSteps:30,
+        spread:0.3
+    );
 ~events[\playVosc].(\bb);
-~events[\setFreq].(\bb, 300);
-~events[\setAmp].(\bb, 0.3);
-~events[\setDetune].(\bb, 0.1, 0.12);
 
-
-~voscs[\bb][\controlSynth].set(\pan, 1, \amp, 0.5);
-~voscs[\aa][\controlSynth].set(\pan, -1, \amp, 0.5);
-~voscs[\bass][\controlSynth].set(\pan, 1, \amp, 0.5);
 }

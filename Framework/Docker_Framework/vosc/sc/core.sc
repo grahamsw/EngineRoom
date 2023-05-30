@@ -81,7 +81,8 @@ s.waitForBoot {
 
 ~definePbinds.value;
 s.sync;
-~runstart.()
+//~runstart.()
 };
 )
 //~voscs[\bass][\buffSet].do {|buf| buf.plot}
+//~events[\start].()
