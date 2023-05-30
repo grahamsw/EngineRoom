@@ -18,6 +18,7 @@
         \buffs:  ~makeBufs.(buffSet),
         \panLow: panLow,
         \panHigh: panHigh,
+        \panSteps: panSteps,
         \spread: spread
 
     );
@@ -40,14 +41,12 @@
         ),
         \freq, Pfunc({ob[\freq]}),
         \amp, Pfunc({ob[\amp]}),
-        \pan, Pseq([
-                Pseries(panLow,
-                        (panHigh - panLow)/panSteps,
-                        panSteps),
-                Pseries(panHigh,
-                        (panLow - panHigh)/panSteps,
-                        panSteps)
-                   ], inf),
+        \pan, Pbrown(
+            Pfunc({ob[\panLow]}),
+			Pfunc({ob[\panHigh]}),
+            Pfunc({(ob[\panHigh] -  ob[\panLow])/ob[\panSteps]})
+
+        ),
         \spread, Pfunc({ob[\spread]})
     );
 
@@ -104,7 +103,6 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
             3, {a = Array.fill(32,0);
                 12.do({a.put(32.rand, 1).postln });
                 a},
-            //a = Array.fill((i+1)**2, { arg j; 1.0.rand2 });
             {Array.fill((i+1)**2, {1.0.rand2 })}
         );
         a.postln;
@@ -112,8 +110,6 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
     });
     buffs;
 };
-
-//~makeBufs.(1).do({|i| i.plot})
 
 ~loadBuffs = {
 
@@ -133,7 +129,7 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
     SynthDef(\VoscChorus,{
         |out = 0, bufindex = 0, freq=400, detune=0.15, amp=1, pan=0, spread=1|
         var rats, cfreq, sig;
-        rats = Rand(0.08, 0.15)!8;
+        rats = {Rand(0.08, 0.15)}!8;
         cfreq = freq  * (LFNoise1.kr(rats).bipolar(detune).midiratio);
         sig = VOsc.ar(bufindex.lag(0.1), cfreq, Rand(0, 2pi), amp);
         sig = Splay.ar(sig,spread, center:pan);
@@ -150,16 +146,6 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
         wet = LPF.ar(wet, 1500);
         XOut.ar(out, mix, wet);
     }).add;
-    //
-    // SynthDef(\passThrough, {
-    //     |in, out = 0|
-    //     Out.ar(out, In.ar(in));
-    // }).add;
-    //
-    // SynthDef(\passThroughPan, {
-    //     |in, out = 0, amp=1, pan=0|
-    //     Out.ar(out, Pan2.ar(In.ar(in), pan, amp));
-    // }).add;
 };
 
 // list of Pbinds
@@ -177,8 +163,8 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
     \start: {
 
         ~rand = {1000000.rand.round(1)};
+        ~reverb = Synth(\reverb, [\mix, 0.2]);
         ~runstart.()
-      //  ~reverb = Synth(\reverb, [\mix, 0.2]);
     },
     \addVosc: {
         |key,
@@ -241,41 +227,38 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
 ].asDict;
 
 ~runstart = {
+    ~events[\addVosc].(\bass,
+            freq: 100,
+            amp: 0.4,
+            detuneLow:0.1,
+            detuneHigh:0.15,
+            panLow:-0.1,
+            panHigh:0.1,
+            spread:1
+        );
+    ~events[\playVosc].(\bass);
 
+    ~events[\addVosc].(\aa,
+            freq: 200,
+            amp:0.3,
+            detuneLow:1,
+            detuneHigh:2,
+            panLow:-0.5,
+            panHigh:0.5,
+            panSteps:50,
+            spread:0.5
+        );
+    ~events[\playVosc].(\aa);
 
-~events[\addVosc].(\bass,
-        freq: 100,
-        amp: 0.4,
-        detuneLow:0.1,
-        detuneHigh:0.15,
-        panLow:-0.1,
-        panHigh:0.1,
-        spread:1
-    );
-~events[\playVosc].(\bass);
-
-~events[\addVosc].(\aa,
-        freq: 200,
-        amp:0.3,
-        detuneLow:1,
-        detuneHigh:2,
-        panLow:-0.5,
-        panHigh:0.5,
-        panSteps:50,
-        spread:0.5
-    );
-~events[\playVosc].(\aa);
-
-~events[\addVosc].(\bb,
-        freq: 300,
-        amp: 0.15, //0.3,
-        detuneLow:0.1,
-        detuneHigh:0.12,
-        panLow:-1,
-        panHigh:1,
-        panSteps:30,
-        spread:0.3
-    );
-~events[\playVosc].(\bb);
-
+    ~events[\addVosc].(\bb,
+            freq: 300,
+            amp: 0.2,
+            detuneLow:0.1,
+            detuneHigh:0.12,
+            panLow:-1,
+            panHigh:1,
+            panSteps:10,
+            spread:0.3
+        );
+    ~events[\playVosc].(\bb);
 }
