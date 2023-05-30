@@ -45,7 +45,6 @@
             Pfunc({ob[\panLow]}),
 			Pfunc({ob[\panHigh]}),
             Pfunc({(ob[\panHigh] -  ob[\panLow])/ob[\panSteps]})
-
         ),
         \spread, Pfunc({ob[\spread]})
     );
@@ -53,6 +52,56 @@
     ob;
 };
 
+
+// util for creating a bus, mapping a parameter to it and
+// cleaning up afterward
+~controlParam = {
+    | synth, field, levels, times, curve, freeSynth=false |
+    var bus = Bus.control(s);
+	var param = {Out.kr(bus, EnvGen.kr(Env(levels, times, curve),doneAction:2))};
+	{
+		param.play;
+		synth.map(field, bus);
+		(times.sum).wait;
+		if (freeSynth,
+			{
+				synth.free;
+			},
+			{
+				synth.set(field, levels[levels.size-1]);
+			}
+		);
+		bus.free;
+	}.fork;
+};
+
+
+
+Pmono(\VoscChorus,
+        \out, 0,
+        \dur, Pwhite(
+            Pfunc({ob[\durLow]}),
+            Pfunc({ob[\durHigh]})
+        ),
+        \bufindex, Pbrown(
+            buffs[0].bufnum,
+            buffs[buffs.size - 2].bufnum,
+            0.3
+        ),
+        \detune, Pbrown(
+            Pfunc({ob[\detuneLow]}),
+            Pfunc({ob[\detuneHigh]})
+        ),
+        \freq, Pfunc({ob[\freq]}),
+        \amp, Pfunc({ob[\amp]}),
+        \pan, Pbrown(
+            Pfunc({ob[\panLow]}),
+			Pfunc({ob[\panHigh]}),
+            Pfunc({(ob[\panHigh] -  ob[\panLow])/ob[\panSteps]})
+
+        ),
+        \spread, Pfunc({ob[\spread]})
+    );
 
 ~freeBufs = {
     | bufs |
@@ -216,9 +265,12 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
         |key, amp|
         ~voscs[key][\amp] = amp;
     },
-    \setPan: {
-        |key, pan|
-        ~voscs[key][\controlSynth].set(\pan, pan);
+    \setPan:{
+        |key, panLow=(-1), panHigh=1, panSteps=20, spread=0.1|
+        ~voscs[key][\panLow] = panLow;
+        ~voscs[key][\panHigh] = panHigh;
+        ~voscs[key][\panSteps] = panSteps;
+        ~voscs[key][\spread] = spread;
     },
     \setReverbMix: {
         |mix|
