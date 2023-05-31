@@ -1,10 +1,11 @@
 ~voscs = ();
+~numBuffsets = 4;
 
 ~createVoscObject = {
     | out = 0, freq = 80, amp = 0.5,
     detuneLow = 0.05, detuneHigh = 0.2,
     durLow = 0.15, durHigh = 0.55,
-    buffSet = 1,
+    buffSet = 0,
     panLow = -1,
     panHigh = 1,
     spread = 0.25,
@@ -15,7 +16,7 @@
         \freq:freq, \amp:amp,
         \detuneLow:detuneLow, \detuneHigh:detuneHigh,
         \durLow:durLow, \durHigh:durHigh,
-        \buffs:  ~makeBufs.(buffSet),
+		\buffs:  ~buffsets[buffSet],
         \panLow: panLow,
         \panHigh: panHigh,
         \panSteps: panSteps,
@@ -75,53 +76,18 @@
 	}.fork;
 };
 
-~freeBufs = {
-    | bufs |
-    bufs.do {|buf|
-        buf.free;
-    }
-};
-
-/*
-~makeBufs1 = {
-| numbuffs = 8|
-
-var makeWaveform = {
-|numLevs = 7|
-var numPts = numLevs + 1;
-var levs = {rrand(-1.0,1.0)}!numLevs;
-var peak = levs.abs.maxItem;
-levs = levs * peak.reciprocal;
-Env(
-[0]++ levs ++ [0],
-{exprand(0.01,1)}!numPts,
-{exprand(0.1,4)}!numPts
-).asSignal(512).asWavetable;
-
-};
-
-~freeBufs.(~bufs);
-~numbuffs = numbuffs;
-~bufs = numbuffs.collect({
-| i |
-Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
-});
-~buffbase = ~bufs[0].bufnum;
-};
-*/
-
 ~makeBufs = {
-    | which=1, randSeed = 5 |
+    | which=0, randSeed = 0 |
     var numbuffs = 8;
     var buffs = Buffer.allocConsecutive(numbuffs, s, 1024, 1);
-    thisThread.randSeed = randSeed;
+	if (randSeed > 0, {thisThread.randSeed = randSeed});
 
     buffs.do({ arg buf, i;
         var n =(numbuffs), a;
         a = switch(which,
-            1, {Array.fill(i+1, { arg j; ((n-j)/n).squared.round(0.001) })},
-            2, {Array.fill(i, 0) ++ [0.5, 1, 0.5];},
-            3, {a = Array.fill(32,0);
+            0, {Array.fill(i+1, { arg j; ((n-j)/n).squared.round(0.001) })},
+            1, {Array.fill(i, 0) ++ [0.5, 1, 0.5];},
+            2, {a = Array.fill(32,0);
                 12.do({a.put(32.rand, 1).postln });
                 a},
             {Array.fill((i+1)**2, {1.0.rand2 })}
@@ -133,9 +99,8 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
 };
 
 ~loadBuffs = {
-
+	~buffsets = ~numBuffsets.collect{|i| ~makeBufs.(i)};
 };
-
 
 ~allocBusses = {
 
@@ -156,7 +121,7 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
         var rats, cfreq, sig;
         rats = {Rand(0.08, 0.15)}!8;
         cfreq = freq  * (LFNoise1.kr(rats).bipolar(detune).midiratio);
-        sig = VOsc.ar(bufindex.lag(0.1), cfreq, Rand(0, 2pi), amp);
+        sig = VOsc.ar(bufindex, cfreq, Rand(0, 2pi), amp);
         sig = Splay.ar(sig,spread, center:pan);
         sig = LeakDC.ar(sig);
         Out.ar(out, sig * amp);
@@ -196,7 +161,7 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
         freq = 80, amp = 0.5,
         detuneLow = 0.05, detuneHigh = 0.2,
         durLow = 0.15, durHigh = 0.55,
-        buffSet = 1,
+        buffSet = 0,
         panLow = -1,
         panHigh = 1,
         panSteps = 20,

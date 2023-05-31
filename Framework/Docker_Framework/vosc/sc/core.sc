@@ -86,14 +86,26 @@ s.sync;
 )
 
 ~events[\start].()
-// ~buffs take some time to create   -  there
-// must
-~buffs = ~makeBufs.(1);
+
 (
+var buffs = ~buffsets[0];
 ~playBomb.(out:0,
-	buffLevels:~buffs[0].bufnum,
-	freqLevels:[400,4000], freqTimes:[1.5],
-	detuneLevels:[0.002, 0.4], detuneTimes:[2], detuneCurves:[-4],
-	 ampLevels:#[0.2, 0.001], ampTimes:#[2], ampCurves:#[-1],
-	panLevels:[-1,1], panTimes:[1], panCurves:[4]);
+	buffLevels:[buffs[3].bufnum, buffs[~buffs.size-2].bufnum],
+	buffTimes:[2],
+
+	freqLevels:[400,4000],
+	freqTimes:[1.5],
+
+	detuneLevels:[0.002, 0.4],
+	detuneTimes:[2],
+	detuneCurves:[-4],
+
+	ampLevels:#[0.2, 0.4, 0.001],
+	ampTimes:#[2, 0.01],
+	ampCurves:#[-1,0],
+
+	panLevels:[-1,1],
+	panTimes:[1],
+	panCurves:[4]);
 )
+
