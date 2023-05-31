@@ -83,7 +83,7 @@ s.waitForBoot {
 s.sync;
 //~runstart.()
 };
-)
+)/*
 
 ~events[\start].()
 
@@ -108,4 +108,5 @@ var buffs = ~buffsets[0];
 	panTimes:[1],
 	panCurves:[4]);
 )
-
+~events[\stopVosc].(\bass)
+*/
