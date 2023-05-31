@@ -84,5 +84,11 @@ s.sync;
 //~runstart.()
 };
 )
-//~voscs[\bass][\buffSet].do {|buf| buf.plot}
-//~events[\start].()
+
+~events[\start].()
+// ~buffs take some time to create   -  there
+// must
+~buffs = ~makeBufs.(1);
+
+~playBomb.()
+().play
