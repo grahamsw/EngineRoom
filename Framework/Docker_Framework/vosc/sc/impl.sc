@@ -291,20 +291,83 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
     ~events[\playVosc].(\bb);
 };
 
-
 ~playBomb = {
-    var vosc = Synth(\VoscChorus, [
+    | out=0,
+     buffLevels=0, buffTimes=0, buffCurves=0,
+     freqLevels=400, freqTimes=0, freqCurves=0,
+     detuneLevels=0, detuneTimes=0, detuneCurves=0,
+	 ampLevels=#[0.5, 0.001], ampTimes=#[1], ampCurves=#[-1],
+     panLevels=0, panTimes=0, panCurves=0,
+     spreadLevels=0, spreadTimes=0, spreadCurves=0
+     |
+     var strip_params = {
+			|levels|
+			if(levels.isArray,
+			  {levels[0]},
+			  {levels});
+		};
+	var vosc;
+
+	vosc = Synth(\VoscChorus, [
         \out, 0,
-        \bufindex, ~buffs[0].bufnum,
-        \freq, 400,
-        \detune, 0.05,
-        \amp, 0.5,
-        \pan, 0,
-        \spread, 0.3
+			\bufindex, strip_params.(buffLevels),
+			\freq, strip_params.(freqLevels),
+			\detune, strip_params.(detuneLevels),
+			\amp, strip_params.(ampLevels),
+			\pan, strip_params.(panLevels),
+			\spread, strip_params.(spreadLevels)
     ]);
 
-    ~controlParam.(vosc, \bufindex, [~buffs[0].bufnum, ~buffs[0].bufnum+6], [1], [0], freeSynth:false);
-    ~controlParam.(vosc, \freq, [500, 1000,2000], [0.5,0.5], [1,1], freeSynth:false);
-    ~controlParam.(vosc, \amp, [0.1, 0.5, 0.0001], [1, 0.01], [2,2], freeSynth:true);
-    ~controlParam.(vosc, \pan, [-1, 1], [0.5], [0], freeSynth:false);
+	if(buffLevels.isArray,
+			{~controlParam.(
+				vosc,
+				\bufindex,
+				buffLevels,
+				buffTimes,
+				buffCurves,
+				freeSynth:false)});
+	if(freqLevels.isArray,
+			{~controlParam.(
+				vosc,
+				\freq,
+				freqLevels,
+				freqTimes,
+				freqCurves,
+				freeSynth:false)});
+	if(detuneLevels.isArray,
+			{~controlParam.(
+				vosc,
+				\detune,
+				detuneLevels,
+				detuneTimes,
+				detuneCurves,
+				freeSynth:false)});
+	if(ampLevels.isArray,
+			{~controlParam.(
+				vosc,
+				\amp,
+				ampLevels,
+				ampTimes,
+				ampCurves,
+				freeSynth:true)});
+	if(panLevels.isArray,
+			{~controlParam.(
+				vosc,
+				\pan,
+				panLevels,
+				panTimes,
+				panCurves,
+				freeSynth:false)});
+	if(spreadLevels.isArray,
+			{~controlParam.(
+				vosc,
+				\spread,
+				spreadLevels,
+				spreadTimes,
+				spreadCurves,
+				freeSynth:false)});
+
 };
+
+
+

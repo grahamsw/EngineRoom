@@ -89,6 +89,11 @@ s.sync;
 // ~buffs take some time to create   -  there
 // must
 ~buffs = ~makeBufs.(1);
-
-~playBomb.()
-().play
+(
+~playBomb.(out:0,
+	buffLevels:~buffs[0].bufnum,
+	freqLevels:[400,4000], freqTimes:[1.5],
+	detuneLevels:[0.002, 0.4], detuneTimes:[2], detuneCurves:[-4],
+	 ampLevels:#[0.2, 0.001], ampTimes:#[2], ampCurves:#[-1],
+	panLevels:[-1,1], panTimes:[1], panCurves:[4]);
+)
