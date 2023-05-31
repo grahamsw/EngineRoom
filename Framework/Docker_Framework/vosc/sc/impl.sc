@@ -235,7 +235,7 @@
     ~events[\addVosc].(\aa,
             freq: 200,
             amp:0.3,
-		    buffSet: 2,
+		    buffSet: 1,
             detuneLow:1,
             detuneHigh:2,
             panLow:-0.5,
