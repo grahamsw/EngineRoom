@@ -75,34 +75,6 @@
 	}.fork;
 };
 
-
-
-Pmono(\VoscChorus,
-        \out, 0,
-        \dur, Pwhite(
-            Pfunc({ob[\durLow]}),
-            Pfunc({ob[\durHigh]})
-        ),
-        \bufindex, Pbrown(
-            buffs[0].bufnum,
-            buffs[buffs.size - 2].bufnum,
-            0.3
-        ),
-        \detune, Pbrown(
-            Pfunc({ob[\detuneLow]}),
-            Pfunc({ob[\detuneHigh]})
-        ),
-        \freq, Pfunc({ob[\freq]}),
-        \amp, Pfunc({ob[\amp]}),
-        \pan, Pbrown(
-            Pfunc({ob[\panLow]}),
-			Pfunc({ob[\panHigh]}),
-            Pfunc({(ob[\panHigh] -  ob[\panLow])/ob[\panSteps]})
-
-        ),
-        \spread, Pfunc({ob[\spread]})
-    );
-
 ~freeBufs = {
     | bufs |
     bufs.do {|buf|
@@ -175,6 +147,10 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
 
 // SynthDefs for the Synths used in the piece
 ~defineSynths = {
+    SynthDef(\test, {
+        Out.ar(0, SinOsc.ar(mul:0.2));
+    }).add;
+
     SynthDef(\VoscChorus,{
         |out = 0, bufindex = 0, freq=400, detune=0.15, amp=1, pan=0, spread=1|
         var rats, cfreq, sig;
@@ -220,7 +196,7 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
         freq = 80, amp = 0.5,
         detuneLow = 0.05, detuneHigh = 0.2,
         durLow = 0.15, durHigh = 0.55,
-        buffSet = 1, controlSynth = \passThroughPan,
+        buffSet = 1,
         panLow = -1,
         panHigh = 1,
         panSteps = 20,
@@ -313,4 +289,22 @@ Buffer.loadCollection(s, makeWaveform.((i + 1) * 3));
             spread:0.3
         );
     ~events[\playVosc].(\bb);
-}
+};
+
+
+~playBomb = {
+    var vosc = Synth(\VoscChorus, [
+        \out, 0,
+        \bufindex, ~buffs[0].bufnum,
+        \freq, 400,
+        \detune, 0.05,
+        \amp, 0.5,
+        \pan, 0,
+        \spread, 0.3
+    ]);
+
+    ~controlParam.(vosc, \bufindex, [~buffs[0].bufnum, ~buffs[0].bufnum+6], [1], [0], freeSynth:false);
+    ~controlParam.(vosc, \freq, [500, 1000,2000], [0.5,0.5], [1,1], freeSynth:false);
+    ~controlParam.(vosc, \amp, [0.1, 0.5, 0.0001], [1, 0.01], [2,2], freeSynth:true);
+    ~controlParam.(vosc, \pan, [-1, 1], [0.5], [0], freeSynth:false);
+};
