@@ -110,3 +110,13 @@ var buffs = ~buffsets[0];
 )
 ~events[\stopVosc].(\bass)
 */
+
+~buffsets
+p = ~makePmono.(durLow:0.2, durHigh:0.3, totalDur:3,
+	bufLow:~buffsets[3][0].bufnum, bufHigh:~buffsets[3][6].bufnum, bufSteps:20,
+    detuneLow:0.15, detuneHigh:0.35,
+    freq:160,
+	panLow:(-1), panHigh:1, panSteps:20, spread:0,
+	amp:0.4)
+
+p.play
