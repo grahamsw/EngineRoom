@@ -127,6 +127,14 @@
         Out.ar(out, sig * amp);
     }).add;
 
+     SynthDef(\envSynth, {
+         |out=0, dur=60, decay=0.5|
+         var signal = In.ar(out, 2);
+         var effectiveDur = dur - 0.01 - decay;
+         var env = EnvGen.kr(Env([0.001, 1, 1, 0.001], [0.01, effectiveDur, decay], [0, 0, 0]));
+         XOut.ar(out, 1, signal * env);
+     }).add;
+
     SynthDef(\reverb, {
         | out = 0, mix = 0.1|
         var dry = In.ar(out);
@@ -346,9 +354,12 @@
     panLow, panHigh, panSteps, spread,
     amp
     |
-    Pmono(\VoscChorus,
-        \out, 0,
-		\dur, Pif(Ptime(inf) < totalDur, Pwhite(
+
+    var dur = totalDur - 1;
+
+   Pfxb(
+        Pmono(\VoscChorus,
+		\dur, Pif(Ptime(inf) <= totalDur, Pwhite(
             durLow,
 			durHigh)),
         \bufindex, Pbrown(
@@ -360,7 +371,10 @@
         \freq, freq,
     \pan, Pbrown(panLow, panHigh, (panHigh - panLow)/panSteps),
     \spread, spread,
-	\amp, amp);
+            \amp, amp)
+        ,
+        \envSynth, \dur, totalDur, \decay, 0.5);
+
 };
 
 /*
