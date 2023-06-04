@@ -15,7 +15,7 @@
         |
 
         var trigger = Impulse.kr(10);
-            var bufindex, d_bufindex;
+        var bufindex, d_bufindex;
         var detune, d_detune;
         var pan, d_pan;
         var env, freqArray, rats;

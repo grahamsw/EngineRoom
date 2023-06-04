@@ -91,10 +91,10 @@ s.sync;
 (
 v = Synth(\VoscPlayer, [
         out:0,
-    bufLow:~buffsets[1][0], bufHigh:~buffsets[1][7], bufSteps:30,
-        detuneLow:0.15, detuneHigh:0.2, detuneSteps:100,
+    bufLow:~buffsets[1][0], bufHigh:~buffsets[1][7], bufSteps:10,
+        detuneLow:0.15, detuneHigh:0.2, detuneSteps:10,
         freq:90,
-        amp:0.5,
+        amp:0.3,
         panLow:-1, panHigh:0, panSteps:30, spread:0,
         releaseTime:10,
         gate:1
