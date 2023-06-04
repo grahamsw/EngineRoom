@@ -1,7 +1,35 @@
-~voscs = ();
-~numBuffsets = 4;
 
-~out = 0;
+    SynthDef(\test, {
+        Out.ar(0, SinOsc.ar(mul:0.2));
+    }).add;
+
+    SynthDef(\VoscChorus,{
+        |out = 0, bufindex = 0, freq=400, detune=0.15, amp=1, pan=0, spread=1|
+        var rats, cfreq, sig;
+        rats = {Rand(0.08, 0.15)}!8;
+        cfreq = freq  * (LFNoise1.kr(rats).bipolar(detune).midiratio);
+        sig = VOsc.ar(bufindex, cfreq, Rand(0, 2pi), amp);
+        sig = Splay.ar(sig, spread, center:pan);
+        sig = LeakDC.ar(sig);
+        Out.ar(out, sig * amp * env);
+    }).add;
+
+    SynthDef(\passThroughMixer, {|inBus = 0, outBus =0, ampBus=0|
+        Out.ar(outBus, In.ar(inBus, 2) * In.kr(ampBus,1));
+    }).add;
+
+
+    SynthDef(\envSynth, {
+    //    |out=0, levels=#[0.0001,1,1,0.0001], times=#[0.01, 1, 1], curves=#[-4, 0, -4] |
+         |out=0, dur=6, decay=0.5|
+         var signal = In.ar(out, 2);
+      //   var effectiveDur = dur - 0.01 - decay;
+   //     var env = EnvGen.kr(Env(levels, times, curves), doneAction:2);
+        var env = EnvGen.kr(Env([0, 1, 1, 0], [3, dur, 3]), doneAction:2);
+         //XOut.ar(out, 1, signal * env);
+        XOut.ar(out, 1, SinOsc.ar!2);
+     }).add;
+
 
 ~createVoscObject = {
     | out = 0, freq = 80, amp = 0.5,
@@ -78,33 +106,7 @@
     }.fork;
 };
 
-
-~allocBusses = {
-
-};
-
-~initServerNodes = {
-
-};
-
-// list of Pbinds
-~definePbinds = {
-
-};
-
-//performance events:
-// array (or dictionary) of functions that when called start/stop/alter
-// Pbinds, or possibly create and manipulate Synths directly via Routines
-// might be called manually, or from a Pattern or a Routine, or from
-// a GUI, or MIDI, or from external code via OSC
-
-~events = [
-    \start: {
-
-        ~rand = {1000000.rand.round(1)};
-        ~reverb = Synth(\reverb, [\mix, 0.2]);
-        ~runstart.()
-    },
+,
     \addVosc: {
         |key,
         freq = 80, amp = 0.5,
@@ -161,52 +163,8 @@
         ~voscs[key][\panHigh] = panHigh;
         ~voscs[key][\panSteps] = panSteps;
         ~voscs[key][\spread] = spread;
-    },
-    \setReverbMix: {
-        |mix|
-        ~reverb.set(\mix, mix);
     }
-].asDict;
 
-~runstart = {
-    ~events[\addVosc].(\bass,
-        freq: 100,
-        amp: 0.4,
-        buffSet: 3,
-        detuneLow:0.1,
-        detuneHigh:0.15,
-        panLow:-0.1,
-        panHigh:0.1,
-        spread:1
-    );
-    ~events[\playVosc].(\bass);
-
-    ~events[\addVosc].(\aa,
-        freq: 200,
-        amp:0.3,
-        buffSet: 1,
-        detuneLow:1,
-        detuneHigh:2,
-        panLow:-0.5,
-        panHigh:0.5,
-        panSteps:50,
-        spread:0.5
-    );
-    ~events[\playVosc].(\aa);
-
-    ~events[\addVosc].(\bb,
-        freq: 300,
-        amp: 0.2,
-        buffSet: 0,
-        detuneLow:0.1,
-        detuneHigh:0.12,
-        panLow:-1,
-        panHigh:1,
-        panSteps:10,
-        spread:0.3
-    );
-    ~events[\playVosc].(\bb);
-};
 
 ~playBomb = {
     | out=0,
@@ -325,3 +283,86 @@
     {vosc}
     );
 };
+
+
+~runstart = {
+
+    ~events[\addVosc].(\bass,
+        freq: 100,
+        amp: 0.4,
+        buffSet: 3,
+        detuneLow:0.1,
+        detuneHigh:0.15,
+        panLow:-0.1,
+        panHigh:0.1,
+        spread:1
+    );
+    ~events[\playVosc].(\bass);
+
+    ~events[\addVosc].(\aa,
+        freq: 200,
+        amp:0.3,
+        buffSet: 1,
+        detuneLow:1,
+        detuneHigh:2,
+        panLow:-0.5,
+        panHigh:0.5,
+        panSteps:50,
+        spread:0.5
+    );
+    ~events[\playVosc].(\aa);
+
+    ~events[\addVosc].(\bb,
+        freq: 300,
+        amp: 0.2,
+        buffSet: 0,
+        detuneLow:0.1,
+        detuneHigh:0.12,
+        panLow:-1,
+        panHigh:1,
+        panSteps:10,
+        spread:0.3
+    );
+    ~events[\playVosc].(\bb);
+};
+(
+var buffs = ~buffsets[0];
+~playBomb.(out:0,
+	buffLevels:[buffs[3].bufnum, buffs[~buffs.size-2].bufnum],
+	buffTimes:[2],
+
+	freqLevels:[400,4000],
+	freqTimes:[1.5],
+
+	detuneLevels:[0.002, 0.4],
+	detuneTimes:[2],
+	detuneCurves:[-4],
+
+	ampLevels:#[0.2, 0.4, 0.001],
+	ampTimes:#[2, 0.01],
+	ampCurves:#[-1,0],
+
+	panLevels:[-1,1],
+	panTimes:[1],
+	panCurves:[4]);
+)
+~events[\stopVosc].(\bass)
+*/
+
+
+(
+p = ~makePmono.(durLow:0.2, durHigh:0.3, totalDur:4,
+    bufLow:~buffsets[1][0].bufnum, bufHigh:~buffsets[1][2].bufnum, bufSteps:20,
+    detuneLow:0.15, detuneHigh:0.25,
+    freq:360,
+	panLow:(-1), panHigh:1, panSteps:10, spread:0,
+	amp:0.3, enveloped:true, dur:5,
+    out:0
+
+
+    ).play;
+)
+p.stop
+(\freq: 560).play
+
+Synth(\VoscPlayer)

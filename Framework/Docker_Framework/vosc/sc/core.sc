@@ -1,6 +1,6 @@
 (
 
-~includes = ["impl.sc"];
+~includes = ["synths.sc", "impl.sc"];
 
 ~includes.do({|include|
     (PathName(thisProcess.nowExecutingPath).parentPath ++ include).load;
@@ -83,40 +83,26 @@ s.waitForBoot {
 s.sync;
 //~runstart.()
 };
-)/*
-
-~events[\start].()
-
-(
-var buffs = ~buffsets[0];
-~playBomb.(out:0,
-	buffLevels:[buffs[3].bufnum, buffs[~buffs.size-2].bufnum],
-	buffTimes:[2],
-
-	freqLevels:[400,4000],
-	freqTimes:[1.5],
-
-	detuneLevels:[0.002, 0.4],
-	detuneTimes:[2],
-	detuneCurves:[-4],
-
-	ampLevels:#[0.2, 0.4, 0.001],
-	ampTimes:#[2, 0.01],
-	ampCurves:#[-1,0],
-
-	panLevels:[-1,1],
-	panTimes:[1],
-	panCurves:[4]);
 )
-~events[\stopVosc].(\bass)
-*/
 
+
+
+//~events[\start].()
+(
+v = Synth(\VoscPlayer, [
+        out:0,
+    bufLow:~buffsets[1][0], bufHigh:~buffsets[1][7], bufSteps:30,
+        detuneLow:0.15, detuneHigh:0.2, detuneSteps:100,
+        freq:90,
+        amp:0.5,
+        panLow:-1, panHigh:0, panSteps:30, spread:0,
+        releaseTime:10,
+        gate:1
+])
+
+)
+v.set(\freq, 180)
+v.set(\bufLow,~buffsets[0][0], \bufHigh,~buffsets[0][6], \bufSteps, 100)
+v.set(\releaseTime, 3)
+v.set(\gate, 0)
 ~buffsets
-(
-p = ~makePmono.(durLow:0.2, durHigh:0.3, totalDur:3,
-	bufLow:~buffsets[0][0].bufnum, bufHigh:~buffsets[0][2].bufnum, bufSteps:20,
-    detuneLow:0.05, detuneHigh:0.15,
-    freq:1250,
-	panLow:(-0.5), panHigh:0.5, panSteps:20, spread:0.25,
-	amp:0.4).play;
-)
