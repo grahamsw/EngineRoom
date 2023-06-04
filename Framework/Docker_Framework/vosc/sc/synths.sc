@@ -11,11 +11,11 @@
         amp=0.5,
         panLow=(-1), panHigh=1, panSteps=10, spread=0,
         releaseTime=10,
-        //levels=#[0.001, 1, 1, 0.0001], times=#[0.01, 5, 5], curves=0,
         gate=1
         |
+
         var trigger = Impulse.kr(10);
-        var bufindex, d_bufindex;
+            var bufindex, d_bufindex;
         var detune, d_detune;
         var pan, d_pan;
         var env, freqArray, rats;
