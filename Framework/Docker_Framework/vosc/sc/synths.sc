@@ -14,7 +14,7 @@
         gate=1
         |
 
-        var trigger = Impulse.kr(10);
+        var trigger = Impulse.kr(10); // this might need adjustment/variability
         var bufindex, d_bufindex;
         var detune, d_detune;
         var pan, d_pan;
@@ -36,8 +36,6 @@
         sig = VOsc.ar(bufindex, freqArray, Rand(0, 2pi), amp);
         sig = Splay.ar(sig, spread, center:pan);
         sig = LeakDC.ar(sig);
-
-
         Out.ar(out, sig * env);
     }).add;
 

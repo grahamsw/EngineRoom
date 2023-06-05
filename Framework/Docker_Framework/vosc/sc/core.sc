@@ -91,9 +91,9 @@ s.sync;
 (
 v = Synth(\VoscPlayer, [
         out:0,
-    bufLow:~buffsets[1][0], bufHigh:~buffsets[1][7], bufSteps:10,
-        detuneLow:0.15, detuneHigh:0.2, detuneSteps:10,
-        freq:90,
+        bufLow:~buffsets[0][0], bufHigh:~buffsets[1][7], bufSteps:100,
+        detuneLow:0.15, detuneHigh:0.2, detuneSteps:100,
+        freq:190,
         amp:0.3,
         panLow:-1, panHigh:0, panSteps:30, spread:0,
         releaseTime:10,
@@ -101,8 +101,58 @@ v = Synth(\VoscPlayer, [
 ])
 
 )
-v.set(\freq, 180)
+v.set(\freq, 80)
 v.set(\bufLow,~buffsets[0][0], \bufHigh,~buffsets[0][6], \bufSteps, 100)
 v.set(\releaseTime, 3)
 v.set(\gate, 0)
 ~buffsets
+
+(
+~voscs = ();
+~runstart_params = [
+    (\name:\bass,
+        \freq: 100,
+        \amp: 0.4,
+        \buffSet: 3,
+        \detuneLow:0.1,
+        \detuneHigh:0.15,
+        \panLow:-0.1,
+        \panHigh:0.1,
+        \spread:1),
+    (\name:\aa,
+        \freq: 200,
+        \amp:0.3,
+        \buffSet: 1,
+        \detuneLow:1,
+        \detuneHigh:2,
+        \panLow:-0.5,
+        \panHigh:0.5,
+        \panSteps:50,
+        \spread:0.5),
+    (\name:\bb,
+        \freq: 300,
+        \amp: 0.2,
+        \buffSet: 0,
+        \detuneLow:0.1,
+        \detuneHigh:0.12,
+        \panLow:-1,
+        \panHigh:1,
+        \panSteps:10,
+        \spread:0.3)]
+)
+
+(
+~runstart_params.do({|ps|
+    ~voscs[ps[\name]] = Synth(\VoscPlayer, [
+        out:0,
+        bufLow:~buffsets[ps[\buffSet]][0], bufHigh:~buffsets[ps[\buffSet]][7], bufSteps:100,
+        detuneLow:ps[\detuneLow], detuneHigh:ps[\detuneHigh], detuneSteps:100,
+        freq:ps[\freq],
+        amp:ps[\amp],
+        panLow:ps[\panLow], panHigh:ps[\panHigh], panSteps:ps[\panSteps], spread:ps[\spread],
+        releaseTime:10,
+        gate:1])
+});
+)
+
+~runstart_params.do({|ps| ~voscs[ps[\name]].set(\gate, 0)})

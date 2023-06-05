@@ -1,3 +1,6 @@
+// code from previous versions of this
+// runstart produced a pretty good sound
+// should reproduce that with current synth
 
     SynthDef(\test, {
         Out.ar(0, SinOsc.ar(mul:0.2));
