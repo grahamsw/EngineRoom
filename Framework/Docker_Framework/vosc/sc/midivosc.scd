@@ -3,11 +3,8 @@ MIDIClient.init;
 MIDIClient.sources;
 MIDIIn.connectAll;
 
-c = {|freq|
-freq.cpsmidi.linlin(1, 200, 3, 0.0001)
-}
+~amp = 0.5;
 
-c.(600)
 (
 ~makeSynth = {
     |freq, amp|
@@ -22,29 +19,66 @@ c.(600)
         \gate,1])
 };
 )
-c = ~makeSynth.(400, 0.2)
-c.set(\gate,0)
+//c = ~makeSynth.(400, 0.2)
+//c.set(\gate,0)
 (
 var poly;
 poly = Array.fill(128, 0); // array with all possible notes
 
 MIDIIn.noteOn = {arg src, chan, num, vel;
-
-    poly[num] = ~makeSynth.(freq:num.midicps, amp:vel/127/2);
+    ["note", src, chan, num, vel].postln;
+    poly[num] = ~makeSynth.(freq:num.midicps, amp:vel/127 * ~amp);
 };
 
 MIDIIn.noteOff = { arg src,chan,num,vel;
 	poly[num].set(\gate, 0);
 };
-/*
+
 MIDIIn.bend = { arg src,chan,val;
-	poly.do({arg synth; if( synth!=0 , { synth.set(\filter, val*0.148828125 ) }); });
+    ["bend", src, chan, val].postln;
+	//poly.do({arg synth; if( synth!=0 , { synth.set(\filter, val*0.148828125 ) }); });
 };
 
 MIDIIn.control = {arg src, chan, num, vel;
-	poly.do({arg synth; if( synth!=0 , { synth.set(\vibrato, vel ) }); });
-};
-
-*/
+    ["control", src, chan, num, vel].postln;
+    switch(num,
+    7, {~amp = vel.linlin(0, 127, 0.0, 1.0)}
+);
+}
 )
+//	poly.do({arg synth; if( synth!=0 , { synth.set(\vibrato, vel ) }); });
+//};
+
+)
+
+//controls
+//
+// C! => 73
+// C2 => 75
+// C3 => 72
+// C4 => 74
+// C5 => 79
+// C6 => 84
+// C7 => 94
+// C8 => 95
+
+// C9 => 7
+// C10 :  24
+// C11: 25
+// C12: 26
+// C13: 44
+// C14: 45
+// C16: 1
+
+// pad 1: 36
+// pad 2: 38
+// pad 3: 42
+// pad 4: 46
+// pad 5: 50
+// pad 6: 45
+// pad 7: 51
+// pad 8: 49
+
+// Bend
+// Pitch (C15) -> val 0 - 16383 (mid is 8192)
 
