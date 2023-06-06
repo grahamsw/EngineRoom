@@ -86,7 +86,7 @@ s.sync;
 )
 
 
-
+~events[\setReverbMix].(0.9)
 //~events[\start].()
 (
 v = Synth(\VoscPlayer, [
@@ -111,7 +111,7 @@ v.set(\gate, 0)
 ~voscs = ();
 ~runstart_params = [
     (\name:\bass,
-        \freq: 100,
+        \freq: 80,
         \amp: 0.4,
         \buffSet: 3,
         \detuneLow:0.1,
@@ -120,7 +120,7 @@ v.set(\gate, 0)
         \panHigh:0.1,
         \spread:1),
     (\name:\aa,
-        \freq: 200,
+        \freq: 160,
         \amp:0.3,
         \buffSet: 1,
         \detuneLow:1,
@@ -130,7 +130,7 @@ v.set(\gate, 0)
         \panSteps:50,
         \spread:0.5),
     (\name:\bb,
-        \freq: 300,
+        \freq: 240,
         \amp: 0.2,
         \buffSet: 0,
         \detuneLow:0.1,
@@ -138,10 +138,8 @@ v.set(\gate, 0)
         \panLow:-1,
         \panHigh:1,
         \panSteps:10,
-        \spread:0.3)]
-)
+        \spread:0.3)];
 
-(
 ~runstart_params.do({|ps|
     ~voscs[ps[\name]] = Synth(\VoscPlayer, [
         out:0,
@@ -156,3 +154,33 @@ v.set(\gate, 0)
 )
 
 ~runstart_params.do({|ps| ~voscs[ps[\name]].set(\gate, 0)})
+
+(
+Pbind(
+    \instrument, \VoscPlayer,
+    \bufSet, Prand([0,1,2,3], inf).trace,
+
+    \bufLow, Pfunc({|e| ~buffsets[e[\bufSet]][0] }),
+    \bufHigh,Pfunc({|e| ~buffsets[e[\bufSet]][7] }),
+    \bufSteps, 100,
+    \detuneLow, 0.15,
+    \detuneHigh, 0.2,
+    \detuneSteps,100,
+    \freq, Prand([80, 160, 240, 320], inf),
+    \amp, 0.3,
+    \panLow, -1,
+    \panHigh, 1,
+    \panSteps, 30,
+    \spread, 0,
+    \releaseTime, 15,
+    \legato, Pwhite(3, 5),
+    \dur, Pwhite(20, 70, inf)
+).play
+)
+c = [1,2,3, 4]
+a = Prand([0,1,2,3], 5).asStream
+c[a.next]
+
+
+4.3.round(1).asInt
+a.next
