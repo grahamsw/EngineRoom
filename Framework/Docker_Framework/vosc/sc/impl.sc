@@ -13,7 +13,27 @@
 
 // list of Pbinds
 ~definePbinds = {
+    ~pbinds = ();
+    ~pbinds[\first] =  Pbind(
+        \instrument, \VoscPlayer,
+        \bufSet, Prand([0,1,2,3], inf).trace,
 
+        \bufLow, Pfunc({|e| ~buffsets[e[\bufSet]][0] }),
+        \bufHigh,Pfunc({|e| ~buffsets[e[\bufSet]][7] }),
+        \bufSteps, 100,
+        \detuneLow, 0.15,
+        \detuneHigh, 0.2,
+        \detuneSteps,100,
+        \freq, Prand([80, 160, 240, 320], inf),
+        \amp, 0.3,
+        \panLow, -1,
+        \panHigh, 1,
+        \panSteps, 30,
+        \spread, 0,
+        \releaseTime, 15,
+        \legato, Pwhite(3, 5),
+        \dur, Pwhite(20, 70, inf)
+    )
 };
 
 //performance events:
@@ -32,6 +52,13 @@
     \setReverbMix: {
         |mix|
         ~reverb.set(\mix, mix);
+    },
+    \startPbind: { |key|
+        Pdef(key,
+            ~pbinds[key]).play;
+    },
+    \stopPbind: {|key|
+        Pdef(key).stop;
     }
 ].asDict;
 
