@@ -85,7 +85,13 @@ s.sync;
 };
 )
 
+~events[\startPbind].(\first)
 
+~events[\stopPbind].(\first)
+
+
+Pdef(\first).stop
+, ~pbinds[\first]).play
 ~events[\setReverbMix].(0.9)
 //~events[\start].()
 (
@@ -155,32 +161,3 @@ v.set(\gate, 0)
 
 ~runstart_params.do({|ps| ~voscs[ps[\name]].set(\gate, 0)})
 
-(
-Pbind(
-    \instrument, \VoscPlayer,
-    \bufSet, Prand([0,1,2,3], inf).trace,
-
-    \bufLow, Pfunc({|e| ~buffsets[e[\bufSet]][0] }),
-    \bufHigh,Pfunc({|e| ~buffsets[e[\bufSet]][7] }),
-    \bufSteps, 100,
-    \detuneLow, 0.15,
-    \detuneHigh, 0.2,
-    \detuneSteps,100,
-    \freq, Prand([80, 160, 240, 320], inf),
-    \amp, 0.3,
-    \panLow, -1,
-    \panHigh, 1,
-    \panSteps, 30,
-    \spread, 0,
-    \releaseTime, 15,
-    \legato, Pwhite(3, 5),
-    \dur, Pwhite(20, 70, inf)
-).play
-)
-c = [1,2,3, 4]
-a = Prand([0,1,2,3], 5).asStream
-c[a.next]
-
-
-4.3.round(1).asInt
-a.next
