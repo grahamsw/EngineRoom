@@ -86,12 +86,13 @@ s.sync;
 )
 
 ~events[\startPbind].(\first)
-
+~events[\startPbind].(\second)
 ~events[\stopPbind].(\first)
+TempoClock.default.tempo = 1
 
 
 Pdef(\first).stop
-, ~pbinds[\first]).play
+ ~pbinds[\second].play
 ~events[\setReverbMix].(0.9)
 //~events[\start].()
 (
