@@ -1,4 +1,4 @@
-b = NetAddr.new("192.168.1.31", 57120);    // create the NetAddr
+b = NetAddr.new("192.168.1.25", 57120);    // create the NetAddr
 b.sendMsg("/s_quit");
 
 SynthDescLib.global.browse

@@ -1,4 +1,4 @@
-
+"adding synths".postln;
 // SynthDefs for the Synths used in the piece
 ~defineSynths = {
 

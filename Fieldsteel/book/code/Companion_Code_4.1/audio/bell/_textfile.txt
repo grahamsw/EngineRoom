@@ -1,0 +1,1 @@
+This is a text file, not an audio file! It is included in this folder structure to test the effectiveness of code that loads audio files into buffers. Poorly written code may attempt to load this text file into a buffer, producing an error. Well-written code will detect the invalid file format and ignore the file.

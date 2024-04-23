@@ -3,7 +3,7 @@
 SynthDef(\vocali, {
 	|f1, f2, fund = 70, amp =0.25|
 	var source = LFSaw.ar(fund);
-	var vowel =
+    var vowel =
 	(
 		Normalizer.ar(BPF.ar(source, f1, 0.1))
 		+
@@ -64,3 +64,5 @@ u.mouseOverAction_({|v, x, y|
 });
 )
 		*/
+
+().play

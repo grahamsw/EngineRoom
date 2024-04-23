@@ -81,10 +81,12 @@ s.waitForBoot {
 
 ~definePbinds.value;
 s.sync;
-//~runstart.()
 };
 )
 
+
+/*
+~events[\start].()
 ~events[\startPbind].(\first)
 ~events[\startPbind].(\second)
 ~events[\stopPbind].(\first)
@@ -94,7 +96,7 @@ TempoClock.default.tempo = 1
 Pdef(\first).stop
  ~pbinds[\second].play
 ~events[\setReverbMix].(0.9)
-//~events[\start].()
+~events[\start].()
 (
 v = Synth(\VoscPlayer, [
         out:0,
@@ -115,6 +117,7 @@ v.set(\gate, 0)
 ~buffsets
 
 (
+~events[\startPbind].(\first);
 ~voscs = ();
 ~runstart_params = [
     (\name:\bass,
@@ -162,3 +165,4 @@ v.set(\gate, 0)
 
 ~runstart_params.do({|ps| ~voscs[ps[\name]].set(\gate, 0)})
 
+*/

@@ -23,6 +23,7 @@ COPY darkice.cfg /etc/darkice.cfg
 COPY startup.scd /root/.config/SuperCollider/startup.scd
 COPY core.sc /core.sc
 COPY impl.sc /impl.sc
+COPY synths.sc /synths.sc
 
 COPY Procfile Procfile
 

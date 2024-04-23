@@ -14,22 +14,12 @@ SynthDef("help-VOsc",{ arg out=0, freq = 400,amp = 0.2, voscrate= 1, gate=1, buf
     // mouse x controls the wavetable position
     x = MouseX.kr(0,7).poll;
 //    x = TRand.kr(0, 7, Impulse.kr(voscrate)).varlag(1);
-    Out(
+    Out.ar(out, VOsc.ar(bufoffset+x, freq * [1, 1.01], mul:env * amp)
+    )
+}).add; //.play(s,[\out, 0, \bufoffset, 0]);
+)
 
-// allocate and fill tables 0 to 7
-8.do({ arg i;
-    var n, a;
-    // allocate table
-    s.sendMsg(\b_alloc, i, 1024);
-    // generate array of harmonic amplitudes
-    n = (i+1)**2;
-    a = Array.fill(n, { arg j; ((n-j)/n).squared.round(0.001) });
-    // fill table
-    s.performList(\sendMsg, \b_gen, i, \sine1, 7, a);
-    // the argument '7' here is a flag for the \sine1 wave fill method -
-    // see the "Wave Fill Commands" section in the Server Command Reference
-});
-).ar(out,
+.ar(out,
         VOsc.ar(bufoffset+x, freq * [1, 1.01], mul:env * amp)
     )
 }).add; //.play(s,[\out, 0, \bufoffset, 0]);
